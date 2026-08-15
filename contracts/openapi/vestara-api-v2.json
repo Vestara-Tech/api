@@ -10884,6 +10884,488 @@
           }
         }
       }
+    },
+    "/api/v2/startup": {
+      "get": {
+        "summary": "Current startup snapshot (state + progress + services + classification)",
+        "tags": [
+          "startup"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "state",
+                    "progress",
+                    "services",
+                    "classification"
+                  ],
+                  "properties": {
+                    "state": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "destination",
+                        "firstBoot",
+                        "authenticated",
+                        "sessionReady"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "destination": {
+                          "type": "string"
+                        },
+                        "firstBoot": {
+                          "type": "boolean"
+                        },
+                        "authenticated": {
+                          "type": "boolean"
+                        },
+                        "sessionReady": {
+                          "type": "boolean"
+                        },
+                        "readyAt": {
+                          "type": "string"
+                        },
+                        "failure": {
+                          "type": "object",
+                          "required": [
+                            "stage",
+                            "message",
+                            "at"
+                          ],
+                          "properties": {
+                            "stage": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "at": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "progress": {},
+                    "services": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "serviceId",
+                          "readiness",
+                          "weight",
+                          "updatedAt"
+                        ],
+                        "properties": {
+                          "serviceId": {
+                            "type": "string"
+                          },
+                          "readiness": {
+                            "type": "string"
+                          },
+                          "weight": {
+                            "type": "integer"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "classification": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/startup/state": {
+      "get": {
+        "summary": "Startup state + routing destination",
+        "tags": [
+          "startup"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "destination",
+                    "firstBoot",
+                    "authenticated",
+                    "sessionReady"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "firstBoot": {
+                      "type": "boolean"
+                    },
+                    "authenticated": {
+                      "type": "boolean"
+                    },
+                    "sessionReady": {
+                      "type": "boolean"
+                    },
+                    "readyAt": {
+                      "type": "string"
+                    },
+                    "failure": {
+                      "type": "object",
+                      "required": [
+                        "stage",
+                        "message",
+                        "at"
+                      ],
+                      "properties": {
+                        "stage": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/startup/progress": {
+      "get": {
+        "summary": "Startup progress aggregate",
+        "tags": [
+          "startup"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/startup/services": {
+      "get": {
+        "summary": "Per-service readiness",
+        "tags": [
+          "startup"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "serviceId",
+                      "readiness",
+                      "weight",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "serviceId": {
+                        "type": "string"
+                      },
+                      "readiness": {
+                        "type": "string"
+                      },
+                      "weight": {
+                        "type": "integer"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "detail": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/startup/transition": {
+      "post": {
+        "summary": "Advance the startup state machine",
+        "tags": [
+          "startup"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "to"
+                ],
+                "properties": {
+                  "to": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "destination",
+                    "firstBoot",
+                    "authenticated",
+                    "sessionReady"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "firstBoot": {
+                      "type": "boolean"
+                    },
+                    "authenticated": {
+                      "type": "boolean"
+                    },
+                    "sessionReady": {
+                      "type": "boolean"
+                    },
+                    "readyAt": {
+                      "type": "string"
+                    },
+                    "failure": {
+                      "type": "object",
+                      "required": [
+                        "stage",
+                        "message",
+                        "at"
+                      ],
+                      "properties": {
+                        "stage": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "at": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/startup/services/{serviceId}/readiness": {
+      "post": {
+        "summary": "Update a service readiness (drives progress/classification)",
+        "tags": [
+          "startup"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "readiness"
+                ],
+                "properties": {
+                  "readiness": {
+                    "type": "string"
+                  },
+                  "detail": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "serviceId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "serviceId",
+                    "readiness",
+                    "weight",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "serviceId": {
+                      "type": "string"
+                    },
+                    "readiness": {
+                      "type": "string"
+                    },
+                    "weight": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "detail": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

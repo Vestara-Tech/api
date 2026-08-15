@@ -25,11 +25,13 @@ import type { SystemService } from '../system/service/system-service.js';
 import { SystemService as SystemServiceImpl } from '../system/service/system-service.js';
 import type { BootPresentationService } from '../system/boot-presentation/service/boot-presentation-service.js';
 import type { GrubConfigurationService } from '../system/grub/service/grub-configuration-service.js';
+import type { StartupCoordinator } from '../startup/service/startup-coordinator.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
 import { buildBootPresentationService } from './boot-presentation.js';
 import { buildGrubConfigurationService } from './grub-configuration.js';
+import { buildStartupCoordinator } from './startup.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -37,6 +39,7 @@ import { registerConfigCapability } from './config-capability.js';
 import { registerGeneratorCapability } from './generator-capability.js';
 import { registerOnboardingCapability } from './onboarding-capability.js';
 import { registerSystemModuleCapability } from './system-capability.js';
+import { registerStartupCapability } from './startup-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -67,6 +70,7 @@ export interface Application {
   readonly system: SystemService;
   readonly bootPresentation: BootPresentationService;
   readonly grubConfiguration: GrubConfigurationService;
+  readonly startup: StartupCoordinator;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -126,6 +130,9 @@ export function createApplication(config: AppConfig): Application {
   // ── GRUB configuration (SYS-019..022) ──────────────────────
   const grubConfiguration = buildGrubConfigurationService();
 
+  // ── Startup (DESK-001..008) ────────────────────────────────
+  const startup = buildStartupCoordinator(events);
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -133,6 +140,7 @@ export function createApplication(config: AppConfig): Application {
   registerGeneratorCapability(capabilities, config);
   registerOnboardingCapability(capabilities, config);
   registerSystemModuleCapability(capabilities, config);
+  registerStartupCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -153,6 +161,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('system', system);
   container.register('bootPresentation', bootPresentation);
   container.register('grubConfiguration', grubConfiguration);
+  container.register('startup', startup);
 
   const startedAt = Date.now();
 
@@ -175,6 +184,7 @@ export function createApplication(config: AppConfig): Application {
     system,
     bootPresentation,
     grubConfiguration,
+    startup,
     shutdown,
     systemStatus(): SystemStatus {
       return {

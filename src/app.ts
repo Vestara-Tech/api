@@ -15,6 +15,7 @@ import { configRoutes } from './routes/config.js';
 import { generatorRoutes } from './routes/generator.js';
 import { bootPresentationRoutes } from './routes/boot-presentation.js';
 import { grubRoutes } from './routes/grub.js';
+import { startupRoutes } from './routes/startup.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -59,6 +60,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(generatorRoutes);
   await app.register(bootPresentationRoutes);
   await app.register(grubRoutes);
+  await app.register(startupRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

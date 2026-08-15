@@ -291,9 +291,28 @@ editing:
 - Dev adapter reports unavailable honestly (no privileged GRUB access) so the
   governed pipeline never touches the host bootloader
 
+**DESK-001..008 — Startup Platform (complete).** The OS startup state machine
+that `vestara-apps/startup` projects (never a client-side guess):
+
+- **DESK-001** `StartupState` + transitions (`booting → initializing →
+  starting-services → verifying → ready`; `uninitialized → onboarding`,
+  `degraded → desktop`, `failed → diagnostics/recovery`) + destination routing
+- **DESK-003** `ServiceReadinessRegistry` — per-service readiness
+- **DESK-004** `StartupDependencyGraph` — dependency-ordered startup
+- **DESK-005** `computeProgress` — weighted progress aggregate
+- **DESK-006** `classifyStartup` — healthy / degraded / failed (required vs
+  optional, blocked deps)
+- **DESK-007** startup events on the EventBus
+- **DESK-002** `StartupCoordinator` — orchestrates state + readiness +
+  progress + classification + events + routing
+- **DESK-008** Control API `/api/v2/startup*` (6 routes; 64 OpenAPI paths) +
+  `startup` capability
+- The startup screen routes: firstBoot → onboarding, unauthenticated → login,
+  session-ready → desktop
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — ONB-010+ (execution), AUTH-007+ (OAuth),
-API2-004+ (compat) come next. PostgreSQL/Redis/NATS/Prisma and external
+**not** part of the current stream — LOGIN (OS login platform) comes next,
+then the OS Image Builder (IMG). PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.
 
 ## Quickstart
