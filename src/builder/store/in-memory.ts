@@ -36,4 +36,9 @@ export class InMemoryDraftStore implements DraftStore {
   async listRevisions(id: string): Promise<readonly ApiDefinitionRevision[]> {
     return this.revisions.get(id) ?? [];
   }
+
+  async getRevision(id: string, revision: number): Promise<ApiDefinitionRevision | null> {
+    const list = this.revisions.get(id) ?? [];
+    return list.find((r) => r.definition.revision === revision) ?? null;
+  }
 }

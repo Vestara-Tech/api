@@ -59,6 +59,10 @@ export function badRequest(message: string, details?: VestaraErrorContext): Vest
   return new VestaraError({ code: 'BAD_REQUEST', message, ...(details !== undefined ? { details } : {}) });
 }
 
+export function conflict(message: string, details?: VestaraErrorContext): VestaraError {
+  return new VestaraError({ code: 'CONFLICT', message, ...(details !== undefined ? { details } : {}) });
+}
+
 export function notFound(message: string, details?: VestaraErrorContext): VestaraError {
   return new VestaraError({ code: 'NOT_FOUND', message, ...(details !== undefined ? { details } : {}) });
 }

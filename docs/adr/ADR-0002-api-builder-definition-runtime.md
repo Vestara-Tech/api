@@ -48,6 +48,27 @@ Route activation is a separate later milestone (API2-005) that consumes a
 published revision through a runtime activator. The builder never calls
 `fastify.route` directly.
 
+### 6. Same-ID identity model (API2-003)
+
+`id` is the stable logical API identity; edits never mint a new id. A new
+definition id means a genuinely different API. `revision` advances 1 → 2 → 3 …
+and publication records `publishedRevision` (future work: distinguish the
+working draft revision from the currently published revision explicitly).
+
+### 7. Optimistic concurrency (API2-003)
+
+Mutations (PATCH / DELETE / publish) accept `If-Match: "revision-N"`. A stale
+editor gets `409 Conflict` rather than silently overwriting. The same mechanism
+protects future AI `ApiDefinitionPatch` proposals against a stale base revision.
+
+### 8. Preview is the review contract (API2-003)
+
+`PreviewResult` bundles definition, validation, compiled contract
+(hash/compilerVersion/openapi/routes), compatibility (classification/changes),
+and `publishable`. Compatibility analysis (API2-004) is seeded now: field type
+change, field removed, field became required, endpoint removed, and resource
+removed are classified as breaking against the last published revision.
+
 ## Consequences
 
 - The Builder UI (API2-006) and Generator/Agent modules both target

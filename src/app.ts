@@ -9,6 +9,7 @@ import { registerTelemetry } from './plugins/telemetry.js';
 import { registerOpenApi } from './plugins/openapi.js';
 import { healthRoutes } from './routes/health.js';
 import { systemRoutes } from './routes/system.js';
+import { builderRoutes } from './routes/builder.js';
 
 export interface BuildAppOptions {
   readonly config: AppConfig;
@@ -41,6 +42,7 @@ export async function buildApp(options: BuildAppOptions) {
   await registerOpenApi(app, options.exposeDocs ?? true);
   await app.register(healthRoutes);
   await app.register(systemRoutes);
+  await app.register(builderRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

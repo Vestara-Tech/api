@@ -72,8 +72,26 @@ Builder UI and future Generator/Agent modules will drive:
   adapter is installed.
 - Builder capability registered (`builder` appears in `/api/v2/system`)
 
+**API2-003 — Builder Control API (complete).** Thin HTTP layer over
+`ApiDefinitionService`:
+
+- `POST/GET /api/v2/builder/definitions`, `GET/PATCH/DELETE .../:id`
+- `POST .../:id/validate`, `.../preview`, `.../publish`
+- `GET .../revisions`, `GET .../revisions/:revision`, `POST .../rollback`
+- **Optimistic concurrency** via `If-Match: "revision-N"` on PATCH / DELETE /
+  publish → stale editors get `409 Conflict`
+- **Rich preview contract**: `{ definition, validation, contract { hash,
+  compilerVersion, openapi, routes }, compatibility { classification, changes },
+  publishable }` — one endpoint for the Builder review panel
+- **Compatibility analyzer** (API2-004 groundwork): classifies
+  breaking/compatible changes vs the last published revision (field type
+  change, field removed, field became required, endpoint removed, resource
+  removed)
+- **Pagination/filtering** on list: `?cursor=&limit=&status=&search=&sort=`
+- Registered in OpenAPI (12 paths total) with a drift gate
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of API2-001/002 — they become API2-003+ capabilities once the
+**not** part of API2-001/002/003 — they become API2-004+ capabilities once the
 control-plane foundation is verified. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.
 

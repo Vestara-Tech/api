@@ -1,8 +1,9 @@
-import { notFound } from '../../core/errors.js';
+import { conflict, notFound } from '../../core/errors.js';
 import type { RequestContext } from '../../core/context.js';
 import { EventBus, type VestaraEvent } from '../../core/events.js';
 import { OperationStore } from '../../core/operations.js';
-import { ContractCompiler } from '../compiler/index.js';
+import { ContractCompiler, type CompiledContract } from '../compiler/index.js';
+import { CompatibilityAnalyzer, type CompatibilityResult } from '../domain/compatibility.js';
 import { transition } from '../domain/lifecycle.js';
 import type {
   ApiDefinition,
@@ -18,14 +19,38 @@ export interface ApiDefinitionServiceOptions {
   readonly store: DraftStore;
   readonly compiler: ContractCompiler;
   readonly validator: DefinitionValidator;
+  readonly analyzer: CompatibilityAnalyzer;
   readonly operations: OperationStore;
   readonly events: EventBus;
+}
+
+export interface PreviewResult {
+  readonly definition: ApiDefinition;
+  readonly validation: ValidationResult;
+  readonly contract: CompiledContract;
+  readonly compatibility: CompatibilityResult;
+  readonly publishable: boolean;
+}
+
+export interface ListDefinitionsQuery {
+  readonly cursor?: string;
+  readonly limit?: number;
+  readonly status?: ApiDefinition['status'];
+  readonly search?: string;
+  readonly sort?: 'createdAt' | 'updatedAt' | 'name';
+}
+
+export interface ListDefinitionsResult {
+  readonly items: readonly ApiDefinition[];
+  readonly nextCursor: string | null;
+  readonly total: number;
 }
 
 export class ApiDefinitionService {
   private readonly store: DraftStore;
   private readonly compiler: ContractCompiler;
   private readonly validator: DefinitionValidator;
+  private readonly analyzer: CompatibilityAnalyzer;
   private readonly operations: OperationStore;
   private readonly events: EventBus;
 
@@ -33,6 +58,7 @@ export class ApiDefinitionService {
     this.store = options.store;
     this.compiler = options.compiler;
     this.validator = options.validator;
+    this.analyzer = options.analyzer;
     this.operations = options.operations;
     this.events = options.events;
   }
@@ -68,12 +94,39 @@ export class ApiDefinitionService {
     return definition;
   }
 
-  async list(): Promise<readonly ApiDefinition[]> {
-    return this.store.list();
+  async list(query: ListDefinitionsQuery = {}): Promise<ListDefinitionsResult> {
+    const all = await this.store.list();
+    const limit = Math.min(Math.max(query.limit ?? 50, 1), 200);
+    const cursorOffset = query.cursor !== undefined ? Number.parseInt(query.cursor, 10) : 0;
+    const offset = Number.isFinite(cursorOffset) && cursorOffset >= 0 ? cursorOffset : 0;
+
+    let filtered = all;
+    if (query.status !== undefined) filtered = filtered.filter((d) => d.status === query.status);
+    if (query.search !== undefined) {
+      const needle = query.search.toLowerCase();
+      filtered = filtered.filter((d) => d.name.toLowerCase().includes(needle) || d.namespace.toLowerCase().includes(needle));
+    }
+
+    const sort = query.sort ?? 'updatedAt';
+    filtered = [...filtered].sort((a, b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name);
+      if (sort === 'createdAt') return b.metadata.createdAt.localeCompare(a.metadata.createdAt);
+      return b.metadata.updatedAt.localeCompare(a.metadata.updatedAt);
+    });
+
+    const total = filtered.length;
+    const items = filtered.slice(offset, offset + limit);
+    const nextCursor = offset + items.length < total ? String(offset + items.length) : null;
+    return { items, nextCursor, total };
   }
 
-  async update(id: string, patch: Partial<Omit<ApiDefinition, 'id' | 'revision' | 'metadata'>>): Promise<ApiDefinition> {
+  async update(
+    id: string,
+    patch: Partial<Omit<ApiDefinition, 'id' | 'revision' | 'metadata'>>,
+    expectedRevision?: number,
+  ): Promise<ApiDefinition> {
     const current = await this.get(id);
+    this.assertRevision(current, expectedRevision);
     // A published definition is immutable; editing it starts a new draft cycle
     // on the same id (revision is preserved until the next publish).
     const status = current.status === 'published' || current.status === 'superseded' ? 'draft' : current.status;
@@ -88,8 +141,9 @@ export class ApiDefinitionService {
     return this.store.save(next);
   }
 
-  async remove(id: string): Promise<boolean> {
+  async remove(id: string, expectedRevision?: number): Promise<boolean> {
     const current = await this.get(id);
+    this.assertRevision(current, expectedRevision);
     if (current.status === 'published') throw new Error(`Cannot delete published definition "${id}"`);
     return this.store.remove(id);
   }
@@ -105,13 +159,19 @@ export class ApiDefinitionService {
     return result;
   }
 
-  async preview(id: string) {
+  async preview(id: string): Promise<PreviewResult> {
     const current = await this.get(id);
-    return this.compiler.compile(current);
+    const validation = this.validator.validate(current);
+    const contract = this.compiler.compile(current);
+    const publishedRevision = await this.latestPublishedRevision(id);
+    const compatibility = this.analyzer.analyze(current, publishedRevision?.definition ?? null);
+    const publishable = validation.ok && current.status === 'ready';
+    return { definition: current, validation, contract, compatibility, publishable };
   }
 
-  async publish(id: string, ctx: RequestContext): Promise<{ definition: ApiDefinition; operationId: string }> {
+  async publish(id: string, ctx: RequestContext, expectedRevision?: number): Promise<{ definition: ApiDefinition; operationId: string }> {
     const current = await this.get(id);
+    this.assertRevision(current, expectedRevision);
 
     // Publish is only allowed from READY.
     const publishing = transition(current.status, 'publishing');
@@ -186,6 +246,31 @@ export class ApiDefinitionService {
   async revisions(id: string): Promise<readonly ApiDefinitionRevision[]> {
     await this.get(id);
     return this.store.listRevisions(id);
+  }
+
+  async revision(id: string, revision: number): Promise<ApiDefinitionRevision> {
+    await this.get(id);
+    const found = await this.store.getRevision(id, revision);
+    if (!found) throw notFound(`Revision ${revision} of "${id}" not found`);
+    return found;
+  }
+
+  private async latestPublishedRevision(id: string): Promise<ApiDefinitionRevision | null> {
+    const revisions = await this.store.listRevisions(id);
+    for (let i = revisions.length - 1; i >= 0; i -= 1) {
+      const r = revisions[i]!;
+      if (r.definition.status === 'published') return r;
+    }
+    return null;
+  }
+
+  private assertRevision(current: ApiDefinition, expectedRevision?: number): void {
+    if (expectedRevision !== undefined && expectedRevision !== current.revision) {
+      throw conflict(`Revision mismatch: expected revision ${expectedRevision}, current is ${current.revision}`, {
+        expectedRevision,
+        currentRevision: current.revision,
+      });
+    }
   }
 
   private emit(type: string, payload: Record<string, unknown>, correlationId?: string): void {

@@ -190,6 +190,4695 @@
           }
         }
       }
+    },
+    "/api/v2/builder/definitions": {
+      "get": {
+        "summary": "List API definitions",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "status",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "search",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "sort",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "nextCursor",
+                    "total"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "namespace",
+                          "version",
+                          "status",
+                          "resources",
+                          "endpoints",
+                          "policies",
+                          "operations",
+                          "events",
+                          "revision",
+                          "metadata"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "resources": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "fields"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "plural": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "fields": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "type"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "required": {
+                                        "type": "boolean"
+                                      },
+                                      "unique": {
+                                        "type": "boolean"
+                                      },
+                                      "indexed": {
+                                        "type": "boolean"
+                                      },
+                                      "enumValues": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "endpoints": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "method",
+                                "path"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "method": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "GET"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "POST"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "PUT"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "PATCH"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "DELETE"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "summary": {
+                                  "type": "string"
+                                },
+                                "parameters": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "in",
+                                      "type"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "in": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "path"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "query"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "header"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "cookie"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "required": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  }
+                                },
+                                "requestBody": {
+                                  "type": "object",
+                                  "properties": {
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "responses": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "status"
+                                    ],
+                                    "properties": {
+                                      "status": {
+                                        "type": "integer"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "resource": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "policyIds": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "capabilityBinding": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "effect",
+                                "action"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "effect": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "allow"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "deny"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "action": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "operations": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "kind"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "kind": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "events": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "revision": {
+                            "type": "integer"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "required": [
+                              "createdAt",
+                              "updatedAt"
+                            ],
+                            "properties": {
+                              "description": {
+                                "type": "string"
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "author": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "nextCursor": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an API definition",
+        "tags": [
+          "builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "namespace",
+                  "version"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "author": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "namespace",
+                    "version",
+                    "status",
+                    "resources",
+                    "endpoints",
+                    "policies",
+                    "operations",
+                    "events",
+                    "revision",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "fields"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "plural": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "unique": {
+                                  "type": "boolean"
+                                },
+                                "indexed": {
+                                  "type": "boolean"
+                                },
+                                "enumValues": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "method",
+                          "path"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "GET"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "POST"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PUT"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PATCH"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "DELETE"
+                                ]
+                              }
+                            ]
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "parameters": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "in",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "in": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "path"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "query"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "header"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "cookie"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "requestBody": {
+                            "type": "object",
+                            "properties": {
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "responses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "status"
+                              ],
+                              "properties": {
+                                "status": {
+                                  "type": "integer"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policyIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "capabilityBinding": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "effect",
+                          "action"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "effect": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "allow"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "deny"
+                                ]
+                              }
+                            ]
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "resource": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "operations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "author": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}": {
+      "get": {
+        "summary": "Get an API definition",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "namespace",
+                    "version",
+                    "status",
+                    "resources",
+                    "endpoints",
+                    "policies",
+                    "operations",
+                    "events",
+                    "revision",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "fields"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "plural": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "unique": {
+                                  "type": "boolean"
+                                },
+                                "indexed": {
+                                  "type": "boolean"
+                                },
+                                "enumValues": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "method",
+                          "path"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "GET"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "POST"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PUT"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PATCH"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "DELETE"
+                                ]
+                              }
+                            ]
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "parameters": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "in",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "in": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "path"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "query"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "header"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "cookie"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "requestBody": {
+                            "type": "object",
+                            "properties": {
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "responses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "status"
+                              ],
+                              "properties": {
+                                "status": {
+                                  "type": "integer"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policyIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "capabilityBinding": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "effect",
+                          "action"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "effect": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "allow"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "deny"
+                                ]
+                              }
+                            ]
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "resource": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "operations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "author": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an API definition (If-Match: \"revision-N\")",
+        "tags": [
+          "builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "resources": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "fields"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "plural": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "fields": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "type"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "required": {
+                                "type": "boolean"
+                              },
+                              "unique": {
+                                "type": "boolean"
+                              },
+                              "indexed": {
+                                "type": "boolean"
+                              },
+                              "enumValues": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "endpoints": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "method",
+                        "path"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "method": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "GET"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "POST"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "PUT"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "PATCH"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "DELETE"
+                              ]
+                            }
+                          ]
+                        },
+                        "path": {
+                          "type": "string"
+                        },
+                        "summary": {
+                          "type": "string"
+                        },
+                        "parameters": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "in",
+                              "type"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "in": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "path"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "query"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "header"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "cookie"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "required": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "requestBody": {
+                          "type": "object",
+                          "properties": {
+                            "resource": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "responses": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "status"
+                            ],
+                            "properties": {
+                              "status": {
+                                "type": "integer"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "policyIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "capabilityBinding": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "policies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "effect",
+                        "action"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "effect": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "allow"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "deny"
+                              ]
+                            }
+                          ]
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "resource": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "operations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "kind"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "events": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "if-match",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "namespace",
+                    "version",
+                    "status",
+                    "resources",
+                    "endpoints",
+                    "policies",
+                    "operations",
+                    "events",
+                    "revision",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "fields"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "plural": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "unique": {
+                                  "type": "boolean"
+                                },
+                                "indexed": {
+                                  "type": "boolean"
+                                },
+                                "enumValues": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "method",
+                          "path"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "GET"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "POST"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PUT"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PATCH"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "DELETE"
+                                ]
+                              }
+                            ]
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "parameters": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "in",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "in": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "path"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "query"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "header"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "cookie"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "requestBody": {
+                            "type": "object",
+                            "properties": {
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "responses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "status"
+                              ],
+                              "properties": {
+                                "status": {
+                                  "type": "integer"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policyIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "capabilityBinding": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "effect",
+                          "action"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "effect": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "allow"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "deny"
+                                ]
+                              }
+                            ]
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "resource": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "operations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "author": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an API definition",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "if-match",
+            "required": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response"
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/validate": {
+      "post": {
+        "summary": "Validate an API definition",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "error"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "warning"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/preview": {
+      "post": {
+        "summary": "Preview an API definition (validation + contract + compatibility)",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "definition",
+                    "validation",
+                    "contract",
+                    "compatibility",
+                    "publishable"
+                  ],
+                  "properties": {
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "namespace",
+                        "version",
+                        "status",
+                        "resources",
+                        "endpoints",
+                        "policies",
+                        "operations",
+                        "events",
+                        "revision",
+                        "metadata"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "namespace": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "resources": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "fields"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "plural": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "fields": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    },
+                                    "unique": {
+                                      "type": "boolean"
+                                    },
+                                    "indexed": {
+                                      "type": "boolean"
+                                    },
+                                    "enumValues": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "endpoints": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "method",
+                              "path"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "method": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "GET"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "POST"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PUT"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PATCH"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "DELETE"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "path": {
+                                "type": "string"
+                              },
+                              "summary": {
+                                "type": "string"
+                              },
+                              "parameters": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "in",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "in": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "path"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "query"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "header"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "cookie"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                }
+                              },
+                              "requestBody": {
+                                "type": "object",
+                                "properties": {
+                                  "resource": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "responses": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "status"
+                                  ],
+                                  "properties": {
+                                    "status": {
+                                      "type": "integer"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "policyIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "capabilityBinding": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "policies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "effect",
+                              "action"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "effect": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "allow"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "deny"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "action": {
+                                "type": "string"
+                              },
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "operations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "kind"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "required": [
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            },
+                            "tags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "author": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "validation": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "issues"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "message",
+                              "severity"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "severity": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "error"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "warning"
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "contract": {
+                      "type": "object",
+                      "required": [
+                        "hash",
+                        "compilerVersion",
+                        "openapi",
+                        "routes"
+                      ],
+                      "properties": {
+                        "hash": {
+                          "type": "string"
+                        },
+                        "compilerVersion": {
+                          "type": "string"
+                        },
+                        "openapi": {},
+                        "routes": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "compatibility": {
+                      "type": "object",
+                      "required": [
+                        "classification",
+                        "changes"
+                      ],
+                      "properties": {
+                        "classification": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "compatible"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "breaking"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "unknown"
+                              ]
+                            }
+                          ]
+                        },
+                        "changes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "kind",
+                              "path",
+                              "severity",
+                              "message"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "string"
+                              },
+                              "severity": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "breaking"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "compatible"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "info"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "publishable": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/publish": {
+      "post": {
+        "summary": "Publish an API definition",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "if-match",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "definition",
+                    "operationId"
+                  ],
+                  "properties": {
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "namespace",
+                        "version",
+                        "status",
+                        "resources",
+                        "endpoints",
+                        "policies",
+                        "operations",
+                        "events",
+                        "revision",
+                        "metadata"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "namespace": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "resources": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "fields"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "plural": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "fields": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    },
+                                    "unique": {
+                                      "type": "boolean"
+                                    },
+                                    "indexed": {
+                                      "type": "boolean"
+                                    },
+                                    "enumValues": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "endpoints": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "method",
+                              "path"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "method": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "GET"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "POST"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PUT"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PATCH"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "DELETE"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "path": {
+                                "type": "string"
+                              },
+                              "summary": {
+                                "type": "string"
+                              },
+                              "parameters": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "in",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "in": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "path"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "query"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "header"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "cookie"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                }
+                              },
+                              "requestBody": {
+                                "type": "object",
+                                "properties": {
+                                  "resource": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "responses": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "status"
+                                  ],
+                                  "properties": {
+                                    "status": {
+                                      "type": "integer"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "policyIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "capabilityBinding": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "policies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "effect",
+                              "action"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "effect": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "allow"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "deny"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "action": {
+                                "type": "string"
+                              },
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "operations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "kind"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "required": [
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            },
+                            "tags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "author": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "operationId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/revisions": {
+      "get": {
+        "summary": "List published revisions",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "definition",
+                      "compiledHash",
+                      "recordedAt"
+                    ],
+                    "properties": {
+                      "definition": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "namespace",
+                          "version",
+                          "status",
+                          "resources",
+                          "endpoints",
+                          "policies",
+                          "operations",
+                          "events",
+                          "revision",
+                          "metadata"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "namespace": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "resources": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "fields"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "plural": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "fields": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "type"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "required": {
+                                        "type": "boolean"
+                                      },
+                                      "unique": {
+                                        "type": "boolean"
+                                      },
+                                      "indexed": {
+                                        "type": "boolean"
+                                      },
+                                      "enumValues": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "endpoints": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "method",
+                                "path"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "method": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "GET"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "POST"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "PUT"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "PATCH"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "DELETE"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "path": {
+                                  "type": "string"
+                                },
+                                "summary": {
+                                  "type": "string"
+                                },
+                                "parameters": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "name",
+                                      "in",
+                                      "type"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "in": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "path"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "query"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "header"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "cookie"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "type": {
+                                        "type": "string"
+                                      },
+                                      "required": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  }
+                                },
+                                "requestBody": {
+                                  "type": "object",
+                                  "properties": {
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                "responses": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "status"
+                                    ],
+                                    "properties": {
+                                      "status": {
+                                        "type": "integer"
+                                      },
+                                      "description": {
+                                        "type": "string"
+                                      },
+                                      "resource": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "policyIds": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "capabilityBinding": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policies": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "effect",
+                                "action"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "effect": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "allow"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "deny"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "action": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "operations": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "kind"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "kind": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "events": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "revision": {
+                            "type": "integer"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "required": [
+                              "createdAt",
+                              "updatedAt"
+                            ],
+                            "properties": {
+                              "description": {
+                                "type": "string"
+                              },
+                              "tags": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "author": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "compiledHash": {
+                        "type": "string"
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/revisions/{revision}": {
+      "get": {
+        "summary": "Get a specific published revision",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "revision",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "definition",
+                    "compiledHash",
+                    "recordedAt"
+                  ],
+                  "properties": {
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "namespace",
+                        "version",
+                        "status",
+                        "resources",
+                        "endpoints",
+                        "policies",
+                        "operations",
+                        "events",
+                        "revision",
+                        "metadata"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "namespace": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "resources": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "fields"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "plural": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "fields": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    },
+                                    "unique": {
+                                      "type": "boolean"
+                                    },
+                                    "indexed": {
+                                      "type": "boolean"
+                                    },
+                                    "enumValues": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "endpoints": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "method",
+                              "path"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "method": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "GET"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "POST"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PUT"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "PATCH"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "DELETE"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "path": {
+                                "type": "string"
+                              },
+                              "summary": {
+                                "type": "string"
+                              },
+                              "parameters": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "id",
+                                    "name",
+                                    "in",
+                                    "type"
+                                  ],
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "in": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "path"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "query"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "header"
+                                          ]
+                                        },
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "cookie"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "type": {
+                                      "type": "string"
+                                    },
+                                    "required": {
+                                      "type": "boolean"
+                                    }
+                                  }
+                                }
+                              },
+                              "requestBody": {
+                                "type": "object",
+                                "properties": {
+                                  "resource": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "responses": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "status"
+                                  ],
+                                  "properties": {
+                                    "status": {
+                                      "type": "integer"
+                                    },
+                                    "description": {
+                                      "type": "string"
+                                    },
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "policyIds": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "capabilityBinding": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "policies": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "effect",
+                              "action"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "effect": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "allow"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "deny"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "action": {
+                                "type": "string"
+                              },
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "operations": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name",
+                              "kind"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "kind": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "required": [
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "properties": {
+                            "description": {
+                              "type": "string"
+                            },
+                            "tags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "author": {
+                              "type": "string"
+                            },
+                            "createdAt": {
+                              "type": "string"
+                            },
+                            "updatedAt": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "compiledHash": {
+                      "type": "string"
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/builder/definitions/{id}/rollback": {
+      "post": {
+        "summary": "Roll back to the previous published revision",
+        "tags": [
+          "builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "namespace",
+                    "version",
+                    "status",
+                    "resources",
+                    "endpoints",
+                    "policies",
+                    "operations",
+                    "events",
+                    "revision",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "namespace": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "fields"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "plural": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "fields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                },
+                                "unique": {
+                                  "type": "boolean"
+                                },
+                                "indexed": {
+                                  "type": "boolean"
+                                },
+                                "enumValues": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "endpoints": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "method",
+                          "path"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "GET"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "POST"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PUT"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "PATCH"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "DELETE"
+                                ]
+                              }
+                            ]
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "parameters": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "name",
+                                "in",
+                                "type"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "in": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "path"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "query"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "header"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "cookie"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "type": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "requestBody": {
+                            "type": "object",
+                            "properties": {
+                              "resource": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "responses": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "status"
+                              ],
+                              "properties": {
+                                "status": {
+                                  "type": "integer"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "resource": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "policyIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "capabilityBinding": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "policies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "effect",
+                          "action"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "effect": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "allow"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "deny"
+                                ]
+                              }
+                            ]
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "resource": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "operations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "author": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

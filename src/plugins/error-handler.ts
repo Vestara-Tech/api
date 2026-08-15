@@ -1,8 +1,15 @@
 import type { FastifyInstance } from 'fastify';
 import { VestaraError, internalError, notFound } from '../core/errors.js';
 
+interface FastifyErrorLike {
+  statusCode?: number;
+}
+
 export function registerErrorHandler(app: FastifyInstance): void {
   app.setErrorHandler((error, request, reply) => {
+    const errLike = error as FastifyErrorLike;
+    const statusCode = errLike?.statusCode;
+    const isClientError = typeof statusCode === 'number' && statusCode >= 400 && statusCode < 500;
     const normalized = error instanceof VestaraError ? error : internalError();
     const requestId = request.ctx?.requestId ?? '';
     const correlationId = request.ctx?.correlationId ?? '';
@@ -11,14 +18,18 @@ export function registerErrorHandler(app: FastifyInstance): void {
       request.log.error({ err: error }, 'http.request.failed');
     }
 
-    reply.status(normalized.status).send({
+    const status = isClientError ? statusCode : normalized.status;
+    const code = isClientError ? 'BAD_REQUEST' : normalized.code;
+    const message = error instanceof Error ? error.message : normalized.message;
+
+    reply.status(status).send({
       error: {
-        code: normalized.code,
-        message: normalized.message,
+        code,
+        message,
         requestId,
         correlationId,
-        retryable: normalized.retryable,
-        details: normalized.details,
+        retryable: false,
+        details: {},
       },
     });
   });

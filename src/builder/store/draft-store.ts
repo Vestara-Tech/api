@@ -8,4 +8,5 @@ export interface DraftStore {
   remove(id: string): Promise<boolean>;
   recordRevision(revision: ApiDefinitionRevision): Promise<void>;
   listRevisions(id: string): Promise<readonly ApiDefinitionRevision[]>;
+  getRevision(id: string, revision: number): Promise<ApiDefinitionRevision | null>;
 }

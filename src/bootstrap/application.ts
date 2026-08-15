@@ -7,6 +7,7 @@ import { OperationStore } from '../core/operations.js';
 import { QueryBus } from '../core/queries.js';
 import { ApiDefinitionService } from '../builder/service/api-definition-service.js';
 import { ContractCompiler } from '../builder/compiler/index.js';
+import { CompatibilityAnalyzer } from '../builder/domain/compatibility.js';
 import { DefinitionValidator } from '../builder/domain/validator.js';
 import { InMemoryDraftStore } from '../builder/store/in-memory.js';
 import { registerSystemCapability } from './capabilities.js';
@@ -49,6 +50,7 @@ export function createApplication(config: AppConfig): Application {
     store: new InMemoryDraftStore(),
     compiler: new ContractCompiler(),
     validator: new DefinitionValidator(),
+    analyzer: new CompatibilityAnalyzer(),
     operations,
     events,
   });
