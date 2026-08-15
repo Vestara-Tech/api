@@ -10,6 +10,8 @@ import { registerOpenApi } from './plugins/openapi.js';
 import { healthRoutes } from './routes/health.js';
 import { systemRoutes } from './routes/system.js';
 import { builderRoutes } from './routes/builder.js';
+import { authRoutes } from './routes/auth.js';
+import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
   readonly config: AppConfig;
@@ -39,10 +41,16 @@ export async function buildApp(options: BuildAppOptions) {
   registerErrorHandler(app);
   registerTelemetry(app);
 
+  registerAuthPlugin(app, {
+    authentication: options.application.authentication,
+    identities: options.application.container.resolve('auth.identityStore'),
+  });
+
   await registerOpenApi(app, options.exposeDocs ?? true);
   await app.register(healthRoutes);
   await app.register(systemRoutes);
   await app.register(builderRoutes);
+  await app.register(authRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

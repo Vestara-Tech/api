@@ -10,8 +10,16 @@ import { ContractCompiler } from '../builder/compiler/index.js';
 import { CompatibilityAnalyzer } from '../builder/domain/compatibility.js';
 import { DefinitionValidator } from '../builder/domain/validator.js';
 import { InMemoryDraftStore } from '../builder/store/in-memory.js';
+import { ScryptPasswordHashing } from '../auth/domain/password.js';
+import { IdentityService } from '../auth/service/identity-service.js';
+import { AuthenticationService } from '../auth/service/authentication-service.js';
+import { AuthorizationService } from '../auth/service/authorization-service.js';
+import { InMemoryIdentityStore } from '../auth/store/in-memory-identity.js';
+import { InMemoryCredentialStore } from '../auth/store/in-memory-credential.js';
+import { InMemorySessionStore } from '../auth/store/in-memory-session.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
+import { registerAuthCapability } from './auth-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -32,6 +40,9 @@ export interface Application {
   readonly operations: OperationStore;
   readonly capabilities: CapabilityRegistry;
   readonly builder: ApiDefinitionService;
+  readonly identities: IdentityService;
+  readonly authentication: AuthenticationService;
+  readonly authorization: AuthorizationService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -55,8 +66,22 @@ export function createApplication(config: AppConfig): Application {
     events,
   });
 
+  // ── Authentication (AUTH-001..006) ─────────────────────────────
+  const identityStore = new InMemoryIdentityStore();
+  const credentialStore = new InMemoryCredentialStore();
+  const sessionStore = new InMemorySessionStore();
+  const identities = new IdentityService({ store: identityStore });
+  const authentication = new AuthenticationService({
+    identityStore,
+    credentialStore,
+    sessionStore,
+    passwords: new ScryptPasswordHashing(),
+  });
+  const authorization = new AuthorizationService();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
+  registerAuthCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -64,6 +89,12 @@ export function createApplication(config: AppConfig): Application {
   container.register('operations', operations);
   container.register('capabilities', capabilities);
   container.register('builder', builder);
+  container.register('auth.identities', identities);
+  container.register('auth.authentication', authentication);
+  container.register('auth.authorization', authorization);
+  container.register('auth.identityStore', identityStore);
+  container.register('auth.credentialStore', credentialStore);
+  container.register('auth.sessionStore', sessionStore);
 
   const startedAt = Date.now();
 
@@ -76,6 +107,9 @@ export function createApplication(config: AppConfig): Application {
     operations,
     capabilities,
     builder,
+    identities,
+    authentication,
+    authorization,
     shutdown,
     systemStatus(): SystemStatus {
       return {

@@ -90,10 +90,34 @@ Builder UI and future Generator/Agent modules will drive:
 - **Pagination/filtering** on list: `?cursor=&limit=&status=&search=&sort=`
 - Registered in OpenAPI (12 paths total) with a drift gate
 
+**AUTH-001..006 — Authentication Platform (complete).** Provider-neutral
+identity foundation — external providers are optional integrations, never the
+identity model:
+
+- **AUTH-001** `Identity` / `Principal` contracts — `PrincipalKind`
+  (`human | agent | service | application | module | device`), `ExternalIdentity`
+  keyed by `(integration, providerSubject)`, never email
+- **AUTH-002** Credential contracts + `ScryptPasswordHashing` (local, offline,
+  no external deps); kinds: password, passkey, oauth, oidc, service-token,
+  api-key, machine
+- **AUTH-003** Session runtime — opaque session tokens, expiry, revocation,
+  per-identity session listing
+- **AUTH-004** `AuthenticationContext` + Fastify plugin — Bearer/session token
+  resolves to a context on `request.authContext`; `requireAuth` guard
+- **AUTH-005** Authorization boundary — `AuthorizationService` permission
+  checks with policy rules (deny overrides, approval-required flags)
+- **AUTH-006** `ExternalIdentityProvider` port (types only) — the auth module
+  never imports Google/GitHub/Facebook SDKs; adapters supply the contract
+- Account linking (`IdentityService.linkExternal`) keyed by stable subject
+- Routes: `POST /api/v2/auth/login|logout`, `GET .../me|sessions`,
+  `POST .../sessions/:id/revoke`, `POST .../check`
+- Auth capability registered (`auth` in `/api/v2/system`); 18 OpenAPI paths
+  total with drift gate
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of API2-001/002/003 — they become API2-004+ capabilities once the
-control-plane foundation is verified. PostgreSQL/Redis/NATS/Prisma and external
-runtimes stay behind ports; the API boots and passes tests without them.
+**not** part of the current stream — they become API2-004+ / AUTH-007+
+capabilities. PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind
+ports; the API boots and passes tests without them.
 
 ## Quickstart
 

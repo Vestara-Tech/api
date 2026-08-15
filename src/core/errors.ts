@@ -63,6 +63,14 @@ export function conflict(message: string, details?: VestaraErrorContext): Vestar
   return new VestaraError({ code: 'CONFLICT', message, ...(details !== undefined ? { details } : {}) });
 }
 
+export function forbidden(message: string, details?: VestaraErrorContext): VestaraError {
+  return new VestaraError({ code: 'FORBIDDEN', message, ...(details !== undefined ? { details } : {}) });
+}
+
+export function unauthorized(message: string, details?: VestaraErrorContext): VestaraError {
+  return new VestaraError({ code: 'UNAUTHORIZED', message, ...(details !== undefined ? { details } : {}) });
+}
+
 export function notFound(message: string, details?: VestaraErrorContext): VestaraError {
   return new VestaraError({ code: 'NOT_FOUND', message, ...(details !== undefined ? { details } : {}) });
 }
