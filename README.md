@@ -589,6 +589,33 @@ FILE-018 AI file operations next
 FILE-019 File Manager UI (reusable explorer) next
 ```
 
+### Context Module (CTX foundation)
+
+**Memory = what Vestara retains · Context = what Vestara selects and presents NOW.**
+
+- `ContextItem`/`ContextBundle` contracts with explicit scopes
+  (System → Organization → Workspace → Project → Workflow → Run → Agent →
+  Task → Turn)
+- `ContextProvider` contract + registry; first providers: Agent
+  (instructions/tools/skills/permissions/task), Workflow (run state), File
+  (contents as candidates) — Marketplace modules can add providers without
+  modifying Context Core
+- `ContextCollector` pipeline: discover → collect → **authorization filter**
+  (context can access a file ≠ agent may see it) → sensitivity filter →
+  ranking → dedup → **token budget** (required items always survive) →
+  composition
+- `ContextBudget` (maximum / reserved output / reserved system / available)
+- `ContextSnapshot` + `bundleHash` + provenance: reproducible executions —
+  "what information did the agent actually have?"
+- Control API: `/api/v2/context/providers`, `/collect`, `/snapshots` —
+  122 OpenAPI paths, capability `context`
+
+```text
+CTX foundation complete · 13 tests · ADR-0017
+CTX-018 AI-assisted retrieval next
+CTX-020 Context Inspector/Builder UI next
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

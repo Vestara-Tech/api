@@ -32,6 +32,7 @@ import type { AiService } from '../ai/runtime/ai-runtime.js';
 import type { AgentPlatform } from './agent-platform.js';
 import type { WorkflowPlatform } from './workflow.js';
 import type { FilePlatform } from './file.js';
+import type { ContextPlatform } from './context.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -44,6 +45,7 @@ import { buildAiService } from './ai.js';
 import { buildAgentPlatform } from './agent-platform.js';
 import { buildWorkflowPlatform } from './workflow.js';
 import { buildFilePlatform } from './file.js';
+import { buildContextPlatform } from './context.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -58,6 +60,7 @@ import { registerAiCapability } from './ai-capability.js';
 import { registerAgentCapability } from './agent-capability.js';
 import { registerWorkflowCapability } from './workflow-capability.js';
 import { registerFileCapability } from './file-capability.js';
+import { registerContextCapability } from './context-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -95,6 +98,7 @@ export interface Application {
   readonly agents: AgentPlatform;
   readonly workflow: WorkflowPlatform;
   readonly file: FilePlatform;
+  readonly context: ContextPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -175,6 +179,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Workflow Module (WF-001..015) ─────────────────────────
   const workflow = buildWorkflowPlatform({ agents: agents.runtime, tools: agents.toolRuntime });
 
+  // ── Context Module (CTX-001..) ────────────────────────────
+  const context = buildContextPlatform({ agents: agents.agents, workflow: workflow.runtime });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -189,6 +196,7 @@ export function createApplication(config: AppConfig): Application {
   registerAgentCapability(capabilities, config);
   registerWorkflowCapability(capabilities, config);
   registerFileCapability(capabilities, config);
+  registerContextCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -228,6 +236,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('workflow.registry', workflow.registry);
   container.register('workflow.runtime', workflow.runtime);
   container.register('file', file.service);
+  container.register('context', context.service);
+  container.register('context.registry', context.registry);
 
   const startedAt = Date.now();
 
@@ -257,6 +267,7 @@ export function createApplication(config: AppConfig): Application {
     agents,
     workflow,
     file,
+    context,
     shutdown,
     systemStatus(): SystemStatus {
       return {

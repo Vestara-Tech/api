@@ -19556,6 +19556,644 @@
           }
         }
       }
+    },
+    "/api/v2/context/providers": {
+      "get": {
+        "summary": "List context providers",
+        "tags": [
+          "context"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "kinds",
+                      "scope"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "kinds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "scope": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/context/collect": {
+      "post": {
+        "summary": "Assemble a context bundle for an execution",
+        "tags": [
+          "context"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "purpose",
+                  "principalId",
+                  "scope"
+                ],
+                "properties": {
+                  "purpose": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "agent-execution"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "workflow-step"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "retrieval"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "observation"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "debugging"
+                        ]
+                      }
+                    ]
+                  },
+                  "principalId": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "system"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "organization"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "workspace"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "project"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "workflow"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "run"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "agent"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "task"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "turn"
+                        ]
+                      }
+                    ]
+                  },
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "workflowRunId": {
+                    "type": "string"
+                  },
+                  "task": {
+                    "type": "string"
+                  },
+                  "maxTokens": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "purpose",
+                    "items",
+                    "budget",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "purpose": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "source",
+                          "content",
+                          "priority",
+                          "required",
+                          "sensitive"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "sourceId": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "priority": {
+                            "type": "integer"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "sensitive": {
+                            "type": "boolean"
+                          },
+                          "tokenEstimate": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "budget": {
+                      "type": "object",
+                      "required": [
+                        "maximumTokens",
+                        "reservedOutputTokens",
+                        "reservedSystemTokens",
+                        "availableContextTokens"
+                      ],
+                      "properties": {
+                        "maximumTokens": {
+                          "type": "integer"
+                        },
+                        "reservedOutputTokens": {
+                          "type": "integer"
+                        },
+                        "reservedSystemTokens": {
+                          "type": "integer"
+                        },
+                        "availableContextTokens": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/context/snapshots": {
+      "post": {
+        "summary": "Snapshot a context bundle",
+        "tags": [
+          "context"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "bundle"
+                ],
+                "properties": {
+                  "bundle": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "purpose",
+                      "items",
+                      "budget",
+                      "createdAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "source",
+                            "content",
+                            "priority",
+                            "required",
+                            "sensitive"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "string"
+                            },
+                            "sourceId": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "content": {
+                              "type": "string"
+                            },
+                            "priority": {
+                              "type": "integer"
+                            },
+                            "required": {
+                              "type": "boolean"
+                            },
+                            "sensitive": {
+                              "type": "boolean"
+                            },
+                            "tokenEstimate": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "budget": {
+                        "type": "object",
+                        "required": [
+                          "maximumTokens",
+                          "reservedOutputTokens",
+                          "reservedSystemTokens",
+                          "availableContextTokens"
+                        ],
+                        "properties": {
+                          "maximumTokens": {
+                            "type": "integer"
+                          },
+                          "reservedOutputTokens": {
+                            "type": "integer"
+                          },
+                          "reservedSystemTokens": {
+                            "type": "integer"
+                          },
+                          "availableContextTokens": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "runId": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "workflowRunId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "bundleHash",
+                    "items",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "bundleHash": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "agentId": {
+                      "type": "string"
+                    },
+                    "workflowRunId": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "itemId",
+                          "source",
+                          "scope",
+                          "tokenEstimate"
+                        ],
+                        "properties": {
+                          "itemId": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "scope": {
+                            "type": "string"
+                          },
+                          "tokenEstimate": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List context snapshots",
+        "tags": [
+          "context"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "bundleHash",
+                      "items",
+                      "createdAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "bundleHash": {
+                        "type": "string"
+                      },
+                      "runId": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "workflowRunId": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "itemId",
+                            "source",
+                            "scope",
+                            "tokenEstimate"
+                          ],
+                          "properties": {
+                            "itemId": {
+                              "type": "string"
+                            },
+                            "source": {
+                              "type": "string"
+                            },
+                            "scope": {
+                              "type": "string"
+                            },
+                            "tokenEstimate": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/context/snapshots/{id}": {
+      "get": {
+        "summary": "Get a context snapshot",
+        "tags": [
+          "context"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "bundleHash",
+                    "items",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "bundleHash": {
+                      "type": "string"
+                    },
+                    "runId": {
+                      "type": "string"
+                    },
+                    "agentId": {
+                      "type": "string"
+                    },
+                    "workflowRunId": {
+                      "type": "string"
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "itemId",
+                          "source",
+                          "scope",
+                          "tokenEstimate"
+                        ],
+                        "properties": {
+                          "itemId": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string"
+                          },
+                          "scope": {
+                            "type": "string"
+                          },
+                          "tokenEstimate": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
