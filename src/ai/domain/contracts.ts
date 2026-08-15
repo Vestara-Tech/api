@@ -127,6 +127,8 @@ export interface AiGenerateResult {
   readonly usage: AiUsage;
   readonly latencyMs: number;
   readonly fallbackCount: number;
+  /** AI-010 — tool calls the model requested (if tools were provided). */
+  readonly toolCalls?: readonly AiToolCall[];
 }
 
 export type AiStreamEvent =

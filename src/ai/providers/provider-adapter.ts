@@ -31,6 +31,17 @@ export type AiProviderStreamEvent =
   | { readonly type: 'done'; readonly usage: AiUsage }
   | { readonly type: 'error'; readonly message: string };
 
+export interface AiEmbeddingAdapterInput {
+  readonly providerId: string;
+  readonly modelId: string;
+  readonly input: readonly string[];
+}
+
+export interface AiEmbeddingAdapterResult {
+  readonly embeddings: readonly (readonly number[])[];
+  readonly usage: AiUsage;
+}
+
 export interface AiExecutionContext {
   readonly requestId: string;
   readonly consumerId: string;
@@ -55,6 +66,12 @@ export interface AiProviderAdapter {
     context: AiExecutionContext,
     request: NormalizedAiRequest,
   ): AsyncIterable<AiProviderStreamEvent>;
+
+  /** AI-011 — optional embedding capability. */
+  embed?(
+    context: AiExecutionContext,
+    request: AiEmbeddingAdapterInput,
+  ): Promise<AiEmbeddingAdapterResult>;
 }
 
 /** Adapter registration input (provider metadata + optional capability probe). */

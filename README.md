@@ -458,9 +458,10 @@ Registered as capability `ai`; container keys `ai`, `ai.providers`,
 credentials remain `secret://integrations/<provider>/api-key` references.
 
 ```text
-AI-001..006 foundation complete · 11 tests · ADR-0013
-AI-007+ generation/streaming/structured-output/tool-calling/embedding next
-AI-012+ routing profiles + fallback chains next
+AI-001..006 foundation complete · ADR-0013
+AI-007..011 generate/stream/structured-output/tool-calling/embedding
+AI-012..015 routing profiles + capability-preserving fallback chains
+AI-019..021 usage accounting + cost estimation + budget policies
 AI-023+ control API + OpenAPI contracts next
 ```
 

@@ -45,3 +45,6 @@ export type { AiRuntimeOptions } from './runtime/ai-runtime.js';
 export { AiService, type AiService as AiServiceInterface } from './runtime/ai-runtime.js';
 export type { AiServiceOptions } from './service/ai-service.js';
 export { buildAiService, DEFAULT_AI_PROVIDERS } from './service/ai-service.js';
+export { CostEstimator } from './policies/cost-estimator.js';
+export type { AiBudget, BudgetDecision } from './policies/budget-policy.js';
+export { BudgetPolicy } from './policies/budget-policy.js';

@@ -4,12 +4,16 @@ import { AiProviderRegistry } from '../providers/provider-registry.js';
 import { OpenAiCompatibleAdapter } from '../providers/openai-compatible.js';
 import { ModelRouter, type RoutingConfig } from '../runtime/model-router.js';
 import { AiService } from '../runtime/ai-runtime.js';
+import { CostEstimator } from '../policies/cost-estimator.js';
+import { BudgetPolicy } from '../policies/budget-policy.js';
 
 export interface AiServiceOptions {
   readonly providers?: readonly AiProvider[];
   readonly models?: readonly Parameters<AiModelCatalog['upsert']>[0][];
   readonly routing?: RoutingConfig;
   readonly defaultApiEndpoint?: string;
+  readonly budgets?: BudgetPolicy;
+  readonly costs?: CostEstimator;
 }
 
 /**
@@ -30,6 +34,8 @@ export function buildAiService(options: AiServiceOptions = {}): {
   registry: AiProviderRegistry;
   catalog: AiModelCatalog;
   router: ModelRouter;
+  budgets: BudgetPolicy;
+  costs: CostEstimator;
 } {
   const registry = new AiProviderRegistry();
   for (const provider of options.providers ?? DEFAULT_AI_PROVIDERS) {
@@ -40,7 +46,9 @@ export function buildAiService(options: AiServiceOptions = {}): {
 
   const catalog = new AiModelCatalog(options.models !== undefined ? { models: options.models } : {});
   const router = new ModelRouter(catalog, registry, options.routing ?? { defaultProfile: 'auto', enabledProviders: [] });
-  const service = new AiService({ router, catalog, providers: registry });
+  const costs = options.costs ?? new CostEstimator();
+  const budgets = options.budgets ?? new BudgetPolicy();
+  const service = new AiService({ router, catalog, providers: registry, costs, budgets });
 
-  return { service, registry, catalog, router };
+  return { service, registry, catalog, router, budgets, costs };
 }

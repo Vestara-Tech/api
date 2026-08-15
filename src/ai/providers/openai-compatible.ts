@@ -1,5 +1,7 @@
 import type { AiModel } from '../domain/contracts.js';
 import type {
+  AiEmbeddingAdapterInput,
+  AiEmbeddingAdapterResult,
   AiExecutionContext,
   AiProviderAdapter,
   AiProviderResult,
@@ -25,6 +27,36 @@ export class OpenAiCompatibleAdapter implements AiProviderAdapter {
 
   supports(model: AiModel): boolean {
     return model.providerId === this.providerId;
+  }
+
+  async embed(context: AiExecutionContext, request: AiEmbeddingAdapterInput): Promise<AiEmbeddingAdapterResult> {
+    const response = await fetch(`${this.apiEndpoint}/embeddings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.apiKey}`,
+        'X-Vestara-Request-Id': context.requestId,
+      },
+      body: JSON.stringify({ model: request.modelId, input: request.input }),
+    });
+
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`AI provider ${this.providerId} embed error ${response.status}: ${text.slice(0, 300)}`);
+    }
+
+    const json = (await response.json()) as {
+      data?: readonly { embedding?: readonly number[] }[];
+      usage?: { prompt_tokens?: number; total_tokens?: number };
+    };
+
+    return {
+      embeddings: (json.data ?? []).map((d) => d.embedding ?? []),
+      usage: {
+        inputTokens: json.usage?.prompt_tokens ?? json.usage?.total_tokens ?? 0,
+        outputTokens: 0,
+      },
+    };
   }
 
   async generate(context: AiExecutionContext, request: NormalizedAiRequest): Promise<AiProviderResult> {
