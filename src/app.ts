@@ -12,6 +12,7 @@ import { systemRoutes } from './routes/system.js';
 import { builderRoutes } from './routes/builder.js';
 import { authRoutes } from './routes/auth.js';
 import { configRoutes } from './routes/config.js';
+import { expandedConfigRoutes } from './routes/config-expanded.js';
 import { generatorRoutes } from './routes/generator.js';
 import { bootPresentationRoutes } from './routes/boot-presentation.js';
 import { grubRoutes } from './routes/grub.js';
@@ -77,6 +78,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(builderRoutes);
   await app.register(authRoutes);
   await app.register(configRoutes);
+  await app.register(expandedConfigRoutes);
   await app.register(generatorRoutes);
   await app.register(bootPresentationRoutes);
   await app.register(grubRoutes);

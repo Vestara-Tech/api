@@ -47,3 +47,26 @@ export type {
   ConfigurationServiceOptions,
   DraftInput,
 } from './service/configuration-service.js';
+export type {
+  ConfigurationValueType,
+  ReloadBehavior,
+  ConfigurationRisk,
+  ConfigurationFieldDefinition,
+  ConfigurationContribution,
+  ConfigurationPreset,
+  ConfigurationScopeType,
+  ConfigurationScopeRef,
+  ConfigurationProvenanceEntry,
+  ConfigurationProvenance,
+  ConfigurationChange,
+  ConfigurationTransactionStatus,
+  ConfigurationTransaction,
+  ConfigurationImpact,
+} from './domain/expanded.js';
+export { CONFIG_SCOPE_PRECEDENCE } from './domain/expanded.js';
+export { ConfigurationContributionRegistry } from './registry/contribution-registry.js';
+export { ProvenanceEngine } from './domain/provenance.js';
+export { ConfigurationImpactAnalyzer } from './domain/impact.js';
+export { ConfigurationTransactionService } from './service/transaction-service.js';
+export type { ExpandedConfigurationServiceOptions } from './service/expanded-service.js';
+export { ExpandedConfigurationService } from './service/expanded-service.js';

@@ -45,7 +45,7 @@ import type { TestPlatform } from './test.js';
 import type { BrowserPlatform } from './browser.js';
 import type { TaskPlatform } from './task.js';
 import type { MilestonePlatform } from './milestone.js';
-import { buildConfigurationService } from './configuration.js';
+import { buildConfigurationService, buildExpandedConfiguration } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
 import { buildBootPresentationService } from './boot-presentation.js';
@@ -184,6 +184,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Configuration (CONFIG-001..008) ─────────────────────────
   const configuration = buildConfigurationService(config);
 
+  // ── Expanded Configuration (CONFIG-009..016) ──────────────
+  const configExpanded = buildExpandedConfiguration(configuration);
+
   // ── Generator (GEN-001..012) ───────────────────────────────
   const { registry: generatorRegistry, service: generatorService } = buildGeneratorPlatform();
 
@@ -314,6 +317,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('auth.credentialStore', credentialStore);
   container.register('auth.sessionStore', sessionStore);
   container.register('configuration', configuration);
+  container.register('config.expanded', configExpanded.expanded);
+  container.register('config.contributions', configExpanded.contributions);
   container.register('generator.registry', generatorRegistry);
   container.register('generator.service', generatorService);
   container.register('onboarding', onboarding);

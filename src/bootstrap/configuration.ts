@@ -114,3 +114,27 @@ export function buildConfigurationService(config: AppConfig): ConfigurationServi
 
   return service;
 }
+
+import { ConfigurationContributionRegistry } from '../configuration/registry/contribution-registry.js';
+import { ProvenanceEngine } from '../configuration/domain/provenance.js';
+import { ConfigurationImpactAnalyzer } from '../configuration/domain/impact.js';
+import { ConfigurationTransactionService } from '../configuration/service/transaction-service.js';
+import { ExpandedConfigurationService } from '../configuration/service/expanded-service.js';
+
+export interface ExpandedConfigurationPlatform {
+  readonly contributions: ConfigurationContributionRegistry;
+  readonly expanded: ExpandedConfigurationService;
+}
+
+/**
+ * CONFIG-009..016 — composition root for the expanded configuration plane.
+ * Built on top of the existing base ConfigurationService.
+ */
+export function buildExpandedConfiguration(base: ConfigurationService): ExpandedConfigurationPlatform {
+  const contributions = new ConfigurationContributionRegistry();
+  const provenance = new ProvenanceEngine();
+  const impact = new ConfigurationImpactAnalyzer(contributions);
+  const transactions = new ConfigurationTransactionService();
+  const expanded = new ExpandedConfigurationService({ contributions, provenance, impact, transactions, base });
+  return { contributions, expanded };
+}
