@@ -48,6 +48,27 @@ AI`, `Modify with AI`, planning, and review capabilities.
 The template platform (GEN-004) keeps deterministic rendering separate from
 AI-assisted generation.
 
+### 7. Preview/Diff + Validation before Apply (GEN-007/008)
+
+A generation is diffed against the target directory (create/update/unchanged)
+and validated (path safety, size, required files, no raw secrets) before any
+write. Unsafe paths are rejected; validation must pass before preview/apply.
+
+### 8. Governed Apply only through a port (GEN-009/010)
+
+Generators never call `fs.writeFile`. An `ArtifactApplyPort` is the only path
+to the filesystem and requires policy approval (`FORBIDDEN` when unapproved).
+Post-apply verification confirms files exist and hashes match, chained to the
+generation evidence. This separation is critical once Marketplace generators
+exist.
+
+### 9. A shared generation bus for all builders (GEN-011/012)
+
+API Builder, Database Builder, Auth Builder, Integration Builder, Workflow
+Builder, and Agent Builder all target the same `GenerationRequest →
+GenerationPlan → ArtifactSet → Review/Apply` pipeline. The control API and
+Builder contracts (review, diff lines, apply records) are generator-agnostic.
+
 ## Consequences
 
 - All builders (API, Database, Auth, Integration, Workflow, Agent) share one

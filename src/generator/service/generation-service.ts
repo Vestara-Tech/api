@@ -6,9 +6,14 @@ import { buildEvidence, type GenerationEvidence } from '../domain/evidence.js';
 import { hashOf } from '../domain/hash.js';
 import type { ConfigurationSnapshot } from '../context/configuration-snapshot.js';
 import type { Generator } from '../domain/contracts.js';
-import type { GenerationContext, GenerationRequest, GenerationResult } from '../domain/contracts.js';
+import type { GenerationContext, GenerationResult } from '../domain/contracts.js';
 import type { TemplateDefinition } from '../templates/template-registry.js';
 import type { GeneratorRegistry } from '../registry/generator-registry.js';
+import type { ArtifactValidationResult } from '../validation/pipeline.js';
+import type { GenerationPreview } from '../preview/preview.js';
+import { buildPreview, type TargetDirectoryReader } from '../preview/preview.js';
+import type { ApplyResult, VerificationResult } from '../apply/apply.js';
+import { governedApply, verifyApply } from '../apply/apply.js';
 
 export interface GenerationServiceOptions {
   readonly registry: GeneratorRegistry;
@@ -30,6 +35,20 @@ export interface PlannedGeneration<TInput = unknown> {
   readonly plan: GenerationPlan;
   readonly generator: Generator<TInput>;
   readonly context: GenerationContext;
+}
+
+export interface GenerationFlowOptions<TInput> {
+  readonly input: RunGenerationInput<TInput>;
+  readonly targetReader: TargetDirectoryReader;
+  readonly previewHash: string;
+}
+
+export interface AppliedGeneration<TOutput = unknown> {
+  readonly result: GenerationResult<TOutput>;
+  readonly validation: ArtifactValidationResult;
+  readonly preview: GenerationPreview;
+  readonly apply: ApplyResult;
+  readonly verification: VerificationResult;
 }
 
 /**
@@ -75,6 +94,48 @@ export class GenerationService {
     const result = await generator.generate(input.input, context) as GenerationResult<TOutput>;
     const evidence = this.buildEvidence(input, generator, plan, result.artifacts);
     return { artifacts: result.artifacts, output: result.output, evidence };
+  }
+
+  /** GEN-007 — Preview: diff the artifact set against a target directory. */
+  async preview<TOutput>(flow: GenerationFlowOptions<unknown>): Promise<GenerationPreview> {
+    const result = await this.run<unknown, TOutput>(flow.input);
+    return buildPreview({
+      generatorId: result.evidence.generatorId,
+      generatorVersion: result.evidence.generatorVersion,
+      artifacts: result.artifacts,
+      reader: flow.targetReader,
+      previewHash: flow.previewHash,
+    });
+  }
+
+  /**
+   * GEN-009/010 — Governed end-to-end flow:
+   * run → validate → preview → apply → verify.
+   * `applyPort` and `approved` gate the actual filesystem write.
+   */
+  async applyFlow<TOutput>(
+    flow: GenerationFlowOptions<unknown>,
+    validation: { validate: (artifacts: ArtifactSet) => ArtifactValidationResult },
+    applyPort: { write(path: string, content: string): Promise<void>; exists(path: string): Promise<boolean> },
+    approved: boolean,
+  ): Promise<AppliedGeneration<TOutput>> {
+    const result = await this.run<unknown, TOutput>(flow.input);
+    const validationResult = validation.validate(result.artifacts);
+    if (!validationResult.ok) {
+      throw badRequest('Artifact validation failed before apply', {
+        issues: validationResult.issues.filter((i) => i.severity === 'error').map((i) => i.message),
+      });
+    }
+    const preview = await buildPreview({
+      generatorId: result.evidence.generatorId,
+      generatorVersion: result.evidence.generatorVersion,
+      artifacts: result.artifacts,
+      reader: flow.targetReader,
+      previewHash: flow.previewHash,
+    });
+    const apply = await governedApply(result.artifacts, { applyPort, approved });
+    const verification = await verifyApply(result.artifacts, applyPort);
+    return { result, validation: validationResult, preview, apply, verification };
   }
 
   private buildContext<TInput>(input: RunGenerationInput<TInput>): GenerationContext {

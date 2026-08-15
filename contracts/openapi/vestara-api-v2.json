@@ -6138,6 +6138,1017 @@
           }
         }
       }
+    },
+    "/api/v2/generator/generators": {
+      "get": {
+        "summary": "List registered generators",
+        "tags": [
+          "generator"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "version",
+                      "capabilities",
+                      "requiresSecrets"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "requiresSecrets": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/generator/capabilities": {
+      "get": {
+        "summary": "List all generator capabilities",
+        "tags": [
+          "generator"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/generator/plan": {
+      "post": {
+        "summary": "Plan a generation without generating",
+        "tags": [
+          "generator"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "generatorId",
+                  "input"
+                ],
+                "properties": {
+                  "generatorId": {
+                    "type": "string"
+                  },
+                  "input": {}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "generatorId",
+                    "inputHash",
+                    "steps",
+                    "requirements",
+                    "warnings",
+                    "planHash"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "generatorId": {
+                      "type": "string"
+                    },
+                    "inputHash": {
+                      "type": "string"
+                    },
+                    "steps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "kind",
+                          "description"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requirements": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "label",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "label": {
+                            "type": "string"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "code",
+                          "message"
+                        ],
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "planHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/generator/run": {
+      "post": {
+        "summary": "Run a generation (no apply)",
+        "tags": [
+          "generator"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "generatorId",
+                  "input"
+                ],
+                "properties": {
+                  "generatorId": {
+                    "type": "string"
+                  },
+                  "input": {},
+                  "requiresSecrets": {
+                    "type": "boolean"
+                  },
+                  "policyApprovedSecrets": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "artifacts",
+                    "output",
+                    "evidence"
+                  ],
+                  "properties": {
+                    "artifacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "contentHash",
+                          "encoding"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "contentHash": {
+                            "type": "string"
+                          },
+                          "encoding": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "output": {},
+                    "evidence": {
+                      "type": "object",
+                      "required": [
+                        "generatorId",
+                        "generatorVersion",
+                        "inputHash",
+                        "configurationHash",
+                        "outputHash",
+                        "evidenceHash"
+                      ],
+                      "properties": {
+                        "generatorId": {
+                          "type": "string"
+                        },
+                        "generatorVersion": {
+                          "type": "string"
+                        },
+                        "inputHash": {
+                          "type": "string"
+                        },
+                        "configurationHash": {
+                          "type": "string"
+                        },
+                        "outputHash": {
+                          "type": "string"
+                        },
+                        "evidenceHash": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/generator/preview": {
+      "post": {
+        "summary": "Preview a generation as a diff against a target directory",
+        "tags": [
+          "generator"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "generatorId",
+                  "input"
+                ],
+                "properties": {
+                  "generatorId": {
+                    "type": "string"
+                  },
+                  "input": {},
+                  "target": {
+                    "type": "object",
+                    "required": [
+                      "basePath"
+                    ],
+                    "properties": {
+                      "basePath": {
+                        "type": "string"
+                      },
+                      "existing": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "path",
+                            "content"
+                          ],
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "content": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "generatorId",
+                    "generatorVersion",
+                    "totalFiles",
+                    "additions",
+                    "removals",
+                    "changes",
+                    "previewHash",
+                    "diff"
+                  ],
+                  "properties": {
+                    "generatorId": {
+                      "type": "string"
+                    },
+                    "generatorVersion": {
+                      "type": "string"
+                    },
+                    "totalFiles": {
+                      "type": "integer"
+                    },
+                    "additions": {
+                      "type": "integer"
+                    },
+                    "removals": {
+                      "type": "integer"
+                    },
+                    "changes": {
+                      "type": "integer"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    },
+                    "diff": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "operation",
+                          "newContentHash",
+                          "addedLines",
+                          "removedLines"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "operation": {
+                            "type": "string"
+                          },
+                          "newContentHash": {
+                            "type": "string"
+                          },
+                          "addedLines": {
+                            "type": "integer"
+                          },
+                          "removedLines": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/generator/apply": {
+      "post": {
+        "summary": "Apply a generation (validate → preview → write → verify)",
+        "tags": [
+          "generator"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "generatorId",
+                  "input",
+                  "approved"
+                ],
+                "properties": {
+                  "generatorId": {
+                    "type": "string"
+                  },
+                  "input": {},
+                  "approved": {
+                    "type": "boolean"
+                  },
+                  "target": {
+                    "type": "object",
+                    "properties": {
+                      "existing": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "path",
+                            "content"
+                          ],
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "content": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "validation",
+                    "preview",
+                    "apply",
+                    "verification",
+                    "evidence"
+                  ],
+                  "properties": {
+                    "validation": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "validatedArtifactCount",
+                        "issues"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "validatedArtifactCount": {
+                          "type": "integer"
+                        },
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "severity",
+                              "message",
+                              "code"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "severity": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "preview": {
+                      "type": "object",
+                      "required": [
+                        "generatorId",
+                        "generatorVersion",
+                        "totalFiles",
+                        "additions",
+                        "removals",
+                        "changes",
+                        "previewHash",
+                        "diff"
+                      ],
+                      "properties": {
+                        "generatorId": {
+                          "type": "string"
+                        },
+                        "generatorVersion": {
+                          "type": "string"
+                        },
+                        "totalFiles": {
+                          "type": "integer"
+                        },
+                        "additions": {
+                          "type": "integer"
+                        },
+                        "removals": {
+                          "type": "integer"
+                        },
+                        "changes": {
+                          "type": "integer"
+                        },
+                        "previewHash": {
+                          "type": "string"
+                        },
+                        "diff": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "operation",
+                              "newContentHash",
+                              "addedLines",
+                              "removedLines"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "operation": {
+                                "type": "string"
+                              },
+                              "newContentHash": {
+                                "type": "string"
+                              },
+                              "addedLines": {
+                                "type": "integer"
+                              },
+                              "removedLines": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "apply": {
+                      "type": "object",
+                      "required": [
+                        "appliedFiles",
+                        "skippedFiles",
+                        "appliedAt",
+                        "applyHash"
+                      ],
+                      "properties": {
+                        "appliedFiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "skippedFiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "appliedAt": {
+                          "type": "string"
+                        },
+                        "applyHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "verification": {
+                      "type": "object",
+                      "required": [
+                        "verified",
+                        "checks"
+                      ],
+                      "properties": {
+                        "verified": {
+                          "type": "boolean"
+                        },
+                        "checks": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "ok"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "ok": {
+                                "type": "boolean"
+                              },
+                              "detail": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "evidence": {
+                      "type": "object",
+                      "required": [
+                        "generatorId",
+                        "generatorVersion",
+                        "inputHash",
+                        "configurationHash",
+                        "outputHash",
+                        "evidenceHash"
+                      ],
+                      "properties": {
+                        "generatorId": {
+                          "type": "string"
+                        },
+                        "generatorVersion": {
+                          "type": "string"
+                        },
+                        "inputHash": {
+                          "type": "string"
+                        },
+                        "configurationHash": {
+                          "type": "string"
+                        },
+                        "outputHash": {
+                          "type": "string"
+                        },
+                        "evidenceHash": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

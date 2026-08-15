@@ -168,10 +168,31 @@ module (API → Generator); consumed via capabilities:
 - Example generator `generator.api.typescript` (template-driven TS client)
   registered; `generator` capability exposed
 
+**GEN-007..012 — Generator Pipeline + Control API (complete).** The governed
+generate→apply pipeline that gives the Publish/Review flow meaning:
+
+- **GEN-007 Preview + Diff** — artifact set diffed against a target directory
+  (create/update/unchanged), line counts, previewHash
+- **GEN-008 Validation pipeline** — path-safety (`../`, absolute paths),
+  max size/count, required files, `noRawSecrets` rule; validates before any
+  preview/apply
+- **GEN-009 Governed Apply** — `ArtifactApplyPort` is the only path to the
+  filesystem; generators never call `fs.writeFile`. Apply requires policy
+  approval (`FORBIDDEN` when unapproved)
+- **GEN-010 Verification + Evidence** — post-apply verification (files exist,
+  hashes match), chained to the generation evidence
+- **`GenerationService.applyFlow`** — `run → validate → preview → apply →
+  verify` in one governed step
+- **GEN-011 Control API** — `GET /api/v2/generator/generators|capabilities`,
+  `POST .../plan|run|preview|apply` (33 OpenAPI paths total)
+- **GEN-012 Builder contracts** — `GenerationReview`, `AppliedGenerationRecord`,
+  `DiffLine`, review decision types for the future Builder UI
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — GEN-007+ (preview/apply/verify/evidence),
-AUTH-007+, and API2-004+ come next. PostgreSQL/Redis/NATS/Prisma and external
-runtimes stay behind ports; the API boots and passes tests without them.
+**not** part of the current stream — the next streams are ONB (onboarding),
+SYS (system/firmware), AUTH-007+ (OAuth), API2-004+ (compat). PostgreSQL/
+Redis/NATS/Prisma and external runtimes stay behind ports; the API boots and
+passes tests without them.
 
 ## Quickstart
 
