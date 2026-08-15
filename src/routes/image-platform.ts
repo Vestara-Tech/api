@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from '@sinclair/typebox';
 import type { ImagePlatformV2 } from '../image/service/image-platform-v2.js';
+import type { ImageExecutionPipeline } from '../image/service/image-execution-pipeline.js';
 
 const PartitionSchema = Type.Object({
   name: Type.String(),
@@ -102,6 +103,7 @@ const BuildRunSchema = Type.Object({
  */
 export const imagePlatformRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const platform = app.application.container.resolve<ImagePlatformV2>('image.platformV2');
+  const execution = app.application.container.resolve<ImageExecutionPipeline>('image.execution');
 
   // ── IMG-033 hardware targets ───────────────────────────────────
   app.get(
@@ -285,5 +287,136 @@ export const imagePlatformRoutes: FastifyPluginAsyncTypebox = async (app) => {
       },
     },
     async (request, reply) => reply.send(platform.run(request.params.id) as never),
+  );
+
+  // ── IMG-043..058 execution pipeline ──────────────────────────
+  const ExecutionResultSchema = Type.Object({
+    runId: Type.String(),
+    status: Type.String(),
+    artifactPath: Type.String(),
+    startedAt: Type.String(),
+    completedAt: Type.Optional(Type.String()),
+    error: Type.Optional(Type.String()),
+    plan: Type.Object({ profileId: Type.String(), planHash: Type.String(), hardwareId: Type.String(), items: Type.Array(PlanV2ItemSchema) }),
+    artifacts: Type.Array(Type.Object({ kind: Type.String(), path: Type.String(), artifactHash: Type.String(), generatedBy: Type.String() })),
+    sbom: Type.Object({ format: Type.String(), version: Type.String(), sbomHash: Type.String(), packages: Type.Array(Type.Object({ name: Type.String(), version: Type.String(), hash: Type.String() })) }),
+    verification: Type.Optional(Type.Object({ ok: Type.Boolean(), reached: Type.Array(Type.String()), missing: Type.Array(Type.String()), verificationHash: Type.String() })),
+    performance: Type.Optional(Type.Object({ totalMs: Type.Integer(), readyMs: Type.Integer(), samples: Type.Array(Type.Object({ stage: Type.String(), durationMs: Type.Integer() })) })),
+    signatures: Type.Array(Type.Object({ artifact: Type.String(), signature: Type.String(), signer: Type.String() })),
+    seal: Type.Optional(Type.Object({ imageHash: Type.String(), sealHash: Type.String() })),
+    evidence: Type.Optional(Type.Object({ bundleHash: Type.String(), planHash: Type.String(), sbomHash: Type.String(), sealHash: Type.String() })),
+  });
+
+  app.post(
+    '/api/v2/image/execute',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Run the full execution pipeline (generate -> assemble -> verify -> sign -> seal -> evidence)',
+        body: Type.Object({ profileId: Type.String(), target: Type.String(), hardwareId: Type.String(), runId: Type.Optional(Type.String()) }),
+        response: { 200: ExecutionResultSchema },
+      },
+    },
+    async (request, reply) => {
+      const runId = request.body.runId ?? `run_${Date.now()}`;
+      const result = await execution.execute({ profileId: request.body.profileId, target: request.body.target as never, hardwareId: request.body.hardwareId, runId });
+      return reply.send(result as never);
+    },
+  );
+
+  const PublishSchema = Type.Object({
+    verdict: Type.String(),
+    reason: Type.Optional(Type.String()),
+    release: Type.Optional(Type.Object({
+      id: Type.String(),
+      profileId: Type.String(),
+      version: Type.String(),
+      buildId: Type.String(),
+      verified: Type.Boolean(),
+      signed: Type.Boolean(),
+      sealed: Type.Boolean(),
+      target: Type.String(),
+      status: Type.String(),
+      artifactPath: Type.String(),
+      evidenceBundleHash: Type.String(),
+      publishedAt: Type.Optional(Type.String()),
+    })),
+  });
+
+  app.post(
+    '/api/v2/image/publish',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Publish a completed build (refuses unverified/unsigned/sealed builds)',
+        body: Type.Object({
+          profileId: Type.String(),
+          version: Type.String(),
+          buildId: Type.String(),
+          verified: Type.Boolean(),
+          signed: Type.Boolean(),
+          sealed: Type.Boolean(),
+          artifactPath: Type.String(),
+          evidenceBundleHash: Type.String(),
+          target: Type.Optional(Type.String()),
+          allowUnverifiedDevBuild: Type.Optional(Type.Boolean()),
+        }),
+        response: { 200: PublishSchema },
+      },
+    },
+    async (request, reply) => reply.send(execution.publish(request.body as never) as never),
+  );
+
+  app.get(
+    '/api/v2/image/releases',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Release history',
+        response: {
+          200: Type.Array(Type.Object({
+            id: Type.String(),
+            profileId: Type.String(),
+            version: Type.String(),
+            buildId: Type.String(),
+            verified: Type.Boolean(),
+            target: Type.String(),
+            status: Type.String(),
+            publishedAt: Type.Optional(Type.String()),
+            artifactPath: Type.String(),
+          })),
+        },
+      },
+    },
+    async (_request, reply) => reply.send(execution.releases().map((r) => ({ id: r.id, profileId: r.profileId, version: r.version, buildId: r.buildId, verified: r.verified, target: r.target, status: r.status, publishedAt: r.publishedAt, artifactPath: r.artifactPath })) as never),
+  );
+
+  app.get(
+    '/api/v2/image/releases/:profileId',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Release history for a profile',
+        params: Type.Object({ profileId: Type.String() }),
+        response: {
+          200: Type.Array(Type.Object({
+            id: Type.String(),
+            profileId: Type.String(),
+            version: Type.String(),
+            buildId: Type.String(),
+            verified: Type.Boolean(),
+            signed: Type.Boolean(),
+            sealed: Type.Boolean(),
+            target: Type.String(),
+            status: Type.String(),
+            artifactPath: Type.String(),
+            evidenceBundleHash: Type.String(),
+            publishedAt: Type.Optional(Type.String()),
+            supersededBy: Type.Optional(Type.String()),
+          })),
+        },
+      },
+    },
+    async (request, reply) => reply.send(execution.releaseHistory(request.params.profileId) as never),
   );
 };

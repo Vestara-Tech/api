@@ -24,3 +24,13 @@ export type { ImageBuildServiceOptions, ImageBuildResult } from './service/image
 export { ImageBuildService } from './service/image-build-service.js';
 export type { ImagePlatformV2Options } from './service/image-platform-v2.js';
 export { ImagePlatformV2 } from './service/image-platform-v2.js';
+export type { BootArtifactKind, BootArtifact, BootArtifactRequest } from './domain/boot-artifacts.js';
+export { generateBootArtifacts } from './domain/boot-artifacts.js';
+export type { BootCheckpointName, BootCheckpoint, BootVerificationResult, BootStageKind, BootPerformanceSample, BootPerformanceResult, VisualCheckpointImage, VisualCheckpointStatus, VisualCheckpointComparison, VisualVerificationResult, QemuRuntimeOptions } from './domain/qemu-verification.js';
+export { runBootVerification, measureBootPerformance, compareVisualCheckpoints } from './domain/qemu-verification.js';
+export type { SbomEntry, SbomDocument, EvidenceBundle, SigningInput, SignatureResult, SealResult, SigningPolicy } from './domain/artifacts.js';
+export { generateSbom, signArtifacts, sealImage, buildEvidenceBundle } from './domain/artifacts.js';
+export type { PublishTarget, ReleaseStatus, ReleaseRecord, PublishRequest, PublishVerdict, PublishResult, ReleaseStorePort } from './domain/publishing.js';
+export { ReleasePublisher, InMemoryReleaseStore } from './domain/publishing.js';
+export type { ImageExecutionStatus, ImageExecutionResult, ImageExecutionOptions } from './service/image-execution-pipeline.js';
+export { ImageExecutionPipeline } from './service/image-execution-pipeline.js';

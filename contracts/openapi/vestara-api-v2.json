@@ -31158,6 +31158,611 @@
           }
         }
       }
+    },
+    "/api/v2/image/execute": {
+      "post": {
+        "summary": "Run the full execution pipeline (generate -> assemble -> verify -> sign -> seal -> evidence)",
+        "tags": [
+          "image"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId",
+                  "target",
+                  "hardwareId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "hardwareId": {
+                    "type": "string"
+                  },
+                  "runId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "runId",
+                    "status",
+                    "artifactPath",
+                    "startedAt",
+                    "plan",
+                    "artifacts",
+                    "sbom",
+                    "signatures"
+                  ],
+                  "properties": {
+                    "runId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "artifactPath": {
+                      "type": "string"
+                    },
+                    "startedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "plan": {
+                      "type": "object",
+                      "required": [
+                        "profileId",
+                        "planHash",
+                        "hardwareId",
+                        "items"
+                      ],
+                      "properties": {
+                        "profileId": {
+                          "type": "string"
+                        },
+                        "planHash": {
+                          "type": "string"
+                        },
+                        "hardwareId": {
+                          "type": "string"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "stage",
+                              "description",
+                              "generated",
+                              "status"
+                            ],
+                            "properties": {
+                              "stage": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "generated": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "status": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "artifacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "kind",
+                          "path",
+                          "artifactHash",
+                          "generatedBy"
+                        ],
+                        "properties": {
+                          "kind": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "artifactHash": {
+                            "type": "string"
+                          },
+                          "generatedBy": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "sbom": {
+                      "type": "object",
+                      "required": [
+                        "format",
+                        "version",
+                        "sbomHash",
+                        "packages"
+                      ],
+                      "properties": {
+                        "format": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "sbomHash": {
+                          "type": "string"
+                        },
+                        "packages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "version",
+                              "hash"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "version": {
+                                "type": "string"
+                              },
+                              "hash": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "verification": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "reached",
+                        "missing",
+                        "verificationHash"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "reached": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "missing": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "verificationHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "performance": {
+                      "type": "object",
+                      "required": [
+                        "totalMs",
+                        "readyMs",
+                        "samples"
+                      ],
+                      "properties": {
+                        "totalMs": {
+                          "type": "integer"
+                        },
+                        "readyMs": {
+                          "type": "integer"
+                        },
+                        "samples": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "stage",
+                              "durationMs"
+                            ],
+                            "properties": {
+                              "stage": {
+                                "type": "string"
+                              },
+                              "durationMs": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "signatures": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "artifact",
+                          "signature",
+                          "signer"
+                        ],
+                        "properties": {
+                          "artifact": {
+                            "type": "string"
+                          },
+                          "signature": {
+                            "type": "string"
+                          },
+                          "signer": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "seal": {
+                      "type": "object",
+                      "required": [
+                        "imageHash",
+                        "sealHash"
+                      ],
+                      "properties": {
+                        "imageHash": {
+                          "type": "string"
+                        },
+                        "sealHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "evidence": {
+                      "type": "object",
+                      "required": [
+                        "bundleHash",
+                        "planHash",
+                        "sbomHash",
+                        "sealHash"
+                      ],
+                      "properties": {
+                        "bundleHash": {
+                          "type": "string"
+                        },
+                        "planHash": {
+                          "type": "string"
+                        },
+                        "sbomHash": {
+                          "type": "string"
+                        },
+                        "sealHash": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/image/publish": {
+      "post": {
+        "summary": "Publish a completed build (refuses unverified/unsigned/sealed builds)",
+        "tags": [
+          "image"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId",
+                  "version",
+                  "buildId",
+                  "verified",
+                  "signed",
+                  "sealed",
+                  "artifactPath",
+                  "evidenceBundleHash"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "buildId": {
+                    "type": "string"
+                  },
+                  "verified": {
+                    "type": "boolean"
+                  },
+                  "signed": {
+                    "type": "boolean"
+                  },
+                  "sealed": {
+                    "type": "boolean"
+                  },
+                  "artifactPath": {
+                    "type": "string"
+                  },
+                  "evidenceBundleHash": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "allowUnverifiedDevBuild": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "verdict"
+                  ],
+                  "properties": {
+                    "verdict": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "release": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "profileId",
+                        "version",
+                        "buildId",
+                        "verified",
+                        "signed",
+                        "sealed",
+                        "target",
+                        "status",
+                        "artifactPath",
+                        "evidenceBundleHash"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "profileId": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "buildId": {
+                          "type": "string"
+                        },
+                        "verified": {
+                          "type": "boolean"
+                        },
+                        "signed": {
+                          "type": "boolean"
+                        },
+                        "sealed": {
+                          "type": "boolean"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "artifactPath": {
+                          "type": "string"
+                        },
+                        "evidenceBundleHash": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/image/releases": {
+      "get": {
+        "summary": "Release history",
+        "tags": [
+          "image"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "profileId",
+                      "version",
+                      "buildId",
+                      "verified",
+                      "target",
+                      "status",
+                      "artifactPath"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "profileId": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "buildId": {
+                        "type": "string"
+                      },
+                      "verified": {
+                        "type": "boolean"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      },
+                      "artifactPath": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/image/releases/{profileId}": {
+      "get": {
+        "summary": "Release history for a profile",
+        "tags": [
+          "image"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "profileId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "profileId",
+                      "version",
+                      "buildId",
+                      "verified",
+                      "signed",
+                      "sealed",
+                      "target",
+                      "status",
+                      "artifactPath",
+                      "evidenceBundleHash"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "profileId": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "buildId": {
+                        "type": "string"
+                      },
+                      "verified": {
+                        "type": "boolean"
+                      },
+                      "signed": {
+                        "type": "boolean"
+                      },
+                      "sealed": {
+                        "type": "boolean"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "artifactPath": {
+                        "type": "string"
+                      },
+                      "evidenceBundleHash": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      },
+                      "supersededBy": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

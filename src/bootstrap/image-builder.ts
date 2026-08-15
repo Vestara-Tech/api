@@ -1,5 +1,7 @@
 import { ImageBuildService } from '../image/service/image-build-service.js';
 import { ImagePlatformV2 } from '../image/service/image-platform-v2.js';
+import { ImageExecutionPipeline } from '../image/service/image-execution-pipeline.js';
+import { resolveHardwareTarget } from '../image/domain/hardware.js';
 import type { BootstrapAdapter, BootstrapResult } from '../image/adapters/build-ports.js';
 import type { VestaraImageProfile } from '../image/domain/profile.js';
 import type { EventBus } from '../core/events.js';
@@ -14,6 +16,7 @@ class DevBootstrapAdapter implements BootstrapAdapter {
 export interface ImageBuilderPlatform {
   readonly service: ImageBuildService;
   readonly platformV2: ImagePlatformV2;
+  readonly execution: ImageExecutionPipeline;
 }
 
 export function buildImageBuilderService(events?: EventBus): ImageBuilderPlatform {
@@ -25,5 +28,11 @@ export function buildImageBuilderService(events?: EventBus): ImageBuilderPlatfor
       events.publish({ type, category: 'domain', occurredAt: new Date().toISOString(), payload });
     },
   });
-  return { service, platformV2 };
+  const execution = new ImageExecutionPipeline({
+    getProfile: (id) => service.getProfile(id),
+    getHardware: resolveHardwareTarget,
+    qemuAvailable: false,
+    ovmfAvailable: false,
+  });
+  return { service, platformV2, execution };
 }
