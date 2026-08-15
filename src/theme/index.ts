@@ -1,0 +1,12 @@
+export type { ThemeMode, ThemeTokens, TypographyDefinition, SpacingDefinition, RadiusDefinition, ElevationDefinition, MotionDefinition, ComponentThemeOverride, ThemeAssets, ThemeMetadata, ThemeDefinition } from './domain/theme-definition.js';
+export type { ThemeScope, ThemeBinding, ThemeValidationIssue, ThemeValidationResult } from './domain/theme-scope.js';
+export { THEME_SCOPE_PRECEDENCE, ThemeScopeResolver, validateTheme, bumpThemeRevision } from './domain/theme-scope.js';
+export type { ThemeRegistryPort } from './registry/theme-registry.js';
+export { ThemeRegistry, InMemoryThemeRegistry } from './registry/theme-registry.js';
+export type { MuiThemeAdapterOutput } from './adapters/frontend.js';
+export { toMuiTheme, toCssVariables, toCssRules } from './adapters/frontend.js';
+export type { OsThemeContribution } from './contributions/os.js';
+export { osThemeContribution } from './contributions/os.js';
+export type { ThemeServiceOptions } from './service/theme-service.js';
+export { ThemeService } from './service/theme-service.js';
+export { builtinThemes } from './contributions/builtin.js';
