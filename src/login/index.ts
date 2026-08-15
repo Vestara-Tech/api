@@ -1,0 +1,12 @@
+export type { LoginFailureReason, LoginChallengeKind, LoginChallenge, LoginResult, LoginUser, AuthenticationRequest, SessionStartRequest, SessionStartResult, LoginCapabilities, OsPrincipalMapping } from './domain/contracts.js';
+export type { OsPrincipal, OsAuthenticationAdapter, DisplayManagerAdapter } from './adapters/os-auth.js';
+export type { LoginBrokerOptions, OsIdentityMapper } from './service/login-broker.js';
+export { LoginBroker } from './service/login-broker.js';
+export type { OsSessionStatus, OsSession } from './service/session-manager.js';
+export { OsSessionManager } from './service/session-manager.js';
+export type { RateLimitWindow, FailedAttempt } from './service/rate-limit.js';
+export { LoginRateLimit } from './service/rate-limit.js';
+export type { PreAuthCapability } from './domain/preauth.js';
+export { PREAUTH_CAPABILITIES, FORBIDDEN_PREAUTH, isPreAuthAllowed } from './domain/preauth.js';
+export type { DesktopSessionDefinition } from './domain/desktop-session.js';
+export { createDesktopSessionDefinition } from './domain/desktop-session.js';

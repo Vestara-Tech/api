@@ -310,10 +310,35 @@ that `vestara-apps/startup` projects (never a client-side guess):
 - The startup screen routes: firstBoot → onboarding, unauthenticated → login,
   session-ready → desktop
 
+**LOGIN-001..014 — Login Platform (complete).** The OS-level security boundary
+between system startup and the Vestara desktop. Separate from API
+authentication; the UI never validates credentials:
+
+- **LOGIN-001** login contracts — `LoginResult` (authenticated /
+  challenge-required / denied), `LoginChallenge`, `LoginCapabilities`
+- **LOGIN-002** OS principal model + OS↔Vestara identity mapping (single-login)
+- **LOGIN-003** PAM authentication port — the broker authenticates through the
+  OS adapter; no password logging/telemetry/evidence
+- **LOGIN-005** `LoginBroker` — delegates to the OS adapter + display manager
+- **LOGIN-006/010** `OsSessionManager` — LOGIN (create session) vs LOCK (unlock
+  existing session)
+- **LOGIN-009** `LoginRateLimit` — failed-attempt/lockout policy
+- **LOGIN-012** pre-auth system capabilities — greeter gets only network/
+  accessibility/locale/power/recovery/session-select, never builder/generator/
+  config-write/marketplace/filesystem/agents
+- **LOGIN-013** `DisplayManagerAdapter` port (LightDM/SDDM/GDM/future Vestara
+  session manager)
+- **LOGIN-014** desktop session definition (`vestara.desktop`, wayland/x11)
+- Control API `/api/v2/login/*` (4 routes; 68 OpenAPI paths) + `login`
+  capability
+
+OS path: Firmware → GRUB → Plymouth → Startup → **Login** → Desktop →
+`vestara-apps/*`.
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — LOGIN (OS login platform) comes next,
-then the OS Image Builder (IMG). PostgreSQL/Redis/NATS/Prisma and external
-runtimes stay behind ports; the API boots and passes tests without them.
+**not** part of the current stream — the OS Image Builder (IMG) comes next.
+PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind ports; the API
+boots and passes tests without them.
 
 ## Quickstart
 
