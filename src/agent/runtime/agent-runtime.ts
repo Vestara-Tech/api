@@ -1,5 +1,5 @@
-import { randomId } from '../../core/identifiers.js';
 import type { AiService } from '../../ai/runtime/ai-runtime.js';
+import type { AiMessage, AiModelSelector, AiToolCall } from '../../ai/domain/contracts.js';
 import type { ToolRuntime } from '../../tool/runtime/tool-runtime.js';
 import type { SkillRegistry } from '../../skill/registry/skill-registry.js';
 import type { AgentRegistry } from '../registry/agent-registry.js';
@@ -65,7 +65,6 @@ export class AgentRuntime {
     this.runs.transition(run.id, 'running', { currentStep: 0, totalSteps: agent.execution.maxSteps });
     this.emit({ runId: run.id, type: 'started', at: new Date().toISOString(), data: { agentId: agent.id, goal: input.goal } });
 
-    // Run the (bounded) reasoning loop against the AI service.
     const running = this.runs.get(run.id);
     void this.runLoop(run, agent, input, context.system).then(
       (result) => {
@@ -85,25 +84,79 @@ export class AgentRuntime {
     return running;
   }
 
+  /**
+   * AGENT-007 — The tool-call loop. Send messages to the AI; if the response
+   * contains tool calls, execute them via the authorized ToolRuntime and feed
+   * the results back; repeat until the model produces a final answer or the
+   * step budget is exhausted.
+   */
   private async runLoop(run: AgentRun, agent: AgentDefinition, input: AgentRunInput, system: string): Promise<string> {
     const maxSteps = agent.execution.maxSteps;
-    let result = '';
+    const messages: AiMessage[] = [
+      { role: 'system', content: system },
+      { role: 'user', content: input.goal },
+    ];
+    const approved = new Set(input.approvedTools ?? []);
+
     for (let step = 0; step < maxSteps; step += 1) {
       this.runs.transition(run.id, 'running', { currentStep: step });
       this.emit({ runId: run.id, type: 'step', at: new Date().toISOString(), data: { step } });
+
       const response = await this.ai.generate({
         consumer: { type: 'agent', id: agent.id },
-        model: agent.model.mode === 'fixed' && agent.model.provider && agent.model.model
-          ? { provider: agent.model.provider, model: agent.model.model }
-          : { requirements: agent.model.requirements ?? {}, optimizeFor: agent.model.optimizeFor ?? 'balanced' },
-        messages: [{ role: 'system', content: system }, { role: 'user', content: input.goal }],
+        model: modelSelector(agent.model),
+        messages,
         tools: agent.tools.map((t) => ({ name: t.id, description: `Tool ${t.id}`, inputSchema: {} })),
         output: { schema: { type: 'object' } },
       });
-      result = response.content;
-      if (!response.content.trim()) break;
+
+      const toolCalls = response.toolCalls ?? [];
+      if (toolCalls.length === 0) {
+        // Final answer.
+        return response.content;
+      }
+
+      // Execute each tool call; feed results back into the conversation.
+      for (const call of toolCalls) {
+        this.emit({ runId: run.id, type: 'tool-call', at: new Date().toISOString(), data: { tool: call.name, arguments: call.arguments } });
+        let resultText: string;
+        try {
+          const result = await this.tools.execute(
+            agent.id,
+            run.id,
+            call.name,
+            parseArguments(call.arguments),
+            {
+              principalId: input.principalId ?? `agent:${agent.id}`,
+              ...(approved.has(call.name) ? { approved: true, authorizedBy: input.principalId ?? `agent:${agent.id}` } : {}),
+            },
+          );
+          resultText = result.ok
+            ? JSON.stringify({ ok: true, output: result.output })
+            : JSON.stringify({ ok: false, error: result.error });
+        } catch (err) {
+          const message = (err as Error).message;
+          if (message.includes('requires human approval')) {
+            this.runs.transition(run.id, 'waiting-for-approval', { approvalRequired: call.name });
+            this.emit({ runId: run.id, type: 'approval-requested', at: new Date().toISOString(), data: { tool: call.name } });
+            return `Suspended: tool "${call.name}" requires human approval.`;
+          }
+          resultText = JSON.stringify({ ok: false, error: message });
+        }
+        this.emit({ runId: run.id, type: 'tool-result', at: new Date().toISOString(), data: { tool: call.name, result: resultText } });
+        messages.push({
+          role: 'assistant',
+          content: '',
+          toolCalls: [call],
+        });
+        messages.push({
+          role: 'tool',
+          content: resultText,
+          toolCallId: call.id,
+        });
+      }
     }
-    return result;
+    return 'Reached the step budget without a final answer.';
   }
 
   cancel(runId: string): AgentRun {
@@ -123,5 +176,23 @@ export class AgentRuntime {
 
   private emit(event: AgentRunEvent): void {
     this.runs.emit(event);
+  }
+}
+
+function modelSelector(model: AgentDefinition['model']): AiModelSelector {
+  if (model.mode === 'fixed' && model.provider && model.model) {
+    return { provider: model.provider, model: model.model };
+  }
+  return {
+    requirements: model.requirements ?? {},
+    ...(model.optimizeFor !== undefined ? { optimizeFor: model.optimizeFor } : {}),
+  };
+}
+
+function parseArguments(raw: string): unknown {
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    return {};
   }
 }

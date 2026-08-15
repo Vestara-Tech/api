@@ -4,7 +4,7 @@ import type { AgentRun, AgentRunEvent, AgentRunStatus } from '../domain/contract
 const TRANSITIONS: Readonly<Record<AgentRunStatus, readonly AgentRunStatus[]>> = {
   queued: ['preparing', 'cancelled'],
   preparing: ['running', 'failed', 'cancelled'],
-  running: ['waiting-for-tool', 'waiting-for-approval', 'suspended', 'completed', 'failed', 'cancelled'],
+  running: ['running', 'waiting-for-tool', 'waiting-for-approval', 'suspended', 'completed', 'failed', 'cancelled'],
   'waiting-for-tool': ['running', 'suspended', 'cancelled'],
   'waiting-for-approval': ['running', 'suspended', 'cancelled', 'failed'],
   suspended: ['running', 'cancelled', 'failed'],

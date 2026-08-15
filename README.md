@@ -493,8 +493,8 @@ capability `agents`; container keys `agents`, `agent.registry`, `agent.runs`,
 `tools`, `tool.runtime`, `skills`.
 
 ```text
-AGENT/TOOL/SKILL foundation complete · 11 tests · ADR-0014
-AGENT-007+ tool-call loop + streaming events + cancellation/resume + delegation next
+AGENT/TOOL/SKILL foundation complete · ADR-0014
+AGENT-007 tool-call loop: AI tool calls -> authorized ToolRuntime -> results fed back
 AGENT-013..018 generator/config/system/image/auth tools next
 AGENT-024+ control API + OpenAPI contracts + UIs next
 ```
