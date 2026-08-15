@@ -28,6 +28,7 @@ import { permissionRoutes } from './routes/permission.js';
 import { carRoutes } from './routes/car.js';
 import { marketplaceRoutes } from './routes/marketplace.js';
 import { generationPlaneRoutes } from './routes/generation-plane.js';
+import { builderPlaneRoutes } from './routes/builder-plane.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -85,6 +86,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(carRoutes);
   await app.register(marketplaceRoutes);
   await app.register(generationPlaneRoutes);
+  await app.register(builderPlaneRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

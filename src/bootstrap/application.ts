@@ -37,6 +37,7 @@ import type { PermissionPlatform } from './permission.js';
 import type { CarPlatform } from './car.js';
 import type { MarketplacePlatform } from './marketplace.js';
 import type { GenerationPlanePlatform } from './generation-plane.js';
+import type { BuilderPlanePlatform } from './builder-plane.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -54,6 +55,7 @@ import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
 import { buildMarketplacePlatform } from './marketplace.js';
 import { buildGenerationPlanePlatform } from './generation-plane.js';
+import { buildBuilderPlanePlatform } from './builder-plane.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -114,6 +116,7 @@ export interface Application {
   readonly car: CarPlatform;
   readonly marketplace: MarketplacePlatform;
   readonly generationPlane: GenerationPlanePlatform;
+  readonly builderPlane: BuilderPlanePlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -220,6 +223,9 @@ export function createApplication(config: AppConfig): Application {
     },
   });
 
+  // ── Builder Plane (BLD-X) ─────────────────────────────────
+  const builderPlane = buildBuilderPlanePlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -296,6 +302,9 @@ export function createApplication(config: AppConfig): Application {
   container.register('marketplace.permissions', marketplace.permissions);
   container.register('generation.plane', generationPlane.plane);
   container.register('generation.registry', generationPlane.registry);
+  container.register('builder.plane.registry', builderPlane.registry);
+  container.register('builder.plane.store', builderPlane.store);
+  container.register('builder.plane.lifecycle', builderPlane.lifecycle);
 
   const startedAt = Date.now();
 
@@ -330,6 +339,7 @@ export function createApplication(config: AppConfig): Application {
     car,
     marketplace,
     generationPlane,
+    builderPlane,
     shutdown,
     systemStatus(): SystemStatus {
       return {
