@@ -43,6 +43,7 @@ import type { LogPlatform } from './log.js';
 import type { DatabasePlatform } from './database.js';
 import type { TestPlatform } from './test.js';
 import type { BrowserPlatform } from './browser.js';
+import type { TaskPlatform } from './task.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -66,6 +67,7 @@ import { buildLogPlatform } from './log.js';
 import { buildDatabasePlatform } from './database.js';
 import { buildTestPlatform } from './test.js';
 import { buildBrowserPlatform } from './browser.js';
+import { buildTaskPlatform } from './task.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -89,6 +91,7 @@ import { registerLogCapability } from './log-capability.js';
 import { registerDatabaseCapability } from './database-capability.js';
 import { registerTestCapability } from './test-capability.js';
 import { registerBrowserCapability } from './browser-capability.js';
+import { registerTaskCapability } from './task-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -137,6 +140,7 @@ export interface Application {
   readonly database: DatabasePlatform;
   readonly test: TestPlatform;
   readonly browser: BrowserPlatform;
+  readonly task: TaskPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -261,6 +265,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Browser Module (BRW-001..) ────────────────────────────
   const browser = buildBrowserPlatform();
 
+  // ── Task Module (TASK-001..) ──────────────────────────────
+  const task = buildTaskPlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -284,6 +291,7 @@ export function createApplication(config: AppConfig): Application {
   registerDatabaseCapability(capabilities, config);
   registerTestCapability(capabilities, config);
   registerBrowserCapability(capabilities, config);
+  registerTaskCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -358,6 +366,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('browser.runtimes', browser.runtimes);
   container.register('browser.sessions', browser.sessions);
   container.register('browser.evidence', browser.evidence);
+  container.register('task.service', task.service);
+  container.register('task.store', task.store);
 
   const startedAt = Date.now();
 
@@ -398,6 +408,7 @@ export function createApplication(config: AppConfig): Application {
     database,
     test,
     browser,
+    task,
     shutdown,
     systemStatus(): SystemStatus {
       return {

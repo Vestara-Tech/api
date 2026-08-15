@@ -26334,6 +26334,948 @@
           }
         }
       }
+    },
+    "/api/v2/tasks": {
+      "get": {
+        "summary": "List tasks",
+        "tags": [
+          "tasks"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "status",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "milestoneId",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "title",
+                      "type",
+                      "status",
+                      "priority",
+                      "dependencies",
+                      "acceptanceCriteria",
+                      "revision"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "priority": {
+                        "type": "string"
+                      },
+                      "milestoneId": {
+                        "type": "string"
+                      },
+                      "parentTaskId": {
+                        "type": "string"
+                      },
+                      "dependencies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "taskId",
+                            "kind"
+                          ],
+                          "properties": {
+                            "taskId": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "assignee": {
+                        "type": "string"
+                      },
+                      "acceptanceCriteria": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "description",
+                            "satisfied"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "satisfied": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "revision": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a task",
+        "tags": [
+          "tasks"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "title",
+                  "type"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "priority": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "milestoneId": {
+                    "type": "string"
+                  },
+                  "parentTaskId": {
+                    "type": "string"
+                  },
+                  "dependencies": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "taskId",
+                        "kind"
+                      ],
+                      "properties": {
+                        "taskId": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "assignee": {
+                    "type": "string"
+                  },
+                  "acceptanceCriteria": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "description",
+                        "satisfied"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "satisfied": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "priority",
+                    "dependencies",
+                    "acceptanceCriteria",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "string"
+                    },
+                    "milestoneId": {
+                      "type": "string"
+                    },
+                    "parentTaskId": {
+                      "type": "string"
+                    },
+                    "dependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "taskId",
+                          "kind"
+                        ],
+                        "properties": {
+                          "taskId": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assignee": {
+                      "type": "string"
+                    },
+                    "acceptanceCriteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "description",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/{id}": {
+      "get": {
+        "summary": "Get a task",
+        "tags": [
+          "tasks"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "priority",
+                    "dependencies",
+                    "acceptanceCriteria",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "string"
+                    },
+                    "milestoneId": {
+                      "type": "string"
+                    },
+                    "parentTaskId": {
+                      "type": "string"
+                    },
+                    "dependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "taskId",
+                          "kind"
+                        ],
+                        "properties": {
+                          "taskId": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assignee": {
+                      "type": "string"
+                    },
+                    "acceptanceCriteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "description",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/dependencies": {
+      "get": {
+        "summary": "Validate the task dependency graph (cycle detection)",
+        "tags": [
+          "tasks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "cycles"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "cycles": {
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/{id}/assign": {
+      "post": {
+        "summary": "Assign a task",
+        "tags": [
+          "tasks"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "assignee"
+                ],
+                "properties": {
+                  "assignee": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "priority",
+                    "dependencies",
+                    "acceptanceCriteria",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "string"
+                    },
+                    "milestoneId": {
+                      "type": "string"
+                    },
+                    "parentTaskId": {
+                      "type": "string"
+                    },
+                    "dependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "taskId",
+                          "kind"
+                        ],
+                        "properties": {
+                          "taskId": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assignee": {
+                      "type": "string"
+                    },
+                    "acceptanceCriteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "description",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/{id}/transition": {
+      "post": {
+        "summary": "Transition a task to a new status",
+        "tags": [
+          "tasks"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "status"
+                ],
+                "properties": {
+                  "status": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "type",
+                    "status",
+                    "priority",
+                    "dependencies",
+                    "acceptanceCriteria",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "priority": {
+                      "type": "string"
+                    },
+                    "milestoneId": {
+                      "type": "string"
+                    },
+                    "parentTaskId": {
+                      "type": "string"
+                    },
+                    "dependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "taskId",
+                          "kind"
+                        ],
+                        "properties": {
+                          "taskId": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "assignee": {
+                      "type": "string"
+                    },
+                    "acceptanceCriteria": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "description",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/{id}/results": {
+      "post": {
+        "summary": "Record a task execution result (completion requires evidence)",
+        "tags": [
+          "tasks"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "outcome",
+                  "summary"
+                ],
+                "properties": {
+                  "outcome": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "success"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "failure"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "partial"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "indeterminate"
+                        ]
+                      }
+                    ]
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "evidenceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "artifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "taskId",
+                    "outcome",
+                    "summary",
+                    "evidenceIds",
+                    "completedAt"
+                  ],
+                  "properties": {
+                    "taskId": {
+                      "type": "string"
+                    },
+                    "outcome": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "evidenceIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Task execution history",
+        "tags": [
+          "tasks"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "taskId",
+                      "outcome",
+                      "summary",
+                      "evidenceIds",
+                      "completedAt"
+                    ],
+                    "properties": {
+                      "taskId": {
+                        "type": "string"
+                      },
+                      "outcome": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "evidenceIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "completedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/tasks/events": {
+      "get": {
+        "summary": "Task events",
+        "tags": [
+          "tasks"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "taskId",
+                      "at"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "taskId": {
+                        "type": "string"
+                      },
+                      "at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
