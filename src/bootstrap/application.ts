@@ -27,6 +27,7 @@ import type { BootPresentationService } from '../system/boot-presentation/servic
 import type { GrubConfigurationService } from '../system/grub/service/grub-configuration-service.js';
 import type { StartupCoordinator } from '../startup/service/startup-coordinator.js';
 import type { LoginBroker } from '../login/service/login-broker.js';
+import type { ImageBuildService } from '../image/service/image-build-service.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -34,6 +35,7 @@ import { buildBootPresentationService } from './boot-presentation.js';
 import { buildGrubConfigurationService } from './grub-configuration.js';
 import { buildStartupCoordinator } from './startup.js';
 import { buildLoginPlatform } from './login.js';
+import { buildImageBuilderService } from './image-builder.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -43,6 +45,7 @@ import { registerOnboardingCapability } from './onboarding-capability.js';
 import { registerSystemModuleCapability } from './system-capability.js';
 import { registerStartupCapability } from './startup-capability.js';
 import { registerLoginCapability } from './login-capability.js';
+import { registerImageCapability } from './image-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -75,6 +78,7 @@ export interface Application {
   readonly grubConfiguration: GrubConfigurationService;
   readonly startup: StartupCoordinator;
   readonly login: LoginBroker;
+  readonly imageBuilder: ImageBuildService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -140,6 +144,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Login (LOGIN-001..014) ─────────────────────────────────
   const loginPlatform = buildLoginPlatform();
 
+  // ── OS Image Builder (IMG-001..026) ────────────────────────
+  const imageBuilder = buildImageBuilderService();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -149,6 +156,7 @@ export function createApplication(config: AppConfig): Application {
   registerSystemModuleCapability(capabilities, config);
   registerStartupCapability(capabilities, config);
   registerLoginCapability(capabilities, config);
+  registerImageCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -173,6 +181,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('loginBroker', loginPlatform.broker);
   container.register('login.sessions', loginPlatform.sessions);
   container.register('login.rateLimit', loginPlatform.rateLimit);
+  container.register('imageBuilder', imageBuilder);
 
   const startedAt = Date.now();
 
@@ -197,6 +206,7 @@ export function createApplication(config: AppConfig): Application {
     grubConfiguration,
     startup,
     login: loginPlatform.broker,
+    imageBuilder,
     shutdown,
     systemStatus(): SystemStatus {
       return {

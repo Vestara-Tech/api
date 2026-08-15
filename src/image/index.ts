@@ -1,0 +1,10 @@
+export type { ImageArchitecture, BaseSystemProfile, BootProfile, SystemProfile, LoginProfile, OnboardingProfile, DesktopProfile, PackageProfile, SecurityProfile, RecoveryProfile, ApplicationProfile, VestaraImageProfile, ImageBuildTarget } from './domain/profile.js';
+export { hashImageProfile, withProfileHash } from './domain/profile.js';
+export { ImageProfileRegistry, DESKTOP_PROFILE, SERVER_PROFILE } from './domain/registry.js';
+export type { ImageBuildStage, ImageBuildStatus, ImageBuildState } from './domain/lifecycle.js';
+export { stageOrder, stageIndex } from './domain/lifecycle.js';
+export type { BuildPlanItem, ImageBuildPlan } from './domain/build-plan.js';
+export { compileBuildPlan } from './domain/build-plan.js';
+export type { ImageRootfsPort, BootstrapResult, BootstrapAdapter, PackageInstaller, ImagePackagePort, ApplyResult } from './adapters/build-ports.js';
+export type { ImageBuildServiceOptions, ImageBuildResult } from './service/image-build-service.js';
+export { ImageBuildService } from './service/image-build-service.js';

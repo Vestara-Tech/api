@@ -335,10 +335,36 @@ authentication; the UI never validates credentials:
 OS path: Firmware → GRUB → Plymouth → Startup → **Login** → Desktop →
 `vestara-apps/*`.
 
+**IMG-001..026 — OS Image Builder Platform (complete).** A compiler/assembler of
+Vestara platform capabilities into an immutable, verifiable bootable artifact —
+not another implementation of Vestara OS:
+
+- **IMG-001** `VestaraImageProfile` (base, boot, system, applications,
+  onboarding, login, desktop, packages, security, recovery) with a
+  deterministic profile hash
+- **IMG-002** `ImageProfileRegistry` with built-in `vestara-desktop` and
+  `vestara-server` profiles
+- **IMG-003** `compileBuildPlan` — profile → ordered 22-stage plan (resolve →
+  bootstrap → install runtime/apps → systemd/login/GRUB/Plymouth/A-B/recovery →
+  initramfs → bootloader → sanitize → verify → SBOM → evidence → seal →
+  export) with plan hash
+- **IMG-004** Build lifecycle state machine (`draft → planning → building →
+  verifying → completed/failed`)
+- **IMG-005/006** Image rootfs abstraction + Debian bootstrap adapter port
+- **IMG-007..023** contributions wired into the plan (packages, runtime,
+  apps, config, generator, systemd, login, onboarding, GRUB, Plymouth, A/B,
+  recovery, sanitize/verify/SBOM/evidence)
+- **IMG-024..026** raw/installer/virtual targets, chained evidence, control API
+  `/api/v2/image/*` (4 routes; 72 OpenAPI paths) + `image` capability
+- Dev adapters degrade honestly (no debootstrap/bootloader in the API process);
+  the governed pipeline runs all 22 stages and seals evidence deterministically
+
+The OS Image Builder is the compiler of the shared System / Config / Auth /
+Generator / Onboarding / Startup / Login contracts into a bootable artifact.
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — the OS Image Builder (IMG) comes next.
-PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind ports; the API
-boots and passes tests without them.
+**not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
+runtimes stay behind ports; the API boots and passes tests without them.
 
 ## Quickstart
 
