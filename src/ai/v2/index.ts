@@ -16,3 +16,6 @@ export type { AiTraceStep, AiTrace, AiEvidence, TraceStorePort } from './trace.j
 export { AiTracer, InMemoryTraceStore, buildAiEvidence } from './trace.js';
 export type { AiRuntimeV2Options, AiExecutionRecord } from './runtime-v2.js';
 export { AiRuntimeV2 } from './runtime-v2.js';
+export type { EvaluationMetric, EvaluatorKind, AiEvaluatorDefinition, EvaluatorResult, AiEvaluationInput, AiEvaluationRun, AiEvaluator, AiModelComparison, RegressionBaseline, RegressionComparison } from './evaluation.js';
+export { AiEvaluationFramework, AiComparisonRunner, RegressionBaselineStore, compareToBaseline, recommendRouting } from './evaluation.js';
+export { schemaEvaluator, instructionEvaluator, toolEvaluator, latencyEvaluator, costEvaluator, defaultEvaluators } from './evaluators.js';

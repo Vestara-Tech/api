@@ -8,6 +8,8 @@ import { AiSessionManager } from '../ai/v2/session.js';
 import { BudgetEngine } from '../ai/v2/budget.js';
 import { UsageAggregator } from '../ai/v2/usage.js';
 import { AiTracer } from '../ai/v2/trace.js';
+import { AiEvaluationFramework, AiComparisonRunner, RegressionBaselineStore } from '../ai/v2/evaluation.js';
+import { defaultEvaluators } from '../ai/v2/evaluators.js';
 
 export interface AiV2Platform {
   readonly platform: AiPlatformV2;
@@ -16,12 +18,15 @@ export interface AiV2Platform {
   readonly usage: UsageAggregator;
   readonly tracer: AiTracer;
   readonly runtime: AiRuntimeV2;
+  readonly evaluations: AiEvaluationFramework;
+  readonly comparisons: AiComparisonRunner;
+  readonly baselines: RegressionBaselineStore;
 }
 
 /**
  * AI2 — Composition root. Builds the profile + provider-state + routing v2
  * platform over the base AI service's catalog/registry, plus the session/
- * budget/usage/trace/evidence runtime.
+ * budget/usage/trace/evidence runtime and the evaluation framework.
  */
 export function buildAiPlatformV2Service(catalog: AiModelCatalog, providers: AiProviderRegistry, service: AiService, providerStates?: readonly AiProviderConfig[]): AiV2Platform {
   const platform = buildAiPlatformV2({ catalog, providers, ...(providerStates ? { providerStates } : {}) });
@@ -30,5 +35,9 @@ export function buildAiPlatformV2Service(catalog: AiModelCatalog, providers: AiP
   const usage = new UsageAggregator();
   const tracer = new AiTracer();
   const runtime = new AiRuntimeV2({ service, platform, sessions, budgets, usage, tracer });
-  return { platform, sessions, budgets, usage, tracer, runtime };
+  const evaluations = new AiEvaluationFramework();
+  for (const evaluator of defaultEvaluators()) evaluations.register(evaluator);
+  const comparisons = new AiComparisonRunner(evaluations);
+  const baselines = new RegressionBaselineStore();
+  return { platform, sessions, budgets, usage, tracer, runtime, evaluations, comparisons, baselines };
 }

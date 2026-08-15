@@ -5,6 +5,7 @@ import type { AiSessionManager } from '../ai/v2/session.js';
 import type { BudgetEngine } from '../ai/v2/budget.js';
 import type { UsageAggregator } from '../ai/v2/usage.js';
 import type { AiTracer } from '../ai/v2/trace.js';
+import type { AiEvaluationFramework, AiComparisonRunner, RegressionBaselineStore, AiEvaluationInput } from '../ai/v2/evaluation.js';
 
 const ProfileSchema = Type.Object({
   id: Type.String(),
@@ -48,6 +49,9 @@ export const aiPlatformV2Routes: FastifyPluginAsyncTypebox = async (app) => {
   const budgets = app.application.container.resolve<BudgetEngine>('ai.v2.budgets');
   const usage = app.application.container.resolve<UsageAggregator>('ai.v2.usage');
   const tracer = app.application.container.resolve<AiTracer>('ai.v2.tracer');
+  const evaluations = app.application.container.resolve<AiEvaluationFramework>('ai.v2.evaluations');
+  const comparisons = app.application.container.resolve<AiComparisonRunner>('ai.v2.comparisons');
+  const baselines = app.application.container.resolve<RegressionBaselineStore>('ai.v2.baselines');
 
   app.get(
     '/api/v2/ai/v2/profiles',
@@ -331,5 +335,116 @@ export const aiPlatformV2Routes: FastifyPluginAsyncTypebox = async (app) => {
       if (!trace) return reply.status(404).send({ error: { code: 'NOT_FOUND', message: 'Trace not found' } } as never);
       return reply.send(trace as never);
     },
+  );
+
+  // ── AI2-021..025 evaluation framework ──────────────────────
+  const EvaluationRunSchema = Type.Object({
+    id: Type.String(),
+    profileId: Type.String(),
+    modelId: Type.String(),
+    providerId: Type.String(),
+    overall: Type.Number(),
+    passed: Type.Boolean(),
+    results: Type.Array(Type.Object({ evaluatorId: Type.String(), metric: Type.String(), score: Type.Number(), passed: Type.Boolean() })),
+    at: Type.String(),
+  });
+
+  app.get(
+    '/api/v2/ai/v2/evaluators',
+    {
+      schema: {
+        tags: ['ai'],
+        summary: 'List registered AI evaluators',
+        response: { 200: Type.Array(Type.Object({ id: Type.String(), name: Type.String(), kind: Type.String(), metric: Type.String(), weight: Type.Number() })) },
+      },
+    },
+    async (_request, reply) => reply.send(evaluations.list() as never),
+  );
+
+  app.post(
+    '/api/v2/ai/v2/evaluate',
+    {
+      schema: {
+        tags: ['ai'],
+        summary: 'Evaluate a model response across registered metrics',
+        body: Type.Object({
+          profileId: Type.String(),
+          modelId: Type.String(),
+          providerId: Type.String(),
+          request: Type.Object({ prompt: Type.String() }),
+          response: Type.Object({ content: Type.String() }),
+          toolCalls: Type.Optional(Type.Array(Type.Object({ name: Type.String(), success: Type.Boolean() }))),
+          latencyMs: Type.Optional(Type.Integer()),
+          costUsd: Type.Optional(Type.Number()),
+        }),
+        response: { 200: EvaluationRunSchema },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body as {
+        profileId: string;
+        modelId: string;
+        providerId: string;
+        request: { prompt: string };
+        response: { content: string };
+        toolCalls?: { name: string; success: boolean }[];
+        latencyMs?: number;
+        costUsd?: number;
+      };
+      const input = {
+        request: body.request,
+        response: body.response,
+        ...(body.toolCalls !== undefined ? { toolCalls: body.toolCalls } : {}),
+        ...(body.latencyMs !== undefined ? { latencyMs: body.latencyMs } : {}),
+        ...(body.costUsd !== undefined ? { costUsd: body.costUsd } : {}),
+      };
+      return reply.send(evaluations.evaluate(input as AiEvaluationInput, body.profileId, body.modelId, body.providerId) as never);
+    },
+  );
+
+  app.post(
+    '/api/v2/ai/v2/compare',
+    {
+      schema: {
+        tags: ['ai'],
+        summary: 'Side-by-side model comparison for the same prompt',
+        body: Type.Object({
+          prompt: Type.String(),
+          runs: Type.Array(Type.Object({ modelId: Type.String(), providerId: Type.String(), profileId: Type.String(), inputs: Type.Array(Type.Any()) })),
+        }),
+        response: { 200: Type.Object({ comparisonId: Type.String(), prompt: Type.String(), winner: Type.Optional(Type.String()), runs: Type.Array(Type.Any()), at: Type.String() }) },
+      },
+    },
+    async (request, reply) => reply.send(comparisons.compare(request.body as never) as never),
+  );
+
+  app.post(
+    '/api/v2/ai/v2/evaluations/:profileId/:modelId/baseline',
+    {
+      schema: {
+        tags: ['ai'],
+        summary: 'Record a regression baseline for a profile/model',
+        params: Type.Object({ profileId: Type.String(), modelId: Type.String() }),
+        body: Type.Object({ overall: Type.Number(), results: Type.Array(Type.Object({ evaluatorId: Type.String(), metric: Type.String(), score: Type.Number(), passed: Type.Boolean() })) }),
+        response: { 200: Type.Object({ baselineId: Type.String(), profileId: Type.String(), modelId: Type.String(), overall: Type.Number(), recordedAt: Type.String() }) },
+      },
+    },
+    async (request, reply) => {
+      const baseline = { baselineId: `base_${Date.now()}`, profileId: request.params.profileId, modelId: request.params.modelId, overall: request.body.overall, results: request.body.results, recordedAt: new Date().toISOString() } as never;
+      baselines.record(baseline);
+      return reply.send(baseline as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/ai/v2/evaluations/baselines',
+    {
+      schema: {
+        tags: ['ai'],
+        summary: 'List regression baselines',
+        response: { 200: Type.Array(Type.Object({ baselineId: Type.String(), profileId: Type.String(), modelId: Type.String(), overall: Type.Number(), recordedAt: Type.String() })) },
+      },
+    },
+    async (_request, reply) => reply.send(baselines.list() as never),
   );
 };

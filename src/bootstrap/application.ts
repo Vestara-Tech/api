@@ -395,6 +395,9 @@ export function createApplication(config: AppConfig): Application {
   container.register('ai.v2.usage', aiV2.usage);
   container.register('ai.v2.tracer', aiV2.tracer);
   container.register('ai.v2.runtime', aiV2.runtime);
+  container.register('ai.v2.evaluations', aiV2.evaluations);
+  container.register('ai.v2.comparisons', aiV2.comparisons);
+  container.register('ai.v2.baselines', aiV2.baselines);
   container.register('agents', agents.runtime);
   container.register('agent.registry', agents.agents);
   container.register('agent.runs', agents.runs);

@@ -45060,6 +45060,450 @@
           }
         }
       }
+    },
+    "/api/v2/ai/v2/evaluators": {
+      "get": {
+        "summary": "List registered AI evaluators",
+        "tags": [
+          "ai"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "kind",
+                      "metric",
+                      "weight"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "metric": {
+                        "type": "string"
+                      },
+                      "weight": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/evaluate": {
+      "post": {
+        "summary": "Evaluate a model response across registered metrics",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId",
+                  "modelId",
+                  "providerId",
+                  "request",
+                  "response"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  },
+                  "modelId": {
+                    "type": "string"
+                  },
+                  "providerId": {
+                    "type": "string"
+                  },
+                  "request": {
+                    "type": "object",
+                    "required": [
+                      "prompt"
+                    ],
+                    "properties": {
+                      "prompt": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "response": {
+                    "type": "object",
+                    "required": [
+                      "content"
+                    ],
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "toolCalls": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "success"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "success": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "latencyMs": {
+                    "type": "integer"
+                  },
+                  "costUsd": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "profileId",
+                    "modelId",
+                    "providerId",
+                    "overall",
+                    "passed",
+                    "results",
+                    "at"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "profileId": {
+                      "type": "string"
+                    },
+                    "modelId": {
+                      "type": "string"
+                    },
+                    "providerId": {
+                      "type": "string"
+                    },
+                    "overall": {
+                      "type": "number"
+                    },
+                    "passed": {
+                      "type": "boolean"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "evaluatorId",
+                          "metric",
+                          "score",
+                          "passed"
+                        ],
+                        "properties": {
+                          "evaluatorId": {
+                            "type": "string"
+                          },
+                          "metric": {
+                            "type": "string"
+                          },
+                          "score": {
+                            "type": "number"
+                          },
+                          "passed": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/compare": {
+      "post": {
+        "summary": "Side-by-side model comparison for the same prompt",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "prompt",
+                  "runs"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string"
+                  },
+                  "runs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "modelId",
+                        "providerId",
+                        "profileId",
+                        "inputs"
+                      ],
+                      "properties": {
+                        "modelId": {
+                          "type": "string"
+                        },
+                        "providerId": {
+                          "type": "string"
+                        },
+                        "profileId": {
+                          "type": "string"
+                        },
+                        "inputs": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "comparisonId",
+                    "prompt",
+                    "runs",
+                    "at"
+                  ],
+                  "properties": {
+                    "comparisonId": {
+                      "type": "string"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    },
+                    "winner": {
+                      "type": "string"
+                    },
+                    "runs": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/evaluations/{profileId}/{modelId}/baseline": {
+      "post": {
+        "summary": "Record a regression baseline for a profile/model",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "overall",
+                  "results"
+                ],
+                "properties": {
+                  "overall": {
+                    "type": "number"
+                  },
+                  "results": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "evaluatorId",
+                        "metric",
+                        "score",
+                        "passed"
+                      ],
+                      "properties": {
+                        "evaluatorId": {
+                          "type": "string"
+                        },
+                        "metric": {
+                          "type": "string"
+                        },
+                        "score": {
+                          "type": "number"
+                        },
+                        "passed": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "profileId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "modelId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "baselineId",
+                    "profileId",
+                    "modelId",
+                    "overall",
+                    "recordedAt"
+                  ],
+                  "properties": {
+                    "baselineId": {
+                      "type": "string"
+                    },
+                    "profileId": {
+                      "type": "string"
+                    },
+                    "modelId": {
+                      "type": "string"
+                    },
+                    "overall": {
+                      "type": "number"
+                    },
+                    "recordedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/evaluations/baselines": {
+      "get": {
+        "summary": "List regression baselines",
+        "tags": [
+          "ai"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "baselineId",
+                      "profileId",
+                      "modelId",
+                      "overall",
+                      "recordedAt"
+                    ],
+                    "properties": {
+                      "baselineId": {
+                        "type": "string"
+                      },
+                      "profileId": {
+                        "type": "string"
+                      },
+                      "modelId": {
+                        "type": "string"
+                      },
+                      "overall": {
+                        "type": "number"
+                      },
+                      "recordedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
