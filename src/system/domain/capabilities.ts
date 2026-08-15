@@ -36,6 +36,18 @@ export const SYSTEM_CAPABILITIES: readonly SystemCapabilityDefinition[] = [
   { id: 'system.slot.switch', kind: 'write', risk: 'high', requiresApproval: true, description: 'Switch active A/B slot' },
   { id: 'system.recovery.scheduleBoot', kind: 'write', risk: 'high', requiresApproval: true, description: 'Schedule recovery boot' },
   { id: 'system.boot.splash.apply', kind: 'write', risk: 'high', requiresApproval: true, description: 'Apply boot splash theme' },
+  { id: 'system.boot.presentation.read', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read boot presentation state' },
+  { id: 'system.boot.presentation.preview', kind: 'read', risk: 'low', requiresApproval: false, description: 'Preview boot presentation changes' },
+  { id: 'system.boot.presentation.apply', kind: 'write', risk: 'high', requiresApproval: true, description: 'Apply boot presentation profile' },
+  { id: 'system.boot.presentation.restore', kind: 'write', risk: 'high', requiresApproval: true, description: 'Restore boot presentation' },
+  { id: 'system.boot.splash.read', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read splash state' },
+  { id: 'system.boot.splash.restore', kind: 'write', risk: 'high', requiresApproval: true, description: 'Restore splash' },
+  { id: 'system.boot.grubTheme.read', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read GRUB theme' },
+  { id: 'system.boot.grubTheme.apply', kind: 'write', risk: 'high', requiresApproval: true, description: 'Apply GRUB theme' },
+  { id: 'system.boot.logo.read', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read boot logo' },
+  { id: 'system.boot.logo.capabilities', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read firmware-logo capabilities' },
+  { id: 'system.boot.logo.apply', kind: 'write', risk: 'critical', requiresApproval: true, description: 'Apply firmware/OEM logo' },
+  { id: 'system.boot.logo.restore', kind: 'write', risk: 'critical', requiresApproval: true, description: 'Restore firmware/OEM logo' },
 
   // ── Control (high risk) ─────────────────────────────────────
   { id: 'system.power.reboot', kind: 'control', risk: 'high', requiresApproval: true, description: 'Reboot the system' },

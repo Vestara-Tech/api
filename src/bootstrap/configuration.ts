@@ -71,6 +71,33 @@ export function buildConfigurationService(config: AppConfig): ConfigurationServi
     secretFields: ['primarySecret'],
   });
 
+  registry.register({
+    namespace: 'vestara.system.boot',
+    version: '1.0.0',
+    schema: {
+      type: 'object',
+      properties: {
+        'presentation.profile': { type: 'string' },
+        'presentation.plymouth.enabled': { type: 'boolean' },
+        'presentation.grub.enabled': { type: 'boolean' },
+        'presentation.quietBoot': { type: 'boolean' },
+        'presentation.showStatusOnFailure': { type: 'boolean' },
+        'presentation.recoveryProfile': { type: 'string' },
+        'presentation.firmwareLogo.enabled': { type: 'boolean' },
+      },
+    },
+    defaults: {
+      'presentation.profile': 'vestara-default',
+      'presentation.plymouth.enabled': true,
+      'presentation.grub.enabled': true,
+      'presentation.quietBoot': true,
+      'presentation.showStatusOnFailure': true,
+      'presentation.recoveryProfile': 'vestara-recovery',
+      'presentation.firmwareLogo.enabled': false,
+    },
+    scope: ['system', 'environment', 'workspace'],
+  });
+
   const service = new ConfigurationServiceImpl({
     registry,
     validator: new ConfigurationValidator(structuralCheck),

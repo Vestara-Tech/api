@@ -50,9 +50,30 @@ Plymouth/GRUB customization and firmware-logo replacement build on SYS-001..014,
 with firmware-logo treated as an optional hardware-specific capability
 (CRITICAL risk, vendor-adapter gated).
 
+### 7. Boot presentation (SYS-015..025)
+
+- **Managed assets only.** The API never accepts raw filesystem paths; assets
+  become content-addressed `BootAssetRef`s via the `BootAssetStore` (sha256),
+  validated for MIME/size/target.
+- **Plymouth + GRUB are first-class OS-supported.** The privileged service
+  installs assets, updates the theme, regenerates initramfs/grub.cfg (Vestara
+  owns a drop-in fragment, never arbitrary `/etc/default/grub` edits), and
+  verifies.
+- **Rollback across reboot.** `applied → pending-reboot-verification →
+  reboot → boot-success marker → verified`; failed boots increment
+  `bootAttempts` and restore known-good at a threshold, connecting to A/B and
+  recovery.
+- **Firmware-logo is a separate, optional, CRITICAL capability.** Requires
+  UEFI, a supported vendor/platform adapter, an available backup, and
+  special-policy approval. Never falls back to generic firmware flashing.
+- **Config, not assets, drives behavior.** `vestara.system.boot.*` config keys
+  select profiles/behavior; binary assets stay in the BootAssetStore.
+
 ## Consequences
 
 - Onboarding (ONB) and the future UI orchestrate the System layer; they never
   gain root.
 - A/B rollback and OS updates have a governed foundation.
 - Boot presentation profiles can become packageable Marketplace assets later.
+- Boot branding works across hardware, degrading gracefully when the OEM logo
+  is not replaceable.

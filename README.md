@@ -237,14 +237,38 @@ directly; it calls narrowly scoped system capabilities:
   privileged info isn't accessible
 - `system-module` capability exposed (20 capabilities, 4 critical)
 
-SYS-015+ (boot presentation: Plymouth/GRUB/firmware-logo) comes after this
-boundary per the roadmap.
+**SYS-015..025 — Boot Presentation Platform (complete).** Plymouth/GRUB
+customization as first-class OS-supported functionality; firmware-logo as a
+separate optional hardware capability:
+
+- **SYS-015** `BootPresentationProfile` (plymouth/grub/firmware, profileHash)
+- **SYS-016/017** `BootAssetStore` — managed assets with sha256 identity; raw
+  filesystem paths (`../../etc/shadow`, `/root/...`, `file:///...`) are
+  rejected. Asset validation (MIME/size/target) → `BootAssetRef`
+- **SYS-018/019** Plymouth + GRUB adapter ports (install theme, backup,
+  regenerate initramfs/grub.cfg, verify) — privileged service performs them
+- **SYS-020** Preview + change plan (PROFILE → VALIDATE → PLAN → PREVIEW)
+- **SYS-021** Governed apply + rollback across reboot:
+  `applied → pending-reboot-verification → reboot → boot-success marker →
+  verified`; failed boots increment `bootAttempts`, restore known-good at
+  threshold
+- **SYS-022/023** Firmware-logo capability discovery + vendor adapter contract
+  (separate, CRITICAL; requires UEFI + supported adapter + backup +
+  special-policy approval; never generic flashing; `unsupported` on other
+  hardware)
+- **SYS-024** Verification + evidence
+- **SYS-025** Control API (`/api/v2/system/boot/presentation/*`,
+  `/api/v2/system/firmware/logo/*`) + `vestara.system.boot` config keys
+  (binary assets stay in the store, never Configuration)
+- 46 OpenAPI paths total; boot presentation capabilities registered
+
+SYS-015..025 connects boot branding to the A/B + recovery foundation from
+SYS-001..014.
 
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — ONB-010+ (execution), SYS-015+
-(presentation), AUTH-007+ (OAuth), API2-004+ (compat) come next.
-PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind ports; the API
-boots and passes tests without them.
+**not** part of the current stream — ONB-010+ (execution), AUTH-007+ (OAuth),
+API2-004+ (compat) come next. PostgreSQL/Redis/NATS/Prisma and external
+runtimes stay behind ports; the API boots and passes tests without them.
 
 ## Quickstart
 

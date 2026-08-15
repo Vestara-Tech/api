@@ -7149,6 +7149,2009 @@
           }
         }
       }
+    },
+    "/api/v2/system/boot/presentation": {
+      "get": {
+        "summary": "Current boot presentation state",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "bootAttempts"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentProfileId": {
+                      "type": "string"
+                    },
+                    "pendingVerificationProfileId": {
+                      "type": "string"
+                    },
+                    "bootAttempts": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/capabilities": {
+      "get": {
+        "summary": "Boot presentation capabilities",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "plymouth",
+                    "grub"
+                  ],
+                  "properties": {
+                    "plymouth": {
+                      "type": "boolean"
+                    },
+                    "grub": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/profiles": {
+      "get": {
+        "summary": "List boot presentation profiles",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "version",
+                      "name",
+                      "profileHash"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "plymouth": {
+                        "type": "object",
+                        "properties": {
+                          "logo": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "animation": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "background": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "progressStyle": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "grub": {
+                        "type": "object",
+                        "properties": {
+                          "background": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "logo": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "theme": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "firmware": {
+                        "type": "object",
+                        "properties": {
+                          "logo": {
+                            "type": "object",
+                            "required": [
+                              "assetId",
+                              "sha256",
+                              "mediaType"
+                            ],
+                            "properties": {
+                              "assetId": {
+                                "type": "string"
+                              },
+                              "sha256": {
+                                "type": "string"
+                              },
+                              "mediaType": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "profileHash": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Save a boot presentation profile",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "version",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "plymouth": {
+                    "type": "object",
+                    "properties": {
+                      "logo": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "animation": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "background": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "progressStyle": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "grub": {
+                    "type": "object",
+                    "properties": {
+                      "background": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "logo": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "theme": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "firmware": {
+                    "type": "object",
+                    "properties": {
+                      "logo": {
+                        "type": "object",
+                        "required": [
+                          "assetId",
+                          "sha256",
+                          "mediaType"
+                        ],
+                        "properties": {
+                          "assetId": {
+                            "type": "string"
+                          },
+                          "sha256": {
+                            "type": "string"
+                          },
+                          "mediaType": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "version",
+                    "name",
+                    "profileHash"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "plymouth": {
+                      "type": "object",
+                      "properties": {
+                        "logo": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "animation": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "background": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "progressStyle": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "grub": {
+                      "type": "object",
+                      "properties": {
+                        "background": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "logo": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "theme": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "firmware": {
+                      "type": "object",
+                      "properties": {
+                        "logo": {
+                          "type": "object",
+                          "required": [
+                            "assetId",
+                            "sha256",
+                            "mediaType"
+                          ],
+                          "properties": {
+                            "assetId": {
+                              "type": "string"
+                            },
+                            "sha256": {
+                              "type": "string"
+                            },
+                            "mediaType": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "profileHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/assets": {
+      "post": {
+        "summary": "Store a managed boot asset (no raw filesystem paths)",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "contentBase64"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "mediaType": {
+                    "type": "string"
+                  },
+                  "contentBase64": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "assetId",
+                    "sha256",
+                    "mediaType",
+                    "name",
+                    "sizeBytes",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "assetId": {
+                      "type": "string"
+                    },
+                    "sha256": {
+                      "type": "string"
+                    },
+                    "mediaType": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "sizeBytes": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/preview": {
+      "post": {
+        "summary": "Preview a profile (validate + plan, no apply)",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile",
+                    "changes",
+                    "validation",
+                    "requiresReboot",
+                    "previewHash"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "version",
+                        "name",
+                        "profileHash"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "plymouth": {
+                          "type": "object",
+                          "properties": {
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "animation": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "background": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "progressStyle": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "grub": {
+                          "type": "object",
+                          "properties": {
+                            "background": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "theme": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "firmware": {
+                          "type": "object",
+                          "properties": {
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "profileHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "target",
+                          "action",
+                          "detail"
+                        ],
+                        "properties": {
+                          "target": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "validation": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "target",
+                          "ok",
+                          "issues"
+                        ],
+                        "properties": {
+                          "target": {
+                            "type": "string"
+                          },
+                          "ok": {
+                            "type": "boolean"
+                          },
+                          "issues": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/validate": {
+      "post": {
+        "summary": "Validate a profile",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/apply": {
+      "post": {
+        "summary": "Apply a profile (requires approval)",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId",
+                  "approved"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  },
+                  "approved": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile",
+                    "changes",
+                    "validation",
+                    "requiresReboot",
+                    "previewHash"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "version",
+                        "name",
+                        "profileHash"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "plymouth": {
+                          "type": "object",
+                          "properties": {
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "animation": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "background": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "progressStyle": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "grub": {
+                          "type": "object",
+                          "properties": {
+                            "background": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "theme": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "firmware": {
+                          "type": "object",
+                          "properties": {
+                            "logo": {
+                              "type": "object",
+                              "required": [
+                                "assetId",
+                                "sha256",
+                                "mediaType"
+                              ],
+                              "properties": {
+                                "assetId": {
+                                  "type": "string"
+                                },
+                                "sha256": {
+                                  "type": "string"
+                                },
+                                "mediaType": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "profileHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "target",
+                          "action",
+                          "detail"
+                        ],
+                        "properties": {
+                          "target": {
+                            "type": "string"
+                          },
+                          "action": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "validation": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "target",
+                          "ok",
+                          "issues"
+                        ],
+                        "properties": {
+                          "target": {
+                            "type": "string"
+                          },
+                          "ok": {
+                            "type": "boolean"
+                          },
+                          "issues": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/rollback": {
+      "post": {
+        "summary": "Roll back the boot presentation",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "bootAttempts"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentProfileId": {
+                      "type": "string"
+                    },
+                    "pendingVerificationProfileId": {
+                      "type": "string"
+                    },
+                    "bootAttempts": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/presentation/boot-result": {
+      "post": {
+        "summary": "Record boot success/failure for reboot verification",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "succeeded"
+                ],
+                "properties": {
+                  "succeeded": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "bootAttempts"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "currentProfileId": {
+                      "type": "string"
+                    },
+                    "pendingVerificationProfileId": {
+                      "type": "string"
+                    },
+                    "bootAttempts": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/firmware/logo/capabilities": {
+      "get": {
+        "summary": "Firmware-logo capabilities (separate, CRITICAL)",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "readable",
+                    "writable",
+                    "replaceable",
+                    "restoreSupported",
+                    "requiresReboot",
+                    "mechanism"
+                  ],
+                  "properties": {
+                    "readable": {
+                      "type": "boolean"
+                    },
+                    "writable": {
+                      "type": "boolean"
+                    },
+                    "replaceable": {
+                      "type": "boolean"
+                    },
+                    "restoreSupported": {
+                      "type": "boolean"
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "mechanism": {
+                      "type": "string"
+                    },
+                    "vendor": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/firmware/logo/preview": {
+      "post": {
+        "summary": "Preview firmware-logo replacement (requires supported hardware)",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "assetId"
+                ],
+                "properties": {
+                  "assetId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "willReplace",
+                    "requiresReboot"
+                  ],
+                  "properties": {
+                    "willReplace": {
+                      "type": "boolean"
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/firmware/logo/apply": {
+      "post": {
+        "summary": "Apply firmware-logo replacement (special policy + supported hardware)",
+        "tags": [
+          "system-boot"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "assetId",
+                  "specialPolicyApproved"
+                ],
+                "properties": {
+                  "assetId": {
+                    "type": "string"
+                  },
+                  "specialPolicyApproved": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/firmware/logo/restore": {
+      "post": {
+        "summary": "Restore the original firmware logo",
+        "tags": [
+          "system-boot"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
