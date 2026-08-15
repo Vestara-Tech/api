@@ -362,6 +362,40 @@ not another implementation of Vestara OS:
 The OS Image Builder is the compiler of the shared System / Config / Auth /
 Generator / Onboarding / Startup / Login contracts into a bootable artifact.
 
+### API Builder UI (API-UI-001..005, `vestara-apps/api-builder`)
+
+A first-class visual development surface for the API Definition Runtime — a
+Strapi-like builder where the root abstraction is an **API Definition**
+(resources, endpoints, relations, policies, operations, events), not a Content
+Type.
+
+The `vestara-apps/` boundary holds the frontend applications; `api-builder/`
+is the first of them (React 19 + Vite + TypeScript + MUI + Tailwind v4). It
+consumes the **derived** wire contracts — `pnpm contracts:frontend` regenerates
+`vestara-apps/api-builder/src/api/contracts.ts` from
+`src/builder/contracts.ts`, so the UI never invents its own image model.
+
+- **API-UI-001** app shell + routing + definition-scoped builder context
+  (Navigator → Canvas → Inspector layout, revision-safe If-Match PATCH)
+- **API-UI-002** definitions dashboard (list, search, create)
+- **API-UI-003** resource/field designer (fields CRUD in canvas + inspector)
+- **API-UI-004** relation designer (visual relation cards, kind/target/FK)
+- **API-UI-005** endpoint workbench + validate + contract preview
+  (API / OpenAPI / Schema / Changes tabs, compatibility + publishable gates)
+
+```bash
+cd vestara-apps/api-builder
+pnpm install --ignore-workspace   # the api-builder app is standalone
+pnpm dev                          # Vite on :5174, proxies /api to the API
+pnpm test                         # unit tests
+pnpm test:ui                      # browser render tests (live API + chromium)
+pnpm build                        # tsc -b + vite build
+```
+
+> **Wire note:** `vestara-apps/api-builder` is a self-contained pnpm app. The
+> repo root's `pnpm-workspace.yaml` makes pnpm treat the tree as a workspace,
+> so installs inside the app must use `--ignore-workspace`.
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

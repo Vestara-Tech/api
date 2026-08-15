@@ -1,171 +1,20 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from '@sinclair/typebox';
-import type { ApiDefinitionStatus, ApiHttpMethod } from '../builder/domain/types.js';
-
-const ApiFieldSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  type: Type.String(),
-  required: Type.Optional(Type.Boolean()),
-  unique: Type.Optional(Type.Boolean()),
-  indexed: Type.Optional(Type.Boolean()),
-  enumValues: Type.Optional(Type.Array(Type.String())),
-});
-
-const ApiResourceSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  plural: Type.Optional(Type.String()),
-  description: Type.Optional(Type.String()),
-  fields: Type.Array(ApiFieldSchema),
-});
-
-const ApiEndpointParameterSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  in: Type.Union([Type.Literal('path'), Type.Literal('query'), Type.Literal('header'), Type.Literal('cookie')]),
-  type: Type.String(),
-  required: Type.Optional(Type.Boolean()),
-});
-
-const ApiEndpointResponseSchema = Type.Object({
-  status: Type.Integer(),
-  description: Type.Optional(Type.String()),
-  resource: Type.Optional(Type.String()),
-});
-
-const ApiEndpointSchema = Type.Object({
-  id: Type.String(),
-  method: Type.Union([Type.Literal('GET'), Type.Literal('POST'), Type.Literal('PUT'), Type.Literal('PATCH'), Type.Literal('DELETE')]),
-  path: Type.String(),
-  summary: Type.Optional(Type.String()),
-  parameters: Type.Optional(Type.Array(ApiEndpointParameterSchema)),
-  requestBody: Type.Optional(Type.Object({ resource: Type.Optional(Type.String()) })),
-  responses: Type.Optional(Type.Array(ApiEndpointResponseSchema)),
-  policyIds: Type.Optional(Type.Array(Type.String())),
-  capabilityBinding: Type.Optional(Type.String()),
-});
-
-const ApiPolicySchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  effect: Type.Union([Type.Literal('allow'), Type.Literal('deny')]),
-  action: Type.String(),
-  resource: Type.Optional(Type.String()),
-});
-
-const ApiOperationSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  kind: Type.String(),
-});
-
-const ApiEventSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-});
-
-const ApiDefinitionSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  namespace: Type.String(),
-  version: Type.String(),
-  status: Type.String(),
-  resources: Type.Array(ApiResourceSchema),
-  endpoints: Type.Array(ApiEndpointSchema),
-  policies: Type.Array(ApiPolicySchema),
-  operations: Type.Array(ApiOperationSchema),
-  events: Type.Array(ApiEventSchema),
-  revision: Type.Integer(),
-  metadata: Type.Object({
-    description: Type.Optional(Type.String()),
-    tags: Type.Optional(Type.Array(Type.String())),
-    author: Type.Optional(Type.String()),
-    createdAt: Type.String(),
-    updatedAt: Type.String(),
-  }),
-});
-
-const CreateDefinitionBody = Type.Object({
-  name: Type.String(),
-  namespace: Type.String(),
-  version: Type.String(),
-  description: Type.Optional(Type.String()),
-  tags: Type.Optional(Type.Array(Type.String())),
-  author: Type.Optional(Type.String()),
-});
-
-const UpdateDefinitionBody = Type.Object({
-  name: Type.Optional(Type.String()),
-  namespace: Type.Optional(Type.String()),
-  version: Type.Optional(Type.String()),
-  resources: Type.Optional(Type.Array(ApiResourceSchema)),
-  endpoints: Type.Optional(Type.Array(ApiEndpointSchema)),
-  policies: Type.Optional(Type.Array(ApiPolicySchema)),
-  operations: Type.Optional(Type.Array(ApiOperationSchema)),
-  events: Type.Optional(Type.Array(ApiEventSchema)),
-});
-
-const ValidationResultSchema = Type.Object({
-  ok: Type.Boolean(),
-  issues: Type.Array(
-    Type.Object({
-      path: Type.String(),
-      message: Type.String(),
-      severity: Type.Union([Type.Literal('error'), Type.Literal('warning')]),
-    }),
-  ),
-});
-
-const ContractSchema = Type.Object({
-  hash: Type.String(),
-  compilerVersion: Type.String(),
-  openapi: Type.Any(),
-  routes: Type.Array(Type.Any()),
-});
-
-const PreviewResultSchema = Type.Object({
-  definition: ApiDefinitionSchema,
-  validation: ValidationResultSchema,
-  contract: ContractSchema,
-  compatibility: Type.Object({
-    classification: Type.Union([Type.Literal('compatible'), Type.Literal('breaking'), Type.Literal('unknown')]),
-    changes: Type.Array(
-      Type.Object({
-        kind: Type.String(),
-        path: Type.String(),
-        severity: Type.Union([Type.Literal('breaking'), Type.Literal('compatible'), Type.Literal('info')]),
-        message: Type.String(),
-      }),
-    ),
-  }),
-  publishable: Type.Boolean(),
-});
-
-const RevisionSchema = Type.Object({
-  definition: ApiDefinitionSchema,
-  compiledHash: Type.String(),
-  recordedAt: Type.String(),
-});
-
-const ListQuery = Type.Object({
-  cursor: Type.Optional(Type.String()),
-  limit: Type.Optional(Type.Union([Type.Integer(), Type.String()])),
-  status: Type.Optional(Type.String()),
-  search: Type.Optional(Type.String()),
-  sort: Type.Optional(Type.String()),
-});
-
-const ErrorSchema = Type.Object({
-  error: Type.Object({
-    code: Type.String(),
-    message: Type.String(),
-    requestId: Type.String(),
-    correlationId: Type.String(),
-    retryable: Type.Boolean(),
-    details: Type.Optional(Type.Any()),
-  }),
-});
+import type { ApiDefinitionStatus } from '../builder/domain/types.js';
+import {
+  ApiDefinitionSchema,
+  CompatibilitySchema,
+  ContractSchema,
+  CreateDefinitionBody,
+  ErrorSchema,
+  ListQuerySchema,
+  ListDefinitionsResultSchema,
+  PreviewResultSchema,
+  PublishResultSchema,
+  RevisionSchema,
+  UpdateDefinitionBody,
+  ValidationResultSchema,
+} from '../builder/contracts.js';
 
 export const builderRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const builder = app.application.builder;
@@ -176,13 +25,9 @@ export const builderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['builder'],
         summary: 'List API definitions',
-        querystring: ListQuery,
+        querystring: ListQuerySchema,
         response: {
-          200: Type.Object({
-            items: Type.Array(ApiDefinitionSchema),
-            nextCursor: Type.Union([Type.String(), Type.Null()]),
-            total: Type.Integer(),
-          }),
+          200: ListDefinitionsResultSchema,
         },
       },
     },
@@ -318,7 +163,7 @@ export const builderRoutes: FastifyPluginAsyncTypebox = async (app) => {
         params: Type.Object({ id: Type.String() }),
         headers: Type.Object({ 'if-match': Type.Optional(Type.String()) }),
         response: {
-          200: Type.Object({ definition: ApiDefinitionSchema, operationId: Type.String() }),
+          200: PublishResultSchema,
           404: ErrorSchema,
           409: ErrorSchema,
         },

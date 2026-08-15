@@ -41,6 +41,8 @@ export class DefinitionValidator {
     const resourceNames = new Map<string, string>();
     for (const resource of definition.resources) {
       resourceNames.set(resource.name, resource.id);
+    }
+    for (const resource of definition.resources) {
       if (!resource.name.trim()) {
         issues.push({ path: `resources[${resource.id}].name`, message: 'resource name is required', severity: 'error' });
       }

@@ -1,7 +1,7 @@
 {
   "name": "@vestara/api",
   "version": "2.0.0-alpha.1",
-  "description": "Vestara API v2 — Platform Gateway and Control Plane (standalone)",
+  "description": "Vestara API v2 \u2014 Platform Gateway and Control Plane (standalone)",
   "private": true,
   "type": "module",
   "main": "dist/main.js",
@@ -19,7 +19,9 @@
     "test:integration": "vitest run tests/integration",
     "test:contract": "vitest run tests/contract",
     "openapi:generate": "tsx scripts/generate-openapi.ts",
-    "openapi:check": "tsx scripts/check-openapi.ts"
+    "openapi:check": "tsx scripts/check-openapi.ts",
+    "contracts:frontend": "tsx scripts/generate-frontend-contracts.ts",
+    "contracts:frontend:check": "tsx scripts/check-frontend-contracts.ts"
   },
   "dependencies": {
     "@fastify/swagger": "^9.8.1",

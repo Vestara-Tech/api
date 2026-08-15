@@ -56,6 +56,21 @@ describe('DefinitionValidator', () => {
     expect(result.issues.some((i) => i.message.includes('relation target resource "User" does not exist'))).toBe(true);
   });
 
+  it('accepts a relation to a resource declared later in the list', () => {
+    const definition = makeProductDefinition();
+    const product = definition.resources[0]!;
+    definition.resources = [
+      {
+        ...product,
+        relations: [{ id: 'rel', name: 'category', kind: 'many-to-one', targetResource: 'Category' }],
+      },
+      { id: 'cat_res', name: 'Category', plural: 'categories', fields: [] },
+    ];
+    const result = validator.validate(definition);
+    expect(result.ok).toBe(true);
+    expect(result.issues).toHaveLength(0);
+  });
+
   it('rejects a path parameter not present in the path', () => {
     const definition = makeProductDefinition();
     definition.endpoints = [
