@@ -396,6 +396,38 @@ pnpm build                        # tsc -b + vite build
 > repo root's `pnpm-workspace.yaml` makes pnpm treat the tree as a workspace,
 > so installs inside the app must use `--ignore-workspace`.
 
+### OS Image Builder UI (IMG-UI-001..004, `vestara-apps/os-image-builder`)
+
+A first-class engineering workspace for designing, validating, building and
+publishing Vestara OS images — not an installer wizard.
+
+- **IMG-UI-001** app shell + routing (config navigation → builder canvas →
+  live inspector) + presets (Vestara Desktop / Developer / Server / Recovery /
+  Custom)
+- **IMG-UI-002** profile editor — Overview, Base System, Packages
+- **IMG-UI-003** visual **Boot Experience** editor: firmware → GRUB → Plymouth
+  → Startup → Login timeline with a live preview canvas that switches per
+  stage, plus a GRUB editor (timeout, theme, recovery entry)
+- **IMG-UI-004** Applications selector driven by the app catalog (core
+  required apps are dependency-locked), Startup / Login / Desktop
+  configuration, Security, Recovery, Configuration, and an observable Build
+  page (22-stage governed pipeline with per-stage detail + evidence)
+
+It consumes the **derived** image contracts —
+`pnpm contracts:frontend` emits `vestara-apps/os-image-builder/src/api/contracts.ts`
+from `src/image/contracts.ts`. The backend image API was enriched to expose the
+full profile, add `GET /profiles/:id` and `PATCH /profiles/:id` (hash recompute),
+and tighten the build/plan/state responses.
+
+```bash
+cd vestara-apps/os-image-builder
+pnpm install --ignore-workspace
+pnpm dev                          # Vite on :5175, proxies /api to the API
+pnpm test                         # unit tests
+pnpm test:ui                      # browser render tests (live API + chromium)
+pnpm build
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

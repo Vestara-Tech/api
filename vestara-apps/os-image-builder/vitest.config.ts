@@ -1,0 +1,20 @@
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig } from 'vitest/config';
+
+const API_TARGET = process.env.VESTARA_API_URL ?? 'http://localhost:3001';
+
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: {
+    port: 5175,
+    proxy: {
+      '/api': { target: API_TARGET, changeOrigin: true },
+    },
+  },
+  test: {
+    include: ['tests/**/*.test.ts'],
+    exclude: ['tests/ui-render.test.ts'],
+    environment: 'node',
+  },
+});

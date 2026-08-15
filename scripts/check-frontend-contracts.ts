@@ -2,10 +2,13 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-const committed = resolve('vestara-apps', 'api-builder', 'src', 'api', 'contracts.ts');
+const targets = [
+  resolve('vestara-apps', 'api-builder', 'src', 'api', 'contracts.ts'),
+  resolve('vestara-apps', 'os-image-builder', 'src', 'api', 'contracts.ts'),
+];
 
 async function main(): Promise<void> {
-  const before = await readFile(committed, 'utf8');
+  const before = await Promise.all(targets.map((p) => readFile(p, 'utf8')));
   const result = spawnSync('npx', ['tsx', 'scripts/generate-frontend-contracts.ts'], {
     encoding: 'utf8',
     cwd: resolve('.'),
@@ -16,8 +19,9 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  const after = await readFile(committed, 'utf8');
-  if (before !== after) {
+  const after = await Promise.all(targets.map((p) => readFile(p, 'utf8')));
+  const drifted = targets.some((p, i) => before[i] !== after[i]);
+  if (drifted) {
     // eslint-disable-next-line no-console
     console.error('Frontend contract drift: run `pnpm contracts:frontend` and commit the update.');
     process.exitCode = 1;

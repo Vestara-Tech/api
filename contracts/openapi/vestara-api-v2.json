@@ -12424,6 +12424,16 @@
                       "id",
                       "version",
                       "architecture",
+                      "base",
+                      "boot",
+                      "system",
+                      "applications",
+                      "onboarding",
+                      "login",
+                      "desktop",
+                      "packages",
+                      "security",
+                      "recovery",
                       "profileHash"
                     ],
                     "properties": {
@@ -12434,7 +12444,280 @@
                         "type": "string"
                       },
                       "architecture": {
-                        "type": "string"
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "amd64"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "arm64"
+                            ]
+                          }
+                        ]
+                      },
+                      "base": {
+                        "type": "object",
+                        "required": [
+                          "distribution",
+                          "release",
+                          "kernel"
+                        ],
+                        "properties": {
+                          "distribution": {
+                            "type": "string",
+                            "enum": [
+                              "debian"
+                            ]
+                          },
+                          "release": {
+                            "type": "string"
+                          },
+                          "kernel": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "boot": {
+                        "type": "object",
+                        "required": [
+                          "grub",
+                          "plymouth",
+                          "firmwareLogo"
+                        ],
+                        "properties": {
+                          "grub": {
+                            "type": "object",
+                            "required": [
+                              "enabled",
+                              "timeout"
+                            ],
+                            "properties": {
+                              "enabled": {
+                                "type": "boolean"
+                              },
+                              "timeout": {
+                                "type": "integer"
+                              },
+                              "theme": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "plymouth": {
+                            "type": "object",
+                            "required": [
+                              "enabled",
+                              "theme"
+                            ],
+                            "properties": {
+                              "enabled": {
+                                "type": "boolean"
+                              },
+                              "theme": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "firmwareLogo": {
+                            "type": "object",
+                            "required": [
+                              "mode"
+                            ],
+                            "properties": {
+                              "mode": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "runtime-if-supported"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "none"
+                                    ]
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "system": {
+                        "type": "object",
+                        "required": [
+                          "abSlots",
+                          "recovery"
+                        ],
+                        "properties": {
+                          "abSlots": {
+                            "type": "boolean"
+                          },
+                          "recovery": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "applications": {
+                        "type": "object",
+                        "required": [
+                          "applications"
+                        ],
+                        "properties": {
+                          "applications": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "onboarding": {
+                        "type": "object",
+                        "required": [
+                          "firstBoot"
+                        ],
+                        "properties": {
+                          "firstBoot": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "login": {
+                        "type": "object",
+                        "required": [
+                          "provider",
+                          "password",
+                          "fingerprint",
+                          "fido2"
+                        ],
+                        "properties": {
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "vestara"
+                            ]
+                          },
+                          "password": {
+                            "type": "boolean"
+                          },
+                          "fingerprint": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "auto"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "disabled"
+                                ]
+                              }
+                            ]
+                          },
+                          "fido2": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "auto"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "disabled"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "desktop": {
+                        "type": "object",
+                        "required": [
+                          "session",
+                          "startupApp",
+                          "desktopApp"
+                        ],
+                        "properties": {
+                          "session": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "vestara"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "fallback"
+                                ]
+                              }
+                            ]
+                          },
+                          "startupApp": {
+                            "type": "string"
+                          },
+                          "desktopApp": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "packages": {
+                        "type": "object",
+                        "required": [
+                          "extraPackages"
+                        ],
+                        "properties": {
+                          "extraPackages": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "security": {
+                        "type": "object",
+                        "required": [
+                          "noDefaultOwner",
+                          "sanitizeSecrets"
+                        ],
+                        "properties": {
+                          "noDefaultOwner": {
+                            "type": "boolean"
+                          },
+                          "sanitizeSecrets": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "recovery": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "includes"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "includes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       },
                       "profileHash": {
                         "type": "string"
@@ -12456,7 +12739,312 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": {}
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "version",
+                  "architecture",
+                  "base",
+                  "boot",
+                  "system",
+                  "applications",
+                  "onboarding",
+                  "login",
+                  "desktop",
+                  "packages",
+                  "security",
+                  "recovery",
+                  "profileHash"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "architecture": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "amd64"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "arm64"
+                        ]
+                      }
+                    ]
+                  },
+                  "base": {
+                    "type": "object",
+                    "required": [
+                      "distribution",
+                      "release",
+                      "kernel"
+                    ],
+                    "properties": {
+                      "distribution": {
+                        "type": "string",
+                        "enum": [
+                          "debian"
+                        ]
+                      },
+                      "release": {
+                        "type": "string"
+                      },
+                      "kernel": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "boot": {
+                    "type": "object",
+                    "required": [
+                      "grub",
+                      "plymouth",
+                      "firmwareLogo"
+                    ],
+                    "properties": {
+                      "grub": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "timeout"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "timeout": {
+                            "type": "integer"
+                          },
+                          "theme": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "plymouth": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "theme"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "theme": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "firmwareLogo": {
+                        "type": "object",
+                        "required": [
+                          "mode"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "runtime-if-supported"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "none"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "system": {
+                    "type": "object",
+                    "required": [
+                      "abSlots",
+                      "recovery"
+                    ],
+                    "properties": {
+                      "abSlots": {
+                        "type": "boolean"
+                      },
+                      "recovery": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "applications": {
+                    "type": "object",
+                    "required": [
+                      "applications"
+                    ],
+                    "properties": {
+                      "applications": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "onboarding": {
+                    "type": "object",
+                    "required": [
+                      "firstBoot"
+                    ],
+                    "properties": {
+                      "firstBoot": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "login": {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "password",
+                      "fingerprint",
+                      "fido2"
+                    ],
+                    "properties": {
+                      "provider": {
+                        "type": "string",
+                        "enum": [
+                          "vestara"
+                        ]
+                      },
+                      "password": {
+                        "type": "boolean"
+                      },
+                      "fingerprint": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "auto"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "disabled"
+                            ]
+                          }
+                        ]
+                      },
+                      "fido2": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "auto"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "disabled"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "desktop": {
+                    "type": "object",
+                    "required": [
+                      "session",
+                      "startupApp",
+                      "desktopApp"
+                    ],
+                    "properties": {
+                      "session": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "vestara"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "fallback"
+                            ]
+                          }
+                        ]
+                      },
+                      "startupApp": {
+                        "type": "string"
+                      },
+                      "desktopApp": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "packages": {
+                    "type": "object",
+                    "required": [
+                      "extraPackages"
+                    ],
+                    "properties": {
+                      "extraPackages": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "security": {
+                    "type": "object",
+                    "required": [
+                      "noDefaultOwner",
+                      "sanitizeSecrets"
+                    ],
+                    "properties": {
+                      "noDefaultOwner": {
+                        "type": "boolean"
+                      },
+                      "sanitizeSecrets": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "recovery": {
+                    "type": "object",
+                    "required": [
+                      "enabled",
+                      "includes"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "includes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "profileHash": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
         },
@@ -12471,6 +13059,16 @@
                     "id",
                     "version",
                     "architecture",
+                    "base",
+                    "boot",
+                    "system",
+                    "applications",
+                    "onboarding",
+                    "login",
+                    "desktop",
+                    "packages",
+                    "security",
+                    "recovery",
                     "profileHash"
                   ],
                   "properties": {
@@ -12481,10 +13079,1324 @@
                       "type": "string"
                     },
                     "architecture": {
-                      "type": "string"
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "amd64"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "arm64"
+                          ]
+                        }
+                      ]
+                    },
+                    "base": {
+                      "type": "object",
+                      "required": [
+                        "distribution",
+                        "release",
+                        "kernel"
+                      ],
+                      "properties": {
+                        "distribution": {
+                          "type": "string",
+                          "enum": [
+                            "debian"
+                          ]
+                        },
+                        "release": {
+                          "type": "string"
+                        },
+                        "kernel": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "boot": {
+                      "type": "object",
+                      "required": [
+                        "grub",
+                        "plymouth",
+                        "firmwareLogo"
+                      ],
+                      "properties": {
+                        "grub": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "timeout"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "timeout": {
+                              "type": "integer"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "plymouth": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "theme"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "firmwareLogo": {
+                          "type": "object",
+                          "required": [
+                            "mode"
+                          ],
+                          "properties": {
+                            "mode": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime-if-supported"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "none"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "system": {
+                      "type": "object",
+                      "required": [
+                        "abSlots",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "abSlots": {
+                          "type": "boolean"
+                        },
+                        "recovery": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "applications": {
+                      "type": "object",
+                      "required": [
+                        "applications"
+                      ],
+                      "properties": {
+                        "applications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "onboarding": {
+                      "type": "object",
+                      "required": [
+                        "firstBoot"
+                      ],
+                      "properties": {
+                        "firstBoot": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "login": {
+                      "type": "object",
+                      "required": [
+                        "provider",
+                        "password",
+                        "fingerprint",
+                        "fido2"
+                      ],
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "vestara"
+                          ]
+                        },
+                        "password": {
+                          "type": "boolean"
+                        },
+                        "fingerprint": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        },
+                        "fido2": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "desktop": {
+                      "type": "object",
+                      "required": [
+                        "session",
+                        "startupApp",
+                        "desktopApp"
+                      ],
+                      "properties": {
+                        "session": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "vestara"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fallback"
+                              ]
+                            }
+                          ]
+                        },
+                        "startupApp": {
+                          "type": "string"
+                        },
+                        "desktopApp": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "packages": {
+                      "type": "object",
+                      "required": [
+                        "extraPackages"
+                      ],
+                      "properties": {
+                        "extraPackages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "security": {
+                      "type": "object",
+                      "required": [
+                        "noDefaultOwner",
+                        "sanitizeSecrets"
+                      ],
+                      "properties": {
+                        "noDefaultOwner": {
+                          "type": "boolean"
+                        },
+                        "sanitizeSecrets": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "recovery": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "includes"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "includes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     },
                     "profileHash": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/image/profiles/{id}": {
+      "get": {
+        "summary": "Get an image profile",
+        "tags": [
+          "image"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "version",
+                    "architecture",
+                    "base",
+                    "boot",
+                    "system",
+                    "applications",
+                    "onboarding",
+                    "login",
+                    "desktop",
+                    "packages",
+                    "security",
+                    "recovery",
+                    "profileHash"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "architecture": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "amd64"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "arm64"
+                          ]
+                        }
+                      ]
+                    },
+                    "base": {
+                      "type": "object",
+                      "required": [
+                        "distribution",
+                        "release",
+                        "kernel"
+                      ],
+                      "properties": {
+                        "distribution": {
+                          "type": "string",
+                          "enum": [
+                            "debian"
+                          ]
+                        },
+                        "release": {
+                          "type": "string"
+                        },
+                        "kernel": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "boot": {
+                      "type": "object",
+                      "required": [
+                        "grub",
+                        "plymouth",
+                        "firmwareLogo"
+                      ],
+                      "properties": {
+                        "grub": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "timeout"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "timeout": {
+                              "type": "integer"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "plymouth": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "theme"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "firmwareLogo": {
+                          "type": "object",
+                          "required": [
+                            "mode"
+                          ],
+                          "properties": {
+                            "mode": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime-if-supported"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "none"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "system": {
+                      "type": "object",
+                      "required": [
+                        "abSlots",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "abSlots": {
+                          "type": "boolean"
+                        },
+                        "recovery": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "applications": {
+                      "type": "object",
+                      "required": [
+                        "applications"
+                      ],
+                      "properties": {
+                        "applications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "onboarding": {
+                      "type": "object",
+                      "required": [
+                        "firstBoot"
+                      ],
+                      "properties": {
+                        "firstBoot": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "login": {
+                      "type": "object",
+                      "required": [
+                        "provider",
+                        "password",
+                        "fingerprint",
+                        "fido2"
+                      ],
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "vestara"
+                          ]
+                        },
+                        "password": {
+                          "type": "boolean"
+                        },
+                        "fingerprint": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        },
+                        "fido2": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "desktop": {
+                      "type": "object",
+                      "required": [
+                        "session",
+                        "startupApp",
+                        "desktopApp"
+                      ],
+                      "properties": {
+                        "session": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "vestara"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fallback"
+                              ]
+                            }
+                          ]
+                        },
+                        "startupApp": {
+                          "type": "string"
+                        },
+                        "desktopApp": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "packages": {
+                      "type": "object",
+                      "required": [
+                        "extraPackages"
+                      ],
+                      "properties": {
+                        "extraPackages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "security": {
+                      "type": "object",
+                      "required": [
+                        "noDefaultOwner",
+                        "sanitizeSecrets"
+                      ],
+                      "properties": {
+                        "noDefaultOwner": {
+                          "type": "boolean"
+                        },
+                        "sanitizeSecrets": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "recovery": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "includes"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "includes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "profileHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an image profile (recomputes profile hash)",
+        "tags": [
+          "image"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "string"
+                  },
+                  "architecture": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "amd64"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "arm64"
+                        ]
+                      }
+                    ]
+                  },
+                  "base": {
+                    "type": "object",
+                    "required": [
+                      "distribution",
+                      "release",
+                      "kernel"
+                    ],
+                    "properties": {
+                      "distribution": {
+                        "type": "string",
+                        "enum": [
+                          "debian"
+                        ]
+                      },
+                      "release": {
+                        "type": "string"
+                      },
+                      "kernel": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "boot": {
+                    "type": "object",
+                    "required": [
+                      "grub",
+                      "plymouth",
+                      "firmwareLogo"
+                    ],
+                    "properties": {
+                      "grub": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "timeout"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "timeout": {
+                            "type": "integer"
+                          },
+                          "theme": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "plymouth": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "theme"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "theme": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "firmwareLogo": {
+                        "type": "object",
+                        "required": [
+                          "mode"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "runtime-if-supported"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "none"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "system": {
+                    "type": "object",
+                    "required": [
+                      "abSlots",
+                      "recovery"
+                    ],
+                    "properties": {
+                      "abSlots": {
+                        "type": "boolean"
+                      },
+                      "recovery": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "applications": {
+                    "type": "object",
+                    "required": [
+                      "applications"
+                    ],
+                    "properties": {
+                      "applications": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "onboarding": {
+                    "type": "object",
+                    "required": [
+                      "firstBoot"
+                    ],
+                    "properties": {
+                      "firstBoot": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "login": {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "password",
+                      "fingerprint",
+                      "fido2"
+                    ],
+                    "properties": {
+                      "provider": {
+                        "type": "string",
+                        "enum": [
+                          "vestara"
+                        ]
+                      },
+                      "password": {
+                        "type": "boolean"
+                      },
+                      "fingerprint": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "auto"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "disabled"
+                            ]
+                          }
+                        ]
+                      },
+                      "fido2": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "auto"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "disabled"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "desktop": {
+                    "type": "object",
+                    "required": [
+                      "session",
+                      "startupApp",
+                      "desktopApp"
+                    ],
+                    "properties": {
+                      "session": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "vestara"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "fallback"
+                            ]
+                          }
+                        ]
+                      },
+                      "startupApp": {
+                        "type": "string"
+                      },
+                      "desktopApp": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "packages": {
+                    "type": "object",
+                    "required": [
+                      "extraPackages"
+                    ],
+                    "properties": {
+                      "extraPackages": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "security": {
+                    "type": "object",
+                    "required": [
+                      "noDefaultOwner",
+                      "sanitizeSecrets"
+                    ],
+                    "properties": {
+                      "noDefaultOwner": {
+                        "type": "boolean"
+                      },
+                      "sanitizeSecrets": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "recovery": {
+                    "type": "object",
+                    "required": [
+                      "enabled",
+                      "includes"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "includes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "version",
+                    "architecture",
+                    "base",
+                    "boot",
+                    "system",
+                    "applications",
+                    "onboarding",
+                    "login",
+                    "desktop",
+                    "packages",
+                    "security",
+                    "recovery",
+                    "profileHash"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "architecture": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "amd64"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "arm64"
+                          ]
+                        }
+                      ]
+                    },
+                    "base": {
+                      "type": "object",
+                      "required": [
+                        "distribution",
+                        "release",
+                        "kernel"
+                      ],
+                      "properties": {
+                        "distribution": {
+                          "type": "string",
+                          "enum": [
+                            "debian"
+                          ]
+                        },
+                        "release": {
+                          "type": "string"
+                        },
+                        "kernel": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "boot": {
+                      "type": "object",
+                      "required": [
+                        "grub",
+                        "plymouth",
+                        "firmwareLogo"
+                      ],
+                      "properties": {
+                        "grub": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "timeout"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "timeout": {
+                              "type": "integer"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "plymouth": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "theme"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "firmwareLogo": {
+                          "type": "object",
+                          "required": [
+                            "mode"
+                          ],
+                          "properties": {
+                            "mode": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "runtime-if-supported"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "none"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "system": {
+                      "type": "object",
+                      "required": [
+                        "abSlots",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "abSlots": {
+                          "type": "boolean"
+                        },
+                        "recovery": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "applications": {
+                      "type": "object",
+                      "required": [
+                        "applications"
+                      ],
+                      "properties": {
+                        "applications": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "onboarding": {
+                      "type": "object",
+                      "required": [
+                        "firstBoot"
+                      ],
+                      "properties": {
+                        "firstBoot": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "login": {
+                      "type": "object",
+                      "required": [
+                        "provider",
+                        "password",
+                        "fingerprint",
+                        "fido2"
+                      ],
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "vestara"
+                          ]
+                        },
+                        "password": {
+                          "type": "boolean"
+                        },
+                        "fingerprint": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        },
+                        "fido2": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "auto"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "disabled"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "desktop": {
+                      "type": "object",
+                      "required": [
+                        "session",
+                        "startupApp",
+                        "desktopApp"
+                      ],
+                      "properties": {
+                        "session": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "vestara"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fallback"
+                              ]
+                            }
+                          ]
+                        },
+                        "startupApp": {
+                          "type": "string"
+                        },
+                        "desktopApp": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "packages": {
+                      "type": "object",
+                      "required": [
+                        "extraPackages"
+                      ],
+                      "properties": {
+                        "extraPackages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "security": {
+                      "type": "object",
+                      "required": [
+                        "noDefaultOwner",
+                        "sanitizeSecrets"
+                      ],
+                      "properties": {
+                        "noDefaultOwner": {
+                          "type": "boolean"
+                        },
+                        "sanitizeSecrets": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "recovery": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "includes"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "includes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "profileHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
                     }
                   }
                 }
@@ -12515,7 +14427,26 @@
                     "type": "string"
                   },
                   "target": {
-                    "type": "string"
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "raw"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "installer"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "virtual"
+                        ]
+                      }
+                    ]
                   }
                 }
               }
@@ -12527,7 +14458,74 @@
             "description": "Default Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profileId",
+                    "profileHash",
+                    "target",
+                    "items",
+                    "planHash"
+                  ],
+                  "properties": {
+                    "profileId": {
+                      "type": "string"
+                    },
+                    "profileHash": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "raw"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "installer"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "virtual"
+                          ]
+                        }
+                      ]
+                    },
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "stage",
+                          "description",
+                          "generated"
+                        ],
+                        "properties": {
+                          "stage": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "generated": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "planHash": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           },
@@ -12599,7 +14597,26 @@
                     "type": "string"
                   },
                   "target": {
-                    "type": "string"
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "raw"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "installer"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "virtual"
+                        ]
+                      }
+                    ]
                   },
                   "approved": {
                     "type": "boolean"
@@ -12614,7 +14631,177 @@
             "description": "Default Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "state",
+                    "plan",
+                    "evidence"
+                  ],
+                  "properties": {
+                    "state": {
+                      "type": "object",
+                      "required": [
+                        "buildId",
+                        "status",
+                        "completedStages"
+                      ],
+                      "properties": {
+                        "buildId": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "draft"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "planning"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "building"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "verifying"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "completed"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "failed"
+                              ]
+                            }
+                          ]
+                        },
+                        "currentStage": {
+                          "type": "string"
+                        },
+                        "completedStages": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "failedStage": {
+                          "type": "string"
+                        },
+                        "failureMessage": {
+                          "type": "string"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "plan": {
+                      "type": "object",
+                      "required": [
+                        "profileId",
+                        "profileHash",
+                        "target",
+                        "items",
+                        "planHash"
+                      ],
+                      "properties": {
+                        "profileId": {
+                          "type": "string"
+                        },
+                        "profileHash": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "raw"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "installer"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "virtual"
+                              ]
+                            }
+                          ]
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "stage",
+                              "description",
+                              "generated"
+                            ],
+                            "properties": {
+                              "stage": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "generated": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "planHash": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "evidence": {
+                      "type": "object",
+                      "required": [
+                        "planHash",
+                        "artifactPath",
+                        "evidenceHash"
+                      ],
+                      "properties": {
+                        "planHash": {
+                          "type": "string"
+                        },
+                        "artifactPath": {
+                          "type": "string"
+                        },
+                        "evidenceHash": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },
@@ -12675,7 +14862,80 @@
             "description": "Default Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "buildId",
+                    "status",
+                    "completedStages"
+                  ],
+                  "properties": {
+                    "buildId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "draft"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "planning"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "building"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "verifying"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "completed"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "failed"
+                          ]
+                        }
+                      ]
+                    },
+                    "currentStage": {
+                      "type": "string"
+                    },
+                    "completedStages": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "failedStage": {
+                      "type": "string"
+                    },
+                    "failureMessage": {
+                      "type": "string"
+                    },
+                    "startedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             }
           }

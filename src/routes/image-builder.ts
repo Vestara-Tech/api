@@ -1,16 +1,17 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from '@sinclair/typebox';
 import type { ImageBuildService } from '../image/service/image-build-service.js';
-import type { VestaraImageProfile, ImageBuildTarget } from '../image/domain/profile.js';
-
-const ErrorSchema = Type.Object({ error: Type.Object({ code: Type.String(), message: Type.String(), requestId: Type.String(), correlationId: Type.String(), retryable: Type.Boolean(), details: Type.Optional(Type.Any()) }) });
-
-const ProfileSchema = Type.Object({
-  id: Type.String(),
-  version: Type.String(),
-  architecture: Type.String(),
-  profileHash: Type.String(),
-});
+import type { VestaraImageProfile } from '../image/domain/profile.js';
+import {
+  BuildRequestSchema,
+  ImageBuildPlanSchema,
+  ImageBuildResultSchema,
+  ImageBuildStateSchema,
+  ImageErrorSchema,
+  ImageProfileSchema,
+  PlanRequestSchema,
+  UpdateImageProfileBodySchema,
+} from '../image/contracts.js';
 
 export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const image = app.application.container.resolve<ImageBuildService>('imageBuilder');
@@ -21,10 +22,23 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['image'],
         summary: 'List image profiles',
-        response: { 200: Type.Array(ProfileSchema) },
+        response: { 200: Type.Array(ImageProfileSchema) },
       },
     },
     async (_request, reply) => reply.send(image.listProfiles() as never),
+  );
+
+  app.get(
+    '/api/v2/image/profiles/:id',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Get an image profile',
+        params: Type.Object({ id: Type.String() }),
+        response: { 200: ImageProfileSchema, 404: ImageErrorSchema },
+      },
+    },
+    async (request, reply) => reply.send(image.getProfile(request.params.id) as never),
   );
 
   app.post(
@@ -33,13 +47,31 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['image'],
         summary: 'Register an image profile',
-        body: Type.Any(),
-        response: { 201: ProfileSchema },
+        body: ImageProfileSchema,
+        response: { 201: ImageProfileSchema },
       },
     },
     async (request, reply) => {
-      const profile = image.registerProfile(request.body as Omit<VestaraImageProfile, 'profileHash'>);
-      return reply.status(201).send({ id: profile.id, version: profile.version, architecture: profile.architecture, profileHash: profile.profileHash } as never);
+      const body = request.body as VestaraImageProfile;
+      const profile = image.registerProfile(body);
+      return reply.status(201).send(profile as never);
+    },
+  );
+
+  app.patch(
+    '/api/v2/image/profiles/:id',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Update an image profile (recomputes profile hash)',
+        params: Type.Object({ id: Type.String() }),
+        body: UpdateImageProfileBodySchema,
+        response: { 200: ImageProfileSchema, 404: ImageErrorSchema },
+      },
+    },
+    async (request, reply) => {
+      const profile = image.updateProfile(request.params.id, request.body as never);
+      return reply.send(profile as never);
     },
   );
 
@@ -49,13 +81,13 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['image'],
         summary: 'Compile an image build plan (no build)',
-        body: Type.Object({ profileId: Type.String(), target: Type.String() }),
-        response: { 200: Type.Any(), 404: ErrorSchema },
+        body: PlanRequestSchema,
+        response: { 200: ImageBuildPlanSchema, 404: ImageErrorSchema },
       },
     },
     async (request, reply) => {
-      const plan = image.plan(request.body.profileId, request.body.target as ImageBuildTarget);
-      return reply.send(plan);
+      const plan = image.plan(request.body.profileId, request.body.target);
+      return reply.send(plan as never);
     },
   );
 
@@ -65,13 +97,13 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['image'],
         summary: 'Run a governed image build (requires approval)',
-        body: Type.Object({ profileId: Type.String(), target: Type.String(), approved: Type.Boolean() }),
-        response: { 200: Type.Any(), 403: ErrorSchema },
+        body: BuildRequestSchema,
+        response: { 200: ImageBuildResultSchema, 403: ImageErrorSchema },
       },
     },
     async (request, reply) => {
-      const result = await image.build(request.body.profileId, request.body.target as ImageBuildTarget, request.body.approved);
-      return reply.send(result);
+      const result = await image.build(request.body.profileId, request.body.target, request.body.approved);
+      return reply.send(result as never);
     },
   );
 
@@ -81,9 +113,9 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       schema: {
         tags: ['image'],
         summary: 'Current image build state',
-        response: { 200: Type.Any() },
+        response: { 200: ImageBuildStateSchema },
       },
     },
-    async () => image.getState(),
+    async () => image.getState() as never,
   );
 };

@@ -52,6 +52,28 @@ export class ImageBuildService {
     return profile;
   }
 
+  /** IMG — Update a profile: merge a partial patch, recompute the profile hash. */
+  updateProfile(id: string, patch: Partial<Omit<VestaraImageProfile, 'id' | 'profileHash'>>): VestaraImageProfile {
+    const current = this.registry.get(id);
+    const merged = {
+      ...current,
+      ...patch,
+      base: { ...current.base, ...(patch.base ?? {}) },
+      boot: { ...current.boot, ...(patch.boot ?? {}) },
+      system: { ...current.system, ...(patch.system ?? {}) },
+      applications: { ...current.applications, ...(patch.applications ?? {}) },
+      onboarding: { ...current.onboarding, ...(patch.onboarding ?? {}) },
+      login: { ...current.login, ...(patch.login ?? {}) },
+      desktop: { ...current.desktop, ...(patch.desktop ?? {}) },
+      packages: { ...current.packages, ...(patch.packages ?? {}) },
+      security: { ...current.security, ...(patch.security ?? {}) },
+      recovery: { ...current.recovery, ...(patch.recovery ?? {}) },
+    };
+    const updated = withProfileHash(merged);
+    this.registry.update(updated);
+    return updated;
+  }
+
   plan(profileId: string, target: ImageBuildTarget): ImageBuildPlan {
     const profile = this.registry.get(profileId);
     return compileBuildPlan(profile, target);

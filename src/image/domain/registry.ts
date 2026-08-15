@@ -25,6 +25,14 @@ export class ImageProfileRegistry {
     return this.profiles.has(id);
   }
 
+  /** Replace an existing profile, preserving its identity. */
+  update(profile: VestaraImageProfile): VestaraImageProfile {
+    const existing = this.profiles.get(profile.id);
+    if (!existing) throw notFound(`Image profile "${profile.id}" not found`);
+    this.profiles.set(profile.id, profile);
+    return profile;
+  }
+
   list(): readonly VestaraImageProfile[] {
     return [...this.profiles.values()].sort((a, b) => a.id.localeCompare(b.id));
   }
