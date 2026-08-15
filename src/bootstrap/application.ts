@@ -217,7 +217,7 @@ export function createApplication(config: AppConfig): Application {
   const loginPlatform = buildLoginPlatform();
 
   // ── OS Image Builder (IMG-001..026) ────────────────────────
-  const imageBuilder = buildImageBuilderService();
+  const { service: imageBuilder, platformV2: imagePlatformV2 } = buildImageBuilderService(events);
 
   // ── AI Platform (AI-001..006) ─────────────────────────────
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
@@ -337,6 +337,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('login.sessions', loginPlatform.sessions);
   container.register('login.rateLimit', loginPlatform.rateLimit);
   container.register('imageBuilder', imageBuilder);
+  container.register('image.platformV2', imagePlatformV2);
   container.register('ai', ai);
   container.register('ai.providers', aiProviders);
   container.register('ai.catalog', aiCatalog);
