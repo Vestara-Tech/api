@@ -32667,6 +32667,514 @@
           }
         }
       }
+    },
+    "/api/v2/system/daemon/execute": {
+      "post": {
+        "summary": "Request a typed operation through the approval workflow + daemon",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "target",
+                  "requestedBy"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "requestedBy": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "journal",
+                    "approval",
+                    "rollbackPoint"
+                  ],
+                  "properties": {
+                    "journal": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "kind",
+                        "risk",
+                        "target",
+                        "status",
+                        "requestedBy",
+                        "requestedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "risk": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "requestedBy": {
+                          "type": "string"
+                        },
+                        "requestedAt": {
+                          "type": "string"
+                        },
+                        "approvedAt": {
+                          "type": "string"
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "string"
+                        },
+                        "approvedBy": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "approval": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "operationId",
+                        "kind",
+                        "status",
+                        "approvals",
+                        "required",
+                        "requestedAt",
+                        "expiresAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "operationId": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "approvals": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "required": {
+                          "type": "integer"
+                        },
+                        "requestedAt": {
+                          "type": "string"
+                        },
+                        "expiresAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "rollbackPoint": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "operationId",
+                        "target",
+                        "kind",
+                        "capturedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "operationId": {
+                          "type": "string"
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "capturedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/approvals/{id}/approve": {
+      "post": {
+        "summary": "Approve a pending approval request (dual approval for critical)",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "approver"
+                ],
+                "properties": {
+                  "approver": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "status",
+                    "approvals",
+                    "required"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "approvals": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "required": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/approvals/{id}/run": {
+      "post": {
+        "summary": "Execute an approved operation through the daemon",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "approver"
+                ],
+                "properties": {
+                  "approver": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "approval",
+                    "executed"
+                  ],
+                  "properties": {
+                    "approval": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "status"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "executed": {
+                      "type": "boolean"
+                    },
+                    "result": {
+                      "type": "object",
+                      "required": [
+                        "ok"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/approvals": {
+      "get": {
+        "summary": "List approval requests",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "operationId",
+                      "kind",
+                      "status",
+                      "approvals",
+                      "required",
+                      "requestedAt",
+                      "expiresAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "operationId": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "approvals": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "required": {
+                        "type": "integer"
+                      },
+                      "requestedAt": {
+                        "type": "string"
+                      },
+                      "expiresAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/health": {
+      "get": {
+        "summary": "System health status",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "api",
+                    "agentRuntime",
+                    "systemd",
+                    "bootSlot",
+                    "recovery",
+                    "measuredAt"
+                  ],
+                  "properties": {
+                    "api": {
+                      "type": "string"
+                    },
+                    "agentRuntime": {
+                      "type": "string"
+                    },
+                    "systemd": {
+                      "type": "string"
+                    },
+                    "bootSlot": {
+                      "type": "string"
+                    },
+                    "recovery": {
+                      "type": "string"
+                    },
+                    "cpuPercent": {
+                      "type": "integer"
+                    },
+                    "measuredAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/reconcile": {
+      "post": {
+        "summary": "Reconcile desired configuration against current system state",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "desired"
+                ],
+                "properties": {
+                  "desired": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "diff",
+                    "checkedAt"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "diff": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "key",
+                          "desired"
+                        ],
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "desired": {},
+                          "current": {}
+                        }
+                      }
+                    },
+                    "checkedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

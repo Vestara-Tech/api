@@ -21,5 +21,14 @@ export type { StorageMutationKind, MountInfo, StorageManagerPort } from './runti
 export { StorageManager, EnvironmentStorageManager, STORAGE_MUTATION_RISK } from './runtime/storage.js';
 export type { SystemOperationRequest, SystemOperationStatus, SystemOperationJournalEntry, SystemOperationStorePort, SystemOperationExecutorPort } from './service/system-operations.js';
 export { SYSTEM_OPERATION_RISK, SystemOperationBroker, InMemorySystemOperationStore, DevSystemOperationExecutor } from './service/system-operations.js';
+export type { ApprovalStatus, ApprovalPolicyLevel, ApprovalPolicy, ApprovalRequest, ApprovalStorePort } from './service/approval-rollback.js';
+export { ApprovalWorkflow, InMemoryApprovalStore } from './service/approval-rollback.js';
+export type { RollbackPoint, RollbackStorePort } from './service/approval-rollback.js';
+export { RollbackFramework, InMemoryRollbackStore } from './service/approval-rollback.js';
+export type { TypedOperationHandler } from './service/daemon.js';
+export { VestaraSystemDaemon, devSystemDaemon, SystemReconciler } from './service/daemon.js';
+export type { ReconciliationStatus, ReconciliationResult } from './service/daemon.js';
+export type { SystemLogSink, SystemDiagnosticsPort, SystemGeneratorPort, SystemImagePort, SystemIntegrationOptions, SystemHealthStatus } from './service/integrations.js';
+export { SystemIntegrations } from './service/integrations.js';
 export type { SystemV2Options } from './service/system-v2-service.js';
 export { SystemV2Service } from './service/system-v2-service.js';

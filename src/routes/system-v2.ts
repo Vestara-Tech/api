@@ -179,4 +179,108 @@ export const systemV2Routes: FastifyPluginAsyncTypebox = async (app) => {
     },
     async (request, reply) => reply.send(system.operation(request.params.id) as never),
   );
+
+  // ── SYS-052..064 daemon, approvals, health, reconcile ─────────
+  app.post(
+    '/api/v2/system/daemon/execute',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'Request a typed operation through the approval workflow + daemon',
+        body: Type.Object({ kind: Type.String(), target: Type.String(), requestedBy: Type.String() }),
+        response: {
+          201: Type.Object({
+            journal: JournalEntrySchema,
+            approval: Type.Object({
+              id: Type.String(),
+              operationId: Type.String(),
+              kind: Type.String(),
+              status: Type.String(),
+              approvals: Type.Array(Type.String()),
+              required: Type.Integer(),
+              requestedAt: Type.String(),
+              expiresAt: Type.String(),
+            }),
+            rollbackPoint: Type.Object({ id: Type.String(), operationId: Type.String(), target: Type.String(), kind: Type.String(), capturedAt: Type.String() }),
+          }),
+        },
+      },
+    },
+    async (request, reply) => reply.status(201).send((await system.daemonExecute(request.body.kind as never, request.body.target, request.body.requestedBy)) as never),
+  );
+
+  app.post(
+    '/api/v2/system/approvals/:id/approve',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'Approve a pending approval request (dual approval for critical)',
+        params: Type.Object({ id: Type.String() }),
+        body: Type.Object({ approver: Type.String() }),
+        response: { 200: Type.Object({ id: Type.String(), status: Type.String(), approvals: Type.Array(Type.String()), required: Type.Integer() }) },
+      },
+    },
+    async (request, reply) => {
+      const approval = system.approvalsGet(request.params.id);
+      const updated = approval ? system.approveOperation(approval.operationId, request.body.approver) : null;
+      return reply.send({ id: request.params.id, status: updated?.status ?? 'unknown', approvals: approval?.approvals ?? [], required: approval?.required ?? 0 } as never);
+    },
+  );
+
+  app.post(
+    '/api/v2/system/approvals/:id/run',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'Execute an approved operation through the daemon',
+        params: Type.Object({ id: Type.String() }),
+        body: Type.Object({ approver: Type.String() }),
+        response: {
+          200: Type.Object({
+            approval: Type.Object({ id: Type.String(), status: Type.String() }),
+            executed: Type.Boolean(),
+            result: Type.Optional(Type.Object({ ok: Type.Boolean(), message: Type.Optional(Type.String()) })),
+          }),
+        },
+      },
+    },
+    async (request, reply) => reply.send((await system.daemonApproveAndRun(request.params.id, request.body.approver)) as never),
+  );
+
+  app.get(
+    '/api/v2/system/approvals',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'List approval requests',
+        response: { 200: Type.Array(Type.Object({ id: Type.String(), operationId: Type.String(), kind: Type.String(), status: Type.String(), approvals: Type.Array(Type.String()), required: Type.Integer(), requestedAt: Type.String(), expiresAt: Type.String() })) },
+      },
+    },
+    async (_request, reply) => reply.send(system.approvalsList() as never),
+  );
+
+  app.get(
+    '/api/v2/system/health',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'System health status',
+        response: { 200: Type.Object({ api: Type.String(), agentRuntime: Type.String(), systemd: Type.String(), bootSlot: Type.String(), recovery: Type.String(), cpuPercent: Type.Optional(Type.Integer()), measuredAt: Type.String() }) },
+      },
+    },
+    async (_request, reply) => reply.send((await system.health()) as never),
+  );
+
+  app.post(
+    '/api/v2/system/reconcile',
+    {
+      schema: {
+        tags: ['system'],
+        summary: 'Reconcile desired configuration against current system state',
+        body: Type.Object({ desired: Type.Record(Type.String(), Type.Any()) }),
+        response: { 200: Type.Object({ status: Type.String(), diff: Type.Array(Type.Object({ key: Type.String(), desired: Type.Any(), current: Type.Optional(Type.Any()) })), checkedAt: Type.String() }) },
+      },
+    },
+    async (request, reply) => reply.send(system.reconcile(request.body.desired) as never),
+  );
 };
