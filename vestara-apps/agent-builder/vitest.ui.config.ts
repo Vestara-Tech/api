@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import { resolve } from 'node:path';
 
-const API_TARGET = process.env.VESTARA_API_URL ?? 'http://localhost:3001';
+const API_TARGET = process.env.VESTARA_API_URL ?? 'http://localhost:4310';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],

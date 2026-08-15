@@ -1,9 +1,11 @@
 import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import CodeIcon from '@mui/icons-material/Code';
 import StorageIcon from '@mui/icons-material/Storage';
 import { useProfile } from '../hooks/useImage';
 import { ImageSummary } from '../components/inspector/ImageSummary';
+import { ConnectionBanner } from '../components/connectivity/ConnectionBanner';
+import { useConnection } from '../hooks/useConnection';
+import { apiBase, imageClient } from '../api/client';
 
 const NAV_ITEMS = [
   { to: '', label: 'Overview', section: null },
@@ -24,12 +26,14 @@ export function ImageBuilderLayout() {
   const location = useLocation();
   const { profileId } = useParams<{ profileId: string }>();
   const { data: profile } = useProfile(profileId ?? '');
+  const { state, retry } = useConnection(imageClient, ['image']);
   const inBuilder = location.pathname.startsWith('/os-image-builder/') && !location.pathname.endsWith('/os-image-builder');
 
   let lastSection: string | null = null;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <ConnectionBanner state={state} apiBase={apiBase} onRetry={retry} />
       <Box
         sx={{
           display: 'flex',

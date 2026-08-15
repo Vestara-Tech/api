@@ -1,10 +1,12 @@
+import { ApiClient } from '@vestara/client';
 import type {
   ImageBuildPlan,
   ImageBuildResult,
   ImageBuildState,
   ImageProfile,
   UpdateImageProfileInput,
-} from './contracts';
+} from '../api/contracts';
+import { imageClient } from './client';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -19,47 +21,35 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const headers = new Headers(init.headers);
-  headers.set('Accept', 'application/json');
-  if (init.body !== undefined) headers.set('Content-Type', 'application/json');
-
-  const response = await fetch(path, { ...init, headers });
-  if (response.status === 204) return undefined as T;
-  const body = (await response.json().catch(() => null)) as unknown;
-  if (!response.ok) {
-    const err = body as { error?: { code?: string; message?: string; details?: unknown } } | null;
-    throw new ApiError(
-      response.status,
-      err?.error?.code ?? 'http_error',
-      err?.error?.message ?? response.statusText,
-      err?.error?.details,
-    );
-  }
-  return body as T;
+function clientOrNew(): ApiClient {
+  return imageClient ?? new ApiClient({ apiBase: 'http://localhost:4310' });
 }
 
+/**
+ * imageApi — thin wrapper over the shared connectivity-aware ApiClient. All
+ * network failures surface as typed ApiError codes (offline / not_found /
+ * server_error / invalid_response), so the UI can distinguish an unreachable
+ * API from a missing endpoint or a 500.
+ */
 export const imageApi = {
-  listProfiles: () => request<readonly ImageProfile[]>('/api/v2/image/profiles'),
+  listProfiles: () => clientOrNew().request<readonly ImageProfile[]>('/api/v2/image/profiles'),
 
-  getProfile: (id: string) => request<ImageProfile>(`/api/v2/image/profiles/${id}`),
+  getProfile: (id: string) => clientOrNew().request<ImageProfile>(`/api/v2/image/profiles/${id}`),
 
   registerProfile: (profile: ImageProfile) =>
-    request<ImageProfile>('/api/v2/image/profiles', { method: 'POST', body: JSON.stringify(profile) }),
+    clientOrNew().request<ImageProfile>('/api/v2/image/profiles', { method: 'POST', body: JSON.stringify(profile) }),
 
   updateProfile: (id: string, patch: UpdateImageProfileInput) =>
-    request<ImageProfile>(`/api/v2/image/profiles/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+    clientOrNew().request<ImageProfile>(`/api/v2/image/profiles/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
 
   plan: (profileId: string, target: string) =>
-    request<ImageBuildPlan>('/api/v2/image/plan', { method: 'POST', body: JSON.stringify({ profileId, target }) }),
+    clientOrNew().request<ImageBuildPlan>('/api/v2/image/plan', { method: 'POST', body: JSON.stringify({ profileId, target }) }),
 
   build: (profileId: string, target: string, approved: boolean) =>
-    request<ImageBuildResult>('/api/v2/image/build', {
+    clientOrNew().request<ImageBuildResult>('/api/v2/image/build', {
       method: 'POST',
       body: JSON.stringify({ profileId, target, approved }),
     }),
 
-  buildState: () => request<ImageBuildState>('/api/v2/image/build/state'),
+  buildState: () => clientOrNew().request<ImageBuildState>('/api/v2/image/build/state'),
 };
-
-export { imageApi as api };
