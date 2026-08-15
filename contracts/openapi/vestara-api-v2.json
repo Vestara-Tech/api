@@ -9152,6 +9152,1738 @@
           }
         }
       }
+    },
+    "/api/v2/system/boot/grub": {
+      "get": {
+        "summary": "Read the current GRUB configuration",
+        "tags": [
+          "system-grub"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "state"
+                  ],
+                  "properties": {
+                    "configuration": {
+                      "type": "object",
+                      "required": [
+                        "timeoutSeconds",
+                        "timeoutStyle",
+                        "kernelParameters",
+                        "recovery",
+                        "osProber"
+                      ],
+                      "properties": {
+                        "defaultEntry": {
+                          "type": "string"
+                        },
+                        "timeoutSeconds": {
+                          "type": "integer"
+                        },
+                        "timeoutStyle": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "menu"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "countdown"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "hidden"
+                              ]
+                            }
+                          ]
+                        },
+                        "distributor": {
+                          "type": "string"
+                        },
+                        "kernelParameters": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "graphics": {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "payload": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "osProber": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "state": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/capabilities": {
+      "get": {
+        "summary": "GRUB configuration capabilities",
+        "tags": [
+          "system-grub"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "read",
+                    "write",
+                    "regenerate",
+                    "backup",
+                    "entries",
+                    "theme"
+                  ],
+                  "properties": {
+                    "read": {
+                      "type": "boolean"
+                    },
+                    "write": {
+                      "type": "boolean"
+                    },
+                    "regenerate": {
+                      "type": "boolean"
+                    },
+                    "backup": {
+                      "type": "boolean"
+                    },
+                    "entries": {
+                      "type": "boolean"
+                    },
+                    "theme": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/entries": {
+      "get": {
+        "summary": "List GRUB boot entries",
+        "tags": [
+          "system-grub"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "label",
+                      "source",
+                      "active",
+                      "isVestara"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "active": {
+                        "type": "boolean"
+                      },
+                      "isVestara": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/validate": {
+      "post": {
+        "summary": "Validate a GRUB configuration proposal",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "timeoutSeconds",
+                  "timeoutStyle",
+                  "kernelParameters",
+                  "recovery",
+                  "osProber"
+                ],
+                "properties": {
+                  "defaultEntry": {
+                    "type": "string"
+                  },
+                  "timeoutSeconds": {
+                    "type": "integer"
+                  },
+                  "timeoutStyle": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "menu"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "countdown"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "hidden"
+                        ]
+                      }
+                    ]
+                  },
+                  "distributor": {
+                    "type": "string"
+                  },
+                  "kernelParameters": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "graphics": {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string"
+                      },
+                      "payload": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "recovery": {
+                    "type": "object",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "osProber": {
+                    "type": "object",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "candidate",
+                    "candidateHash",
+                    "changed",
+                    "validation",
+                    "requiresReboot",
+                    "previewHash"
+                  ],
+                  "properties": {
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "configuration",
+                        "configurationHash",
+                        "capturedAt"
+                      ],
+                      "properties": {
+                        "configuration": {
+                          "type": "object",
+                          "required": [
+                            "timeoutSeconds",
+                            "timeoutStyle",
+                            "kernelParameters",
+                            "recovery",
+                            "osProber"
+                          ],
+                          "properties": {
+                            "defaultEntry": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "timeoutStyle": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "menu"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "countdown"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "hidden"
+                                  ]
+                                }
+                              ]
+                            },
+                            "distributor": {
+                              "type": "string"
+                            },
+                            "kernelParameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "graphics": {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string"
+                                },
+                                "payload": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "recovery": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "osProber": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "configurationHash": {
+                          "type": "string"
+                        },
+                        "capturedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "candidate": {
+                      "type": "object",
+                      "required": [
+                        "timeoutSeconds",
+                        "timeoutStyle",
+                        "kernelParameters",
+                        "recovery",
+                        "osProber"
+                      ],
+                      "properties": {
+                        "defaultEntry": {
+                          "type": "string"
+                        },
+                        "timeoutSeconds": {
+                          "type": "integer"
+                        },
+                        "timeoutStyle": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "menu"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "countdown"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "hidden"
+                              ]
+                            }
+                          ]
+                        },
+                        "distributor": {
+                          "type": "string"
+                        },
+                        "kernelParameters": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "graphics": {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "payload": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "osProber": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "candidateHash": {
+                      "type": "string"
+                    },
+                    "changed": {
+                      "type": "boolean"
+                    },
+                    "validation": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "issues"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/preview": {
+      "post": {
+        "summary": "Preview GRUB configuration changes",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "timeoutSeconds",
+                  "timeoutStyle",
+                  "kernelParameters",
+                  "recovery",
+                  "osProber"
+                ],
+                "properties": {
+                  "defaultEntry": {
+                    "type": "string"
+                  },
+                  "timeoutSeconds": {
+                    "type": "integer"
+                  },
+                  "timeoutStyle": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "menu"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "countdown"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "hidden"
+                        ]
+                      }
+                    ]
+                  },
+                  "distributor": {
+                    "type": "string"
+                  },
+                  "kernelParameters": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "graphics": {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string"
+                      },
+                      "payload": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "recovery": {
+                    "type": "object",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "osProber": {
+                    "type": "object",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "candidate",
+                    "candidateHash",
+                    "changed",
+                    "validation",
+                    "requiresReboot",
+                    "previewHash"
+                  ],
+                  "properties": {
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "configuration",
+                        "configurationHash",
+                        "capturedAt"
+                      ],
+                      "properties": {
+                        "configuration": {
+                          "type": "object",
+                          "required": [
+                            "timeoutSeconds",
+                            "timeoutStyle",
+                            "kernelParameters",
+                            "recovery",
+                            "osProber"
+                          ],
+                          "properties": {
+                            "defaultEntry": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "timeoutStyle": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "menu"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "countdown"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "hidden"
+                                  ]
+                                }
+                              ]
+                            },
+                            "distributor": {
+                              "type": "string"
+                            },
+                            "kernelParameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "graphics": {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string"
+                                },
+                                "payload": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "recovery": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "osProber": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "configurationHash": {
+                          "type": "string"
+                        },
+                        "capturedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "candidate": {
+                      "type": "object",
+                      "required": [
+                        "timeoutSeconds",
+                        "timeoutStyle",
+                        "kernelParameters",
+                        "recovery",
+                        "osProber"
+                      ],
+                      "properties": {
+                        "defaultEntry": {
+                          "type": "string"
+                        },
+                        "timeoutSeconds": {
+                          "type": "integer"
+                        },
+                        "timeoutStyle": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "menu"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "countdown"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "hidden"
+                              ]
+                            }
+                          ]
+                        },
+                        "distributor": {
+                          "type": "string"
+                        },
+                        "kernelParameters": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "graphics": {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "payload": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "osProber": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "candidateHash": {
+                      "type": "string"
+                    },
+                    "changed": {
+                      "type": "boolean"
+                    },
+                    "validation": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "issues"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/apply": {
+      "post": {
+        "summary": "Apply a GRUB configuration (requires approval)",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "configuration",
+                  "approved"
+                ],
+                "properties": {
+                  "configuration": {
+                    "type": "object",
+                    "required": [
+                      "timeoutSeconds",
+                      "timeoutStyle",
+                      "kernelParameters",
+                      "recovery",
+                      "osProber"
+                    ],
+                    "properties": {
+                      "defaultEntry": {
+                        "type": "string"
+                      },
+                      "timeoutSeconds": {
+                        "type": "integer"
+                      },
+                      "timeoutStyle": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "menu"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "countdown"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "hidden"
+                            ]
+                          }
+                        ]
+                      },
+                      "distributor": {
+                        "type": "string"
+                      },
+                      "kernelParameters": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "graphics": {
+                        "type": "object",
+                        "properties": {
+                          "mode": {
+                            "type": "string"
+                          },
+                          "payload": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "recovery": {
+                        "type": "object",
+                        "required": [
+                          "enabled"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "osProber": {
+                        "type": "object",
+                        "required": [
+                          "enabled"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "approved": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "candidate",
+                    "candidateHash",
+                    "changed",
+                    "validation",
+                    "requiresReboot",
+                    "previewHash"
+                  ],
+                  "properties": {
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "configuration",
+                        "configurationHash",
+                        "capturedAt"
+                      ],
+                      "properties": {
+                        "configuration": {
+                          "type": "object",
+                          "required": [
+                            "timeoutSeconds",
+                            "timeoutStyle",
+                            "kernelParameters",
+                            "recovery",
+                            "osProber"
+                          ],
+                          "properties": {
+                            "defaultEntry": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "timeoutStyle": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "menu"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "countdown"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "hidden"
+                                  ]
+                                }
+                              ]
+                            },
+                            "distributor": {
+                              "type": "string"
+                            },
+                            "kernelParameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "graphics": {
+                              "type": "object",
+                              "properties": {
+                                "mode": {
+                                  "type": "string"
+                                },
+                                "payload": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "recovery": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "osProber": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "configurationHash": {
+                          "type": "string"
+                        },
+                        "capturedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "candidate": {
+                      "type": "object",
+                      "required": [
+                        "timeoutSeconds",
+                        "timeoutStyle",
+                        "kernelParameters",
+                        "recovery",
+                        "osProber"
+                      ],
+                      "properties": {
+                        "defaultEntry": {
+                          "type": "string"
+                        },
+                        "timeoutSeconds": {
+                          "type": "integer"
+                        },
+                        "timeoutStyle": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "menu"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "countdown"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "hidden"
+                              ]
+                            }
+                          ]
+                        },
+                        "distributor": {
+                          "type": "string"
+                        },
+                        "kernelParameters": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "graphics": {
+                          "type": "object",
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "payload": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "osProber": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "candidateHash": {
+                      "type": "string"
+                    },
+                    "changed": {
+                      "type": "boolean"
+                    },
+                    "validation": {
+                      "type": "object",
+                      "required": [
+                        "ok",
+                        "issues"
+                      ],
+                      "properties": {
+                        "ok": {
+                          "type": "boolean"
+                        },
+                        "issues": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "previewHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/rollback": {
+      "post": {
+        "summary": "Roll back the GRUB configuration",
+        "tags": [
+          "system-grub"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/boot-result": {
+      "post": {
+        "summary": "Record GRUB boot success/failure",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "succeeded"
+                ],
+                "properties": {
+                  "succeeded": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/default": {
+      "post": {
+        "summary": "Set the default GRUB entry",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entryId"
+                ],
+                "properties": {
+                  "entryId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "entryId"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "entryId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/next": {
+      "post": {
+        "summary": "Set the next-boot GRUB entry",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entryId"
+                ],
+                "properties": {
+                  "entryId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "entryId"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "entryId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/theme/preview": {
+      "post": {
+        "summary": "Validate a GRUB theme proposal",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "theme": {
+                    "type": "object",
+                    "required": [
+                      "assetId",
+                      "sha256",
+                      "mediaType"
+                    ],
+                    "properties": {
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "sha256": {
+                        "type": "string"
+                      },
+                      "mediaType": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/boot/grub/theme/apply": {
+      "post": {
+        "summary": "Apply the GRUB theme",
+        "tags": [
+          "system-grub"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "theme": {
+                    "type": "object",
+                    "required": [
+                      "assetId",
+                      "sha256",
+                      "mediaType"
+                    ],
+                    "properties": {
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "sha256": {
+                        "type": "string"
+                      },
+                      "mediaType": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

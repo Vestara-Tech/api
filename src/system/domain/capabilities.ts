@@ -49,6 +49,17 @@ export const SYSTEM_CAPABILITIES: readonly SystemCapabilityDefinition[] = [
   { id: 'system.boot.logo.apply', kind: 'write', risk: 'critical', requiresApproval: true, description: 'Apply firmware/OEM logo' },
   { id: 'system.boot.logo.restore', kind: 'write', risk: 'critical', requiresApproval: true, description: 'Restore firmware/OEM logo' },
 
+  // ── GRUB configuration (SYS-019..022) ───────────────────────
+  { id: 'system.boot.grub.read', kind: 'read', risk: 'low', requiresApproval: false, description: 'Read GRUB configuration' },
+  { id: 'system.boot.grub.preview', kind: 'read', risk: 'low', requiresApproval: false, description: 'Preview GRUB configuration changes' },
+  { id: 'system.boot.grub.configuration.apply', kind: 'write', risk: 'high', requiresApproval: true, description: 'Apply GRUB configuration' },
+  { id: 'system.boot.grub.configuration.rollback', kind: 'write', risk: 'high', requiresApproval: true, description: 'Roll back GRUB configuration' },
+  { id: 'system.boot.grub.regenerate', kind: 'write', risk: 'high', requiresApproval: true, description: 'Regenerate grub.cfg via the distribution mechanism' },
+  { id: 'system.boot.grub.entry.setDefault', kind: 'write', risk: 'high', requiresApproval: true, description: 'Set the default GRUB entry' },
+  { id: 'system.boot.grub.entry.setNext', kind: 'write', risk: 'high', requiresApproval: true, description: 'Set the next-boot GRUB entry' },
+  { id: 'system.boot.grub.theme.apply', kind: 'write', risk: 'high', requiresApproval: true, description: 'Apply the GRUB theme' },
+  { id: 'system.boot.grub.theme.restore', kind: 'write', risk: 'high', requiresApproval: true, description: 'Restore the GRUB theme' },
+
   // ── Control (high risk) ─────────────────────────────────────
   { id: 'system.power.reboot', kind: 'control', risk: 'high', requiresApproval: true, description: 'Reboot the system' },
   { id: 'system.power.shutdown', kind: 'control', risk: 'high', requiresApproval: true, description: 'Shut down the system' },
@@ -73,4 +84,7 @@ export const FORBIDDEN_SYSTEM_OPERATIONS = [
   'system.shell.root',
   'system.firmware.writeArbitrary',
   'system.efivar.writeArbitrary',
+  'system.boot.grub.writeArbitrary',
+  'system.boot.grub.executeArbitrary',
+  'system.boot.grub.rawConfigWrite',
 ] as const;

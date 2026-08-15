@@ -69,6 +69,22 @@ with firmware-logo treated as an optional hardware-specific capability
 - **Config, not assets, drives behavior.** `vestara.system.boot.*` config keys
   select profiles/behavior; binary assets stay in the BootAssetStore.
 
+### 8. GRUB configuration is governed, not raw-text (SYS-019..022)
+
+- Vestara exposes a typed `GrubConfiguration` model — never arbitrary
+  `/etc/default/grub` or `grub.cfg` editing.
+- Kernel parameters are governed: known args modeled individually, dangerous
+  params rejected, unknown params require escalation.
+- Vestara manages drop-ins/config inputs and invokes the distribution's
+  supported generation mechanism (`update-grub`/`grub-mkconfig`); it does not
+  directly maintain generated `grub.cfg`.
+- Every change follows: validate → approval → snapshot known-good → apply →
+  regenerate → verify → pending-reboot-verification, with rollback at a
+  `bootAttempts` threshold.
+- `setDefault`/`setNext` operate through the A/B/recovery boot-entry
+  abstractions, never manual GRUB text.
+- Deliberately absent: `writeArbitrary`, `executeArbitrary`, `rawConfigWrite`.
+
 ## Consequences
 
 - Onboarding (ONB) and the future UI orchestrate the System layer; they never
@@ -77,3 +93,6 @@ with firmware-logo treated as an optional hardware-specific capability
 - Boot presentation profiles can become packageable Marketplace assets later.
 - Boot branding works across hardware, degrading gracefully when the OEM logo
   is not replaceable.
+- The future `vestara-apps/system-settings` UI can configure the complete OS
+  boot experience (firmware / GRUB / Plymouth) through three independent
+  governed layers.

@@ -265,6 +265,32 @@ separate optional hardware capability:
 SYS-015..025 connects boot branding to the A/B + recovery foundation from
 SYS-001..014.
 
+**SYS-019..022 — GRUB Configuration Platform (complete).** Governed GRUB
+configuration without exposing arbitrary `/etc/default/grub` or `grub.cfg`
+editing:
+
+- Typed `GrubConfiguration` model (defaultEntry, timeoutSeconds, timeoutStyle,
+  distributor, kernelParameters, graphics, recovery, osProber, presentation) —
+  never raw text
+- **Kernel-parameter governance** — known args modeled individually (`quiet`,
+  `splash`, `loglevel=3`, `systemd.show_status`); dangerous params rejected
+  (`single`, `emergency`, `init=/bin/bash`, `nokaslr`, `mitigations=off`);
+  unknown params require escalation
+- `GrubAdapter` port: discover/read/backup/apply/regenerate/verify/rollback/
+  setDefault/setNext/listEntries/applyTheme — the privileged service performs
+  all operations (Vestara manages drop-ins, never generated `grub.cfg`)
+- Governed pipeline: validate → approval → snapshot known-good → apply →
+  regenerate (distribution mechanism) → verify → pending-reboot-verification;
+  failed boots increment `bootAttempts` and restore known-good at threshold
+- Boot-entry integration: `setDefault`/`setNext` through the A/B/recovery
+  abstractions (never manual GRUB text)
+- Capabilities: read/preview LOW; configuration.apply/rollback/regenerate/
+  entry.setDefault/entry.setNext/theme.apply/theme.restore HIGH; absent:
+  `writeArbitrary`, `executeArbitrary`, `rawConfigWrite`
+- Control API `/api/v2/system/boot/grub/*` (12 routes); 58 OpenAPI paths total
+- Dev adapter reports unavailable honestly (no privileged GRUB access) so the
+  governed pipeline never touches the host bootloader
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream — ONB-010+ (execution), AUTH-007+ (OAuth),
 API2-004+ (compat) come next. PostgreSQL/Redis/NATS/Prisma and external
