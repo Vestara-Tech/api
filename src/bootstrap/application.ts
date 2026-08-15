@@ -41,6 +41,7 @@ import type { BuilderPlanePlatform } from './builder-plane.js';
 import type { DiagnosticsPlatform } from './diagnostics.js';
 import type { LogPlatform } from './log.js';
 import type { DatabasePlatform } from './database.js';
+import type { TestPlatform } from './test.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -62,6 +63,7 @@ import { buildBuilderPlanePlatform } from './builder-plane.js';
 import { buildDiagnosticsPlatform } from './diagnostics.js';
 import { buildLogPlatform } from './log.js';
 import { buildDatabasePlatform } from './database.js';
+import { buildTestPlatform } from './test.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -83,6 +85,7 @@ import { registerMarketplaceCapability } from './marketplace-capability.js';
 import { registerDiagnosticsCapability } from './diagnostics-capability.js';
 import { registerLogCapability } from './log-capability.js';
 import { registerDatabaseCapability } from './database-capability.js';
+import { registerTestCapability } from './test-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -129,6 +132,7 @@ export interface Application {
   readonly diagnostics: DiagnosticsPlatform;
   readonly log: LogPlatform;
   readonly database: DatabasePlatform;
+  readonly test: TestPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -247,6 +251,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Database Module (DB-001..) ────────────────────────────
   const database = buildDatabasePlatform();
 
+  // ── Test Module (TEST-001..) ──────────────────────────────
+  const test = buildTestPlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -268,6 +275,7 @@ export function createApplication(config: AppConfig): Application {
   registerDiagnosticsCapability(capabilities, config);
   registerLogCapability(capabilities, config);
   registerDatabaseCapability(capabilities, config);
+  registerTestCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -336,6 +344,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('database', database.service);
   container.register('database.store', database.store);
   container.register('database.adapters', database.adapters);
+  container.register('test.service', test.service);
+  container.register('test.registry', test.registry);
 
   const startedAt = Date.now();
 
@@ -374,6 +384,7 @@ export function createApplication(config: AppConfig): Application {
     diagnostics,
     log,
     database,
+    test,
     shutdown,
     systemStatus(): SystemStatus {
       return {

@@ -32,6 +32,7 @@ import { builderPlaneRoutes } from './routes/builder-plane.js';
 import { diagnosticsRoutes } from './routes/diagnostics.js';
 import { logRoutes } from './routes/log.js';
 import { databaseRoutes } from './routes/database.js';
+import { testRoutes } from './routes/test.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -93,6 +94,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(diagnosticsRoutes);
   await app.register(logRoutes);
   await app.register(databaseRoutes);
+  await app.register(testRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 
