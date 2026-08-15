@@ -1,0 +1,10 @@
+export type { TemplateKind, TemplateParameterType, TemplateParameter, TemplateMetadata, TemplateDefinition, TemplateParameterValues, TemplateContext } from './domain/template-definition.js';
+export { contextValue, resolveTemplateString, resolveTemplateValue } from './domain/template-definition.js';
+export type { TemplateValidationIssue, TemplateValidationResult } from './domain/template-validator.js';
+export { validateTemplate, validateParameterValues, mergeParameterDefaults, bumpTemplateVersion, instantiateTemplate } from './domain/template-validator.js';
+export type { TemplateContribution, TemplateContributionSource } from './domain/contribution.js';
+export type { TemplateRegistryPort } from './registry/template-registry.js';
+export { TemplateRegistry, InMemoryTemplateRegistry } from './registry/template-registry.js';
+export type { TemplateServiceOptions, TemplateInstantiationResult } from './service/template-service.js';
+export { TemplateService } from './service/template-service.js';
+export { builtinTemplates } from './contributions/builtin.js';

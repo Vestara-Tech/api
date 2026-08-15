@@ -46,6 +46,7 @@ import { applicationBuilderRoutes } from './routes/application-builder.js';
 import { userRoutes } from './routes/user.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { themeRoutes } from './routes/theme.js';
+import { templateRoutes } from './routes/template.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -121,6 +122,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(userRoutes);
   await app.register(dashboardRoutes);
   await app.register(themeRoutes);
+  await app.register(templateRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

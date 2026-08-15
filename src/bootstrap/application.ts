@@ -76,6 +76,7 @@ import { buildApplicationBuilderPlatform } from './appbuilder.js';
 import { buildUserPlatform } from './user.js';
 import { buildDashboardPlatform } from './dashboard.js';
 import { buildThemePlatform } from './theme.js';
+import { buildTemplatePlatform } from './template.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
@@ -108,6 +109,7 @@ import { registerPageBuilderCapability, registerApplicationBuilderCapability } f
 import { registerUserCapability } from './user-capability.js';
 import { registerDashboardCapability } from './dashboard-capability.js';
 import { registerThemeCapability } from './theme-capability.js';
+import { registerTemplateCapability } from './template-capability.js';
 import { registerMilestoneCapability } from './milestone-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
@@ -315,6 +317,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Theme Module (THEME-001..) ────────────────────────────
   const themes = buildThemePlatform();
 
+  // ── Template Module (TPL-001..) ───────────────────────────
+  const templates = buildTemplatePlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -346,6 +351,7 @@ export function createApplication(config: AppConfig): Application {
   registerUserCapability(capabilities, config);
   registerDashboardCapability(capabilities, config);
   registerThemeCapability(capabilities, config);
+  registerTemplateCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
 
   container.register('commands', commands);
@@ -438,6 +444,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('dashboard.builder', dashboard.builder);
   container.register('dashboard.generator', dashboard.generator);
   container.register('themes', themes.service);
+  container.register('templates', templates.service);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
   container.register('component.registry', component.registry);
