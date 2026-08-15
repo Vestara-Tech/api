@@ -237,7 +237,7 @@ export function createApplication(config: AppConfig): Application {
 
   // ── AI Platform (AI-001..006) ─────────────────────────────
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
-  const aiV2 = buildAiPlatformV2Service(aiCatalog, aiProviders);
+  const aiV2 = buildAiPlatformV2Service(aiCatalog, aiProviders, ai);
 
   // ── File Module (FILE-001..) ──────────────────────────────
   const file = buildFilePlatform();
@@ -389,7 +389,12 @@ export function createApplication(config: AppConfig): Application {
   container.register('ai.providers', aiProviders);
   container.register('ai.catalog', aiCatalog);
   container.register('ai.router', aiRouter);
-  container.register('ai.v2', aiV2);
+  container.register('ai.v2', aiV2.platform);
+  container.register('ai.v2.sessions', aiV2.sessions);
+  container.register('ai.v2.budgets', aiV2.budgets);
+  container.register('ai.v2.usage', aiV2.usage);
+  container.register('ai.v2.tracer', aiV2.tracer);
+  container.register('ai.v2.runtime', aiV2.runtime);
   container.register('agents', agents.runtime);
   container.register('agent.registry', agents.agents);
   container.register('agent.runs', agents.runs);
