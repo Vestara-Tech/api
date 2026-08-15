@@ -1,0 +1,12 @@
+export type { SystemRiskLevel, SystemOperationKind, SystemCapabilityDefinition } from './domain/capabilities.js';
+export { SYSTEM_CAPABILITIES, getSystemCapability, hasSystemCapability, FORBIDDEN_SYSTEM_OPERATIONS } from './domain/capabilities.js';
+export type { BootEntry, BootEntrySource, BootOrder } from './domain/boot.js';
+export { createBootOrder } from './domain/boot.js';
+export type { SlotId, SlotHealth, SlotState } from './domain/slots.js';
+export { createSlotState, isSlotHealthy } from './domain/slots.js';
+export type { DetectionStatus, FirmwareMode, CpuInfo, MemoryInfo, StorageInfo, NetworkInfo, HardwareDiscovery, FirmwareInfo, SystemDiscoveryResult } from './discovery/types.js';
+export type { SystemDiscoveryPort } from './discovery/port.js';
+export { EnvironmentSystemDiscovery } from './adapters/environment.js';
+export type { RecoveryDestination, RecoveryBootRequest, RecoveryBootControl, PowerAction, PowerControlRequest, PowerControl } from './service/controls.js';
+export type { SystemServiceOptions } from './service/system-service.js';
+export { SystemService } from './service/system-service.js';

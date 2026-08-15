@@ -215,11 +215,36 @@ Onboarding orchestrates setup; it does not own the systems it configures:
 - `onboarding` capability exposed; **no execution engine yet** (ONB-010..016 are
   deliberately deferred — this is the pre-mutation checkpoint)
 
+**SYS-001..014 — System/Firmware platform foundation (complete).** The
+privileged capability boundary — the API never touches firmware/hardware
+directly; it calls narrowly scoped system capabilities:
+
+- **SYS-001/002** System service architecture + privilege/capability boundary:
+  READ (low risk) / WRITE + control (high risk, approval) / firmware
+  (CRITICAL, special policy). `system.shell.root`,
+  `system.firmware.writeArbitrary`, `system.efivar.writeArbitrary` are
+  deliberately absent
+- **SYS-003..008** Discovery contracts: hardware (CPU/memory/storage/network),
+  firmware mode (UEFI/BIOS), Secure Boot, TPM, UEFI variables
+- **SYS-009** Bootloader discovery (GRUB)
+- **SYS-010** Boot entry model + **SYS-011** A/B slot state (active/booted/
+  health/bootAttempts — foundation for safe updates + rollback)
+- **SYS-012** Recovery boot control, **SYS-013** power management (reboot/
+  shutdown) — both governed
+- **SYS-014** System capability registry + authorization integration; every
+  high/critical operation requires the capability permission
+- Environment adapter degrades gracefully to `unsupported`/`unknown` where
+  privileged info isn't accessible
+- `system-module` capability exposed (20 capabilities, 4 critical)
+
+SYS-015+ (boot presentation: Plymouth/GRUB/firmware-logo) comes after this
+boundary per the roadmap.
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — ONB-010+ (execution), SYS-001+ (system/
-firmware), AUTH-007+ (OAuth), API2-004+ (compat) come next. PostgreSQL/
-Redis/NATS/Prisma and external runtimes stay behind ports; the API boots and
-passes tests without them.
+**not** part of the current stream — ONB-010+ (execution), SYS-015+
+(presentation), AUTH-007+ (OAuth), API2-004+ (compat) come next.
+PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind ports; the API
+boots and passes tests without them.
 
 ## Quickstart
 
