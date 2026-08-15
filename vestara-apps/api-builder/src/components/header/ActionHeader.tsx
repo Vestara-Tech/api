@@ -16,6 +16,7 @@ import {
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import type { ApiDefinition } from '../../api/contracts';
 import { usePublish, useValidate } from '../../hooks/useBuilder';
 import { DEFINITION_STATUSES } from '../../types/domain';
@@ -29,7 +30,7 @@ const chipTone: Record<string, 'default' | 'primary' | 'success' | 'info' | 'sec
   superseded: 'secondary',
 };
 
-export function ActionHeader({ definition }: { definition: ApiDefinition }) {
+export function ActionHeader({ definition, onToggleAssistant, assistantOpen }: { definition: ApiDefinition; onToggleAssistant: () => void; assistantOpen: boolean }) {
   const validate = useValidate(definition.id);
   const publish = usePublish(definition.id);
   const navigate = useNavigate();
@@ -113,6 +114,16 @@ export function ActionHeader({ definition }: { definition: ApiDefinition }) {
         disabled={publish.isPending}
       >
         Publish
+      </Button>
+
+      <Button
+        size="small"
+        variant="outlined"
+        onClick={onToggleAssistant}
+        startIcon={<AutoAwesomeIcon />}
+        color={assistantOpen ? 'primary' : 'inherit'}
+      >
+        Assistant
       </Button>
 
       <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>

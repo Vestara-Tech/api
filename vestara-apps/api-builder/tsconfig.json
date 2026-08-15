@@ -17,7 +17,10 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["vite/client", "node"]
+    "types": ["vite/client", "node"],
+    "paths": {
+      "@vestara/ai-ui": ["../../packages/ai-ui/src/index.ts"]
+    }
   },
   "include": ["src", "vite.config.ts"]
 }
