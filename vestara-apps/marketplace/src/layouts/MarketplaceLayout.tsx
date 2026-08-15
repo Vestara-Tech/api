@@ -6,6 +6,7 @@ const NAV = [
   { to: '/marketplace', label: 'Discover', end: true },
   { to: '/marketplace/installed', label: 'Installed', end: true },
   { to: '/marketplace/library', label: 'My Library', end: true },
+  { to: '/marketplace/collections', label: 'Collections', end: true },
 ];
 
 export function MarketplaceLayout() {

@@ -4,6 +4,7 @@ import { DiscoverPage } from '../pages/DiscoverPage';
 import { PackageDetailsPage } from '../pages/PackageDetailsPage';
 import { InstalledPage } from '../pages/InstalledPage';
 import { MyLibraryPage } from '../pages/MyLibraryPage';
+import { CollectionsPage } from '../pages/CollectionsPage';
 
 export function App() {
   return (
@@ -14,6 +15,7 @@ export function App() {
           <Route path="/marketplace" element={<DiscoverPage />} />
           <Route path="/marketplace/installed" element={<InstalledPage />} />
           <Route path="/marketplace/library" element={<MyLibraryPage />} />
+          <Route path="/marketplace/collections" element={<CollectionsPage />} />
           <Route path="/marketplace/packages/:packageId" element={<PackageDetailsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/marketplace" replace />} />
