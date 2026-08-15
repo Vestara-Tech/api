@@ -15,13 +15,18 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import StorageIcon from '@mui/icons-material/Storage';
 import { useProfiles, useRegisterProfile } from '../hooks/useImage';
+import { useConnection } from '../hooks/useConnection';
+import { BuilderDiagnostics } from '../components/connectivity/BuilderDiagnostics';
+import { apiBase, imageClient } from '../api/client';
 import { PRESETS, applicationsSizeMb } from '../types/domain';
 
 export function ProfilesPage() {
-  const { data: profiles, isLoading, isError } = useProfiles();
+  const { data: profiles, isLoading, isError, error } = useProfiles();
   const register = useRegisterProfile();
   const navigate = useNavigate();
   const [creating, setCreating] = useState<string | null>(null);
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
+  const { state, retry } = useConnection(imageClient, ['image']);
 
   const existing = new Set((profiles ?? []).map((p) => p.id));
 
@@ -48,7 +53,27 @@ export function ProfilesPage() {
         </Box>
       </Stack>
 
-      {isError ? <Alert severity="error">Failed to load profiles. Is the API running?</Alert> : null}
+      {isError ? (
+        <Alert severity="error" sx={{ mb: 2 }} action={
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+            <Button color="inherit" size="small" onClick={() => setDiagnosticsOpen(true)}>
+              Diagnostics
+            </Button>
+            <Button color="inherit" size="small" onClick={retry}>
+              Retry
+            </Button>
+          </Stack>
+        }>
+          {state.status === 'offline'
+            ? `Cannot reach the Vestara API at ${apiBase}.`
+            : state.status === 'contract-mismatch'
+              ? 'API contract mismatch — the API version does not match this builder.'
+              : state.status === 'degraded'
+                ? 'API reached, but the image-builder capability is not available.'
+                : `Failed to load profiles: ${error instanceof Error ? error.message : 'unknown error'}`}
+        </Alert>
+      ) : null}
+      <BuilderDiagnostics open={diagnosticsOpen} onClose={() => setDiagnosticsOpen(false)} />
 
       <Typography variant="subtitle2" sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: 'text.secondary', mb: 1 }}>
         Start from a preset

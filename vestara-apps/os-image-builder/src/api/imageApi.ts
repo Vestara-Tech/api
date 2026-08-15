@@ -52,4 +52,25 @@ export const imageApi = {
     }),
 
   buildState: () => clientOrNew().request<ImageBuildState>('/api/v2/image/build/state'),
+
+  /** IMG-030 — run Image Builder diagnostics (connectivity, capability, profiles). */
+  diagnostics: () => clientOrNew().request<BuilderDiagnosticsRun>('/api/v2/image/diagnostics', { method: 'POST' }),
 };
+
+export interface BuilderDiagnosticCheck {
+  readonly checkId: string;
+  readonly status: 'pass' | 'fail' | 'degraded' | 'unknown' | 'unsupported' | 'skipped';
+  readonly severity: 'info' | 'warning' | 'error' | 'critical';
+  readonly message: string;
+  readonly detail?: string;
+}
+
+export interface BuilderDiagnosticsRun {
+  readonly id: string;
+  readonly scope: string;
+  readonly status: string;
+  readonly startedAt: string;
+  readonly completedAt?: string;
+  readonly counts: { healthy: number; degraded: number; failed: number };
+  readonly checks: readonly BuilderDiagnosticCheck[];
+}

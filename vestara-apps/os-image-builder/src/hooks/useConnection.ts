@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiClient, type ApiConnectionState } from '@vestara/client';
+import { ApiClient, type ApiConnectionState, type ApiNegotiationResult } from '@vestara/client';
 
+/**
+ * IMG-027/028 — API connection manager. Runs the full startup preflight
+ * (health -> system -> capabilities -> contract negotiation) and classifies
+ * the result: offline, degraded (capability missing), contract-mismatch or
+ * online. Distinguishing these states is what makes "Failed to load
+ * profiles. Is the API running?" a diagnostic problem instead of a guess.
+ */
 export function useConnection(client: ApiClient, capabilities: readonly string[] = []) {
   const [state, setState] = useState<ApiConnectionState>({ status: 'unknown' });
+  const [contract, setContract] = useState<ApiNegotiationResult['contract']>(undefined);
   const [attempts, setAttempts] = useState(0);
 
   const preflight = useCallback(async () => {
-    try {
-      const result = await client.health();
-      setState(result.state);
-    } catch {
-      setState({ status: 'offline', message: 'Unable to reach the Vestara API', lastAttemptAt: new Date().toISOString() });
-    }
+    const result = await client.negotiate();
+    setState(result.state);
+    setContract(result.contract);
   }, [client]);
 
   useEffect(() => {
@@ -30,5 +35,5 @@ export function useConnection(client: ApiClient, capabilities: readonly string[]
     }
   }
 
-  return { state: effective, retry, hasCapability: (name: string) => effective.capabilities?.includes(name) ?? false };
+  return { state: effective, contract, retry, hasCapability: (name: string) => effective.capabilities?.includes(name) ?? false };
 }

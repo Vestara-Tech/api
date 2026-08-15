@@ -1,6 +1,7 @@
 import type { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox';
 import { Type } from '@sinclair/typebox';
 import type { ImageBuildService } from '../image/service/image-build-service.js';
+import type { DiagnosticExecutor } from '../diagnostics/executor.js';
 import type { VestaraImageProfile } from '../image/domain/profile.js';
 import {
   BuildRequestSchema,
@@ -15,6 +16,7 @@ import {
 
 export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const image = app.application.container.resolve<ImageBuildService>('imageBuilder');
+  const diagnostics = app.application.container.resolve<DiagnosticExecutor>('diagnostics.executor');
 
   app.get(
     '/api/v2/image/profiles',
@@ -117,5 +119,52 @@ export const imageBuilderRoutes: FastifyPluginAsyncTypebox = async (app) => {
       },
     },
     async () => image.getState() as never,
+  );
+
+  const DiagnosticRunViewSchema = Type.Object({
+    id: Type.String(),
+    scope: Type.String(),
+    status: Type.String(),
+    startedAt: Type.String(),
+    completedAt: Type.Optional(Type.String()),
+    counts: Type.Object({ healthy: Type.Integer(), degraded: Type.Integer(), failed: Type.Integer() }),
+    checks: Type.Array(
+      Type.Object({
+        checkId: Type.String(),
+        status: Type.String(),
+        severity: Type.String(),
+        message: Type.String(),
+        detail: Type.Optional(Type.String()),
+      }),
+    ),
+  });
+
+  app.post(
+    '/api/v2/image/diagnostics',
+    {
+      schema: {
+        tags: ['image'],
+        summary: 'Run Image Builder diagnostics (connectivity, capability, profiles)',
+        response: { 200: DiagnosticRunViewSchema },
+      },
+    },
+    async (_request, reply) => {
+      const run = await diagnostics.run({ scope: 'module', moduleId: 'image-builder' });
+      return reply.send({
+        id: run.id,
+        scope: run.scope,
+        status: run.status,
+        startedAt: run.startedAt,
+        ...(run.completedAt !== undefined ? { completedAt: run.completedAt } : {}),
+        counts: run.counts,
+        checks: run.checks.map((c) => ({
+          checkId: c.checkId,
+          status: c.status,
+          severity: c.severity,
+          message: c.message,
+          ...(c.detail !== undefined ? { detail: c.detail } : {}),
+        })),
+      } as never);
+    },
   );
 };

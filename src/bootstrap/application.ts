@@ -103,6 +103,7 @@ import { ShutdownCoordinator } from './shutdown.js';
 export interface SystemStatus {
   readonly service: string;
   readonly apiVersion: string;
+  readonly contractVersion: string;
   readonly uptimeMs: number;
   readonly startedAt: string;
   readonly capabilities: string[];
@@ -438,6 +439,7 @@ export function createApplication(config: AppConfig): Application {
       return {
         service: config.service,
         apiVersion: config.apiVersion,
+        contractVersion: config.contractVersion,
         uptimeMs: Date.now() - startedAt,
         startedAt: new Date(startedAt).toISOString(),
         capabilities: capabilities.listEnabled().map((c) => c.namespace),

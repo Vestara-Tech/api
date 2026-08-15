@@ -1,9 +1,11 @@
 import { Link, NavLink, Outlet, useLocation, useParams } from 'react-router';
+import { useState } from 'react';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import StorageIcon from '@mui/icons-material/Storage';
 import { useProfile } from '../hooks/useImage';
 import { ImageSummary } from '../components/inspector/ImageSummary';
 import { ConnectionBanner } from '../components/connectivity/ConnectionBanner';
+import { BuilderDiagnostics } from '../components/connectivity/BuilderDiagnostics';
 import { useConnection } from '../hooks/useConnection';
 import { apiBase, imageClient } from '../api/client';
 
@@ -26,14 +28,16 @@ export function ImageBuilderLayout() {
   const location = useLocation();
   const { profileId } = useParams<{ profileId: string }>();
   const { data: profile } = useProfile(profileId ?? '');
-  const { state, retry } = useConnection(imageClient, ['image']);
+  const { state, contract, retry } = useConnection(imageClient, ['image']);
+  const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const inBuilder = location.pathname.startsWith('/os-image-builder/') && !location.pathname.endsWith('/os-image-builder');
 
   let lastSection: string | null = null;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      <ConnectionBanner state={state} apiBase={apiBase} onRetry={retry} />
+      <ConnectionBanner state={state} apiBase={apiBase} contract={contract} onRetry={retry} onDiagnostics={() => setDiagnosticsOpen(true)} />
+      <BuilderDiagnostics open={diagnosticsOpen} onClose={() => setDiagnosticsOpen(false)} />
       <Box
         sx={{
           display: 'flex',

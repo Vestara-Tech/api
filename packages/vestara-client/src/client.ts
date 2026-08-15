@@ -31,7 +31,7 @@ export interface ApiErrorBody {
   readonly error?: { code?: string; message?: string; requestId?: string; retryable?: boolean; details?: unknown };
 }
 
-export type ApiConnectionStatus = 'unknown' | 'online' | 'degraded' | 'offline';
+export type ApiConnectionStatus = 'unknown' | 'online' | 'degraded' | 'contract-mismatch' | 'offline';
 
 export interface ApiConnectionState {
   readonly status: ApiConnectionStatus;
@@ -39,6 +39,16 @@ export interface ApiConnectionState {
   readonly lastAttemptAt?: string;
   readonly capabilities?: readonly string[];
   readonly apiVersion?: string;
+  readonly contractVersion?: string;
+}
+
+export interface ApiNegotiationResult {
+  readonly state: ApiConnectionState;
+  readonly contract?: {
+    readonly expected: string;
+    readonly actual: string | undefined;
+    readonly compatible: boolean;
+  };
 }
 
 export interface ApiHealthResult {
@@ -49,16 +59,20 @@ export interface ApiHealthResult {
 export interface ApiClientOptions {
   readonly apiBase: string;
   readonly timeoutMs?: number;
+  /** Expected API contract version; negotiation reports a contract-mismatch when it differs. */
+  readonly expectedContractVersion?: string;
 }
 
 /** Shared Vestara API client. Distinguishes offline/404/500/invalid/proxy. */
 export class ApiClient {
   readonly apiBase: string;
   private readonly timeoutMs: number;
+  readonly expectedContractVersion: string | undefined;
 
   constructor(options: ApiClientOptions) {
     this.apiBase = options.apiBase.replace(/\/$/, '');
     this.timeoutMs = options.timeoutMs ?? 15_000;
+    this.expectedContractVersion = options.expectedContractVersion;
   }
 
   async request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -132,12 +146,48 @@ export class ApiClient {
   /** Startup preflight: /health -> /api/v2/system -> capability list. */
   async systemState(): Promise<ApiConnectionState> {
     const health = await this.request<{ status?: string }>('/health').catch(() => null);
-    const system = await this.request<{ service?: string; apiVersion?: string; capabilities?: readonly string[] }>('/api/v2/system');
+    const system = await this.request<{ service?: string; apiVersion?: string; contractVersion?: string; capabilities?: readonly string[] }>('/api/v2/system');
     return {
       status: health ? 'online' : 'degraded',
       ...(system.apiVersion !== undefined ? { apiVersion: system.apiVersion } : {}),
+      ...(system.contractVersion !== undefined ? { contractVersion: system.contractVersion } : {}),
       ...(system.capabilities !== undefined ? { capabilities: system.capabilities } : {}),
       lastAttemptAt: new Date().toISOString(),
+    };
+  }
+
+  /**
+   * IMG-028 — Contract negotiation. Runs the full startup preflight and
+   * classifies the result, including a contract-mismatch state when the
+   * server contract version differs from the client's expected version.
+   */
+  async negotiate(): Promise<ApiNegotiationResult> {
+    let state: ApiConnectionState;
+    try {
+      state = await this.systemState();
+    } catch (err) {
+      const apiError = err as ApiError;
+      return {
+        state: {
+          status: apiError.code === 'offline' || apiError.code === 'timeout' ? 'offline' : 'degraded',
+          message: apiError.message,
+          lastAttemptAt: new Date().toISOString(),
+        },
+      };
+    }
+
+    if (!this.expectedContractVersion) {
+      return { state: { ...state, status: state.status === 'online' ? 'online' : 'degraded' } };
+    }
+
+    const actual = state.contractVersion;
+    const compatible = actual === this.expectedContractVersion;
+    const mismatch = actual !== undefined && !compatible;
+    return {
+      state: mismatch
+        ? { ...state, status: 'contract-mismatch', message: `Contract mismatch: client expects ${this.expectedContractVersion}, API serves ${actual}` }
+        : state,
+      contract: { expected: this.expectedContractVersion, actual, compatible },
     };
   }
 

@@ -160,6 +160,7 @@
                   "required": [
                     "service",
                     "apiVersion",
+                    "contractVersion",
                     "uptimeMs",
                     "startedAt",
                     "capabilities"
@@ -169,6 +170,9 @@
                       "type": "string"
                     },
                     "apiVersion": {
+                      "type": "string"
+                    },
+                    "contractVersion": {
                       "type": "string"
                     },
                     "uptimeMs": {
@@ -15376,6 +15380,99 @@
                     },
                     "completedAt": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/image/diagnostics": {
+      "post": {
+        "summary": "Run Image Builder diagnostics (connectivity, capability, profiles)",
+        "tags": [
+          "image"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "scope",
+                    "status",
+                    "startedAt",
+                    "counts",
+                    "checks"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "startedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "counts": {
+                      "type": "object",
+                      "required": [
+                        "healthy",
+                        "degraded",
+                        "failed"
+                      ],
+                      "properties": {
+                        "healthy": {
+                          "type": "integer"
+                        },
+                        "degraded": {
+                          "type": "integer"
+                        },
+                        "failed": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "checks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "checkId",
+                          "status",
+                          "severity",
+                          "message"
+                        ],
+                        "properties": {
+                          "checkId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     }
                   }
                 }

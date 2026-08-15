@@ -1,4 +1,4 @@
-import { API_VERSION, DEFAULT_HOST, DEFAULT_LOG_LEVEL, DEFAULT_PORT, DEFAULT_REQUEST_TIMEOUT_MS, SERVICE_NAME } from './defaults.js';
+import { API_VERSION, CONTRACT_VERSION, DEFAULT_HOST, DEFAULT_LOG_LEVEL, DEFAULT_PORT, DEFAULT_REQUEST_TIMEOUT_MS, SERVICE_NAME } from './defaults.js';
 import type { EnvironmentVariables } from './environment.js';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -7,6 +7,7 @@ export interface AppConfig {
   readonly nodeEnv: string;
   readonly service: typeof SERVICE_NAME;
   readonly apiVersion: typeof API_VERSION;
+  readonly contractVersion: typeof CONTRACT_VERSION;
   readonly host: string;
   readonly port: number;
   readonly logLevel: LogLevel;
@@ -54,6 +55,7 @@ export function loadConfig(env: EnvironmentVariables): AppConfig {
     nodeEnv,
     service: SERVICE_NAME,
     apiVersion: API_VERSION,
+    contractVersion: CONTRACT_VERSION,
     host: env.VESTARA_API_HOST ?? DEFAULT_HOST,
     port: parsePort(env.VESTARA_API_PORT, DEFAULT_PORT),
     logLevel: parseLogLevel(env.VESTARA_API_LOG_LEVEL),

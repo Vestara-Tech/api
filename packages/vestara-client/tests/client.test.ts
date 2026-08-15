@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { ApiClient, ApiError, resolveApiBase, DEFAULT_API_BASE } from '../src/index';
 
 describe('ApiClient error classification', () => {
@@ -42,6 +42,71 @@ describe('ApiClient error classification', () => {
       expect(err.retryable).toBe(true);
     } finally {
       globalThis.fetch = original;
+    }
+  });
+});
+
+describe('ApiClient contract negotiation (IMG-028)', () => {
+  function stubSystem(body: unknown) {
+    globalThis.fetch = (async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith('/health')) return new Response(JSON.stringify({ status: 'ok' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as typeof fetch;
+  }
+
+  afterEach(() => {
+    globalThis.fetch = fetch;
+  });
+
+  it('reports online with a matching contract version', async () => {
+    stubSystem({ service: 'vestara-api', apiVersion: 'v2', contractVersion: '2.0.0', capabilities: ['image'] });
+    try {
+      const client = new ApiClient({ apiBase: 'http://x', expectedContractVersion: '2.0.0' });
+      const result = await client.negotiate();
+      expect(result.state.status).toBe('online');
+      expect(result.contract).toMatchObject({ expected: '2.0.0', actual: '2.0.0', compatible: true });
+    } finally {
+      globalThis.fetch = fetch;
+    }
+  });
+
+  it('reports contract-mismatch when versions differ', async () => {
+    stubSystem({ service: 'vestara-api', apiVersion: 'v2', contractVersion: '1.9.0', capabilities: ['image'] });
+    try {
+      const client = new ApiClient({ apiBase: 'http://x', expectedContractVersion: '2.0.0' });
+      const result = await client.negotiate();
+      expect(result.state.status).toBe('contract-mismatch');
+      expect(result.contract).toMatchObject({ expected: '2.0.0', actual: '1.9.0', compatible: false });
+      expect(result.state.message).toContain('Contract mismatch');
+    } finally {
+      globalThis.fetch = fetch;
+    }
+  });
+
+  it('reports offline when the API is unreachable', async () => {
+    const original = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new TypeError('fetch failed');
+    }) as typeof fetch;
+    try {
+      const client = new ApiClient({ apiBase: 'http://127.0.0.1:1', expectedContractVersion: '2.0.0' });
+      const result = await client.negotiate();
+      expect(result.state.status).toBe('offline');
+    } finally {
+      globalThis.fetch = original;
+    }
+  });
+
+  it('skips mismatch classification when no expected contract is configured', async () => {
+    stubSystem({ service: 'vestara-api', apiVersion: 'v2', contractVersion: '1.0.0', capabilities: [] });
+    try {
+      const client = new ApiClient({ apiBase: 'http://x' });
+      const result = await client.negotiate();
+      expect(result.state.status).toBe('online');
+      expect(result.contract).toBeUndefined();
+    } finally {
+      globalThis.fetch = fetch;
     }
   });
 });

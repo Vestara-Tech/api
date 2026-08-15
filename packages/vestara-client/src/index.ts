@@ -1,5 +1,5 @@
 export { ApiClient, ApiError } from './client';
-export type { ApiErrorCode, ApiConnectionState, ApiConnectionStatus, ApiHealthResult, ApiClientOptions, ApiErrorBody } from './client';
+export type { ApiErrorCode, ApiConnectionState, ApiConnectionStatus, ApiHealthResult, ApiNegotiationResult, ApiClientOptions, ApiErrorBody } from './client';
 export { createImageApi } from './image';
 export type { ImageApi, ImageProfile, ImageBuildPlan, ImageBuildState } from './image';
 

@@ -34,6 +34,7 @@ export const systemRoutes: FastifyPluginAsyncTypebox = async (app) => {
           200: Type.Object({
             service: Type.String(),
             apiVersion: Type.String(),
+            contractVersion: Type.String(),
             uptimeMs: Type.Integer(),
             startedAt: Type.String(),
             capabilities: Type.Array(Type.String()),
