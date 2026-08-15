@@ -55,6 +55,7 @@ import { buildStartupCoordinator } from './startup.js';
 import { buildLoginPlatform } from './login.js';
 import { buildImageBuilderService } from './image-builder.js';
 import { buildAiService } from './ai.js';
+import { buildAiPlatformV2Service } from './ai-v2.js';
 import { buildAgentPlatform } from './agent-platform.js';
 import { buildWorkflowPlatform } from './workflow.js';
 import { buildFilePlatform } from './file.js';
@@ -236,6 +237,7 @@ export function createApplication(config: AppConfig): Application {
 
   // ── AI Platform (AI-001..006) ─────────────────────────────
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
+  const aiV2 = buildAiPlatformV2Service(aiCatalog, aiProviders);
 
   // ── File Module (FILE-001..) ──────────────────────────────
   const file = buildFilePlatform();
@@ -387,6 +389,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('ai.providers', aiProviders);
   container.register('ai.catalog', aiCatalog);
   container.register('ai.router', aiRouter);
+  container.register('ai.v2', aiV2);
   container.register('agents', agents.runtime);
   container.register('agent.registry', agents.agents);
   container.register('agent.runs', agents.runs);

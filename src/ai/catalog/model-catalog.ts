@@ -30,6 +30,10 @@ export class AiModelCatalog {
     return this.models.has(catalogKey(providerId, modelId));
   }
 
+  getSafe(providerId: string, modelId: string): AiModel | undefined {
+    return this.models.get(catalogKey(providerId, modelId));
+  }
+
   list(): readonly AiModel[] {
     return [...this.models.values()].sort((a, b) => a.providerId.localeCompare(b.providerId) || a.id.localeCompare(b.id));
   }

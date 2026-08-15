@@ -43642,6 +43642,710 @@
           }
         }
       }
+    },
+    "/api/v2/ai/v2/profiles": {
+      "get": {
+        "summary": "List AI profiles (named model configurations)",
+        "tags": [
+          "ai"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "requirements",
+                      "strategy",
+                      "parameters",
+                      "tags"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "requirements": {
+                        "type": "object",
+                        "properties": {
+                          "reasoning": {
+                            "type": "boolean"
+                          },
+                          "tools": {
+                            "type": "boolean"
+                          },
+                          "structuredOutput": {
+                            "type": "boolean"
+                          },
+                          "minContext": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "strategy": {
+                        "type": "string"
+                      },
+                      "parameters": {
+                        "type": "object",
+                        "properties": {
+                          "temperature": {
+                            "type": "number"
+                          },
+                          "maxTokens": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "budget": {
+                        "type": "object",
+                        "properties": {
+                          "maxTokensPerRequest": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register an AI profile",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "requirements",
+                  "strategy",
+                  "parameters",
+                  "tags"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "requirements": {
+                    "type": "object",
+                    "properties": {
+                      "reasoning": {
+                        "type": "boolean"
+                      },
+                      "tools": {
+                        "type": "boolean"
+                      },
+                      "structuredOutput": {
+                        "type": "boolean"
+                      },
+                      "minContext": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "strategy": {
+                    "type": "string"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "properties": {
+                      "temperature": {
+                        "type": "number"
+                      },
+                      "maxTokens": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "budget": {
+                    "type": "object",
+                    "properties": {
+                      "maxTokensPerRequest": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "requirements",
+                    "strategy",
+                    "parameters",
+                    "tags"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "requirements": {
+                      "type": "object",
+                      "properties": {
+                        "reasoning": {
+                          "type": "boolean"
+                        },
+                        "tools": {
+                          "type": "boolean"
+                        },
+                        "structuredOutput": {
+                          "type": "boolean"
+                        },
+                        "minContext": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "temperature": {
+                          "type": "number"
+                        },
+                        "maxTokens": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "budget": {
+                      "type": "object",
+                      "properties": {
+                        "maxTokensPerRequest": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/profiles/{id}": {
+      "get": {
+        "summary": "Get an AI profile",
+        "tags": [
+          "ai"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "requirements",
+                    "strategy",
+                    "parameters",
+                    "tags"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "requirements": {
+                      "type": "object",
+                      "properties": {
+                        "reasoning": {
+                          "type": "boolean"
+                        },
+                        "tools": {
+                          "type": "boolean"
+                        },
+                        "structuredOutput": {
+                          "type": "boolean"
+                        },
+                        "minContext": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "parameters": {
+                      "type": "object",
+                      "properties": {
+                        "temperature": {
+                          "type": "number"
+                        },
+                        "maxTokens": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "budget": {
+                      "type": "object",
+                      "properties": {
+                        "maxTokensPerRequest": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/providers": {
+      "get": {
+        "summary": "List provider lifecycle states (installed/configured/enabled + health)",
+        "tags": [
+          "ai"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "installed",
+                      "configured",
+                      "enabled",
+                      "health"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "installed": {
+                        "type": "boolean"
+                      },
+                      "configured": {
+                        "type": "boolean"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "credentialRef": {
+                        "type": "string"
+                      },
+                      "health": {
+                        "type": "string"
+                      },
+                      "lastCheckedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Upsert provider state (credentials remain secret references)",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "installed",
+                  "configured",
+                  "enabled",
+                  "health"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "installed": {
+                    "type": "boolean"
+                  },
+                  "configured": {
+                    "type": "boolean"
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "credentialRef": {
+                    "type": "string"
+                  },
+                  "health": {
+                    "type": "string"
+                  },
+                  "lastCheckedAt": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "installed",
+                    "configured",
+                    "enabled",
+                    "health"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "installed": {
+                      "type": "boolean"
+                    },
+                    "configured": {
+                      "type": "boolean"
+                    },
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "credentialRef": {
+                      "type": "string"
+                    },
+                    "health": {
+                      "type": "string"
+                    },
+                    "lastCheckedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/route": {
+      "post": {
+        "summary": "Route a profile to a concrete model (explainable decision)",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "resolved",
+                    "profileId",
+                    "strategy",
+                    "fallbackChain",
+                    "selectedFrom",
+                    "reason",
+                    "at"
+                  ],
+                  "properties": {
+                    "resolved": {
+                      "type": "object",
+                      "required": [
+                        "providerId",
+                        "modelId",
+                        "name",
+                        "contextWindow"
+                      ],
+                      "properties": {
+                        "providerId": {
+                          "type": "string"
+                        },
+                        "modelId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "contextWindow": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "profileId": {
+                      "type": "string"
+                    },
+                    "strategy": {
+                      "type": "string"
+                    },
+                    "fallbackChain": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "selectedFrom": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "at": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/ai/v2/route/eligible": {
+      "post": {
+        "summary": "List eligible models for a profile",
+        "tags": [
+          "ai"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "profileId"
+                ],
+                "properties": {
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "providerId",
+                      "modelId",
+                      "name",
+                      "contextWindow"
+                    ],
+                    "properties": {
+                      "providerId": {
+                        "type": "string"
+                      },
+                      "modelId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "contextWindow": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
