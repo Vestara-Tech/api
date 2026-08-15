@@ -36,6 +36,7 @@ import type { ContextPlatform } from './context.js';
 import type { PermissionPlatform } from './permission.js';
 import type { CarPlatform } from './car.js';
 import type { MarketplacePlatform } from './marketplace.js';
+import type { GenerationPlanePlatform } from './generation-plane.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -52,6 +53,7 @@ import { buildContextPlatform } from './context.js';
 import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
 import { buildMarketplacePlatform } from './marketplace.js';
+import { buildGenerationPlanePlatform } from './generation-plane.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -111,6 +113,7 @@ export interface Application {
   readonly permission: PermissionPlatform;
   readonly car: CarPlatform;
   readonly marketplace: MarketplacePlatform;
+  readonly generationPlane: GenerationPlanePlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -209,6 +212,14 @@ export function createApplication(config: AppConfig): Application {
   // ── Marketplace (MKT-001..) ────────────────────────────────
   const marketplace = buildMarketplacePlatform();
 
+  // ── Generation Plane (GEN-X) ───────────────────────────────
+  const generationPlane = buildGenerationPlanePlatform({
+    permission: {
+      canGenerate: async () => true,
+      canApply: async (_p, capability) => !capability.includes('apply'),
+    },
+  });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -283,6 +294,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('marketplace.dependencies', marketplace.dependencies);
   container.register('marketplace.compatibility', marketplace.compatibility);
   container.register('marketplace.permissions', marketplace.permissions);
+  container.register('generation.plane', generationPlane.plane);
+  container.register('generation.registry', generationPlane.registry);
 
   const startedAt = Date.now();
 
@@ -316,6 +329,7 @@ export function createApplication(config: AppConfig): Application {
     permission,
     car,
     marketplace,
+    generationPlane,
     shutdown,
     systemStatus(): SystemStatus {
       return {
