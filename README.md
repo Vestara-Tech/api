@@ -464,6 +464,40 @@ AI-012+ routing profiles + fallback chains next
 AI-023+ control API + OpenAPI contracts next
 ```
 
+### Agent Platform (AGENT-001..006 + TOOL-001..005 + SKILL-001..005)
+
+Six concepts stay separate: **Agent = identity + role + policies + runtime.
+Tool = governed executable capability. Skill = reusable procedural knowledge.
+AI = reasoning. Workflow = orchestration. Module = actual capability.**
+
+- **AGENT-001/002** declarative `AgentDefinition` (role, model policy,
+  instructions, tools, skills, permissions, execution policy) + registry with
+  the canonical Planner/Developer/Reviewer/Verifier/Observer set
+- **AGENT-003/004/005** `AgentRuntime` + run state machine
+  (queued/preparing/running/waiting-for-tool/waiting-for-approval/suspended/
+  completed/failed/cancelled) + AI Runtime integration; **AGENT-006** context
+  assembly (instructions + skills + tools + permissions)
+- **TOOL-001/002/003** `ToolDefinition`, `ToolRegistry`, `ToolRuntime`;
+  **TOOL-004** capability bridge — the API Builder module contributes
+  `api.definition.*` tools; **TOOL-005/007** `ToolPolicy` (read/write
+  auto-approve; control/privileged/critical require approval) + audit
+  `ToolExecutionRecord` + evidence hash
+- **SKILL-001..005** `SkillDefinition`, `skill.json` + `SKILL.md` loader,
+  validating `SkillRegistry`, capability-based `SkillResolver`; skills compose
+  (Developer + api-builder skill = API developer)
+
+AI never bypasses the capability policy; `Generate ≠ Write` survives agent
+automation (apply stays governed by the consuming module). Registered as
+capability `agents`; container keys `agents`, `agent.registry`, `agent.runs`,
+`tools`, `tool.runtime`, `skills`.
+
+```text
+AGENT/TOOL/SKILL foundation complete · 11 tests · ADR-0014
+AGENT-007+ tool-call loop + streaming events + cancellation/resume + delegation next
+AGENT-013..018 generator/config/system/image/auth tools next
+AGENT-024+ control API + OpenAPI contracts + UIs next
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

@@ -29,6 +29,7 @@ import type { StartupCoordinator } from '../startup/service/startup-coordinator.
 import type { LoginBroker } from '../login/service/login-broker.js';
 import type { ImageBuildService } from '../image/service/image-build-service.js';
 import type { AiService } from '../ai/runtime/ai-runtime.js';
+import type { AgentPlatform } from './agent-platform.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -38,6 +39,7 @@ import { buildStartupCoordinator } from './startup.js';
 import { buildLoginPlatform } from './login.js';
 import { buildImageBuilderService } from './image-builder.js';
 import { buildAiService } from './ai.js';
+import { buildAgentPlatform } from './agent-platform.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -49,6 +51,7 @@ import { registerStartupCapability } from './startup-capability.js';
 import { registerLoginCapability } from './login-capability.js';
 import { registerImageCapability } from './image-capability.js';
 import { registerAiCapability } from './ai-capability.js';
+import { registerAgentCapability } from './agent-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -83,6 +86,7 @@ export interface Application {
   readonly login: LoginBroker;
   readonly imageBuilder: ImageBuildService;
   readonly ai: AiService;
+  readonly agents: AgentPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -154,6 +158,9 @@ export function createApplication(config: AppConfig): Application {
   // ── AI Platform (AI-001..006) ─────────────────────────────
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
 
+  // ── Agent Platform (AGENT + TOOL + SKILL) ─────────────────
+  const agents = buildAgentPlatform({ ai, builder });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -165,6 +172,7 @@ export function createApplication(config: AppConfig): Application {
   registerLoginCapability(capabilities, config);
   registerImageCapability(capabilities, config);
   registerAiCapability(capabilities, config);
+  registerAgentCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -194,6 +202,12 @@ export function createApplication(config: AppConfig): Application {
   container.register('ai.providers', aiProviders);
   container.register('ai.catalog', aiCatalog);
   container.register('ai.router', aiRouter);
+  container.register('agents', agents.runtime);
+  container.register('agent.registry', agents.agents);
+  container.register('agent.runs', agents.runs);
+  container.register('tools', agents.tools);
+  container.register('tool.runtime', agents.toolRuntime);
+  container.register('skills', agents.skills);
 
   const startedAt = Date.now();
 
@@ -220,6 +234,7 @@ export function createApplication(config: AppConfig): Application {
     login: loginPlatform.broker,
     imageBuilder,
     ai,
+    agents,
     shutdown,
     systemStatus(): SystemStatus {
       return {
