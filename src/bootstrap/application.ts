@@ -419,6 +419,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('builder.plane.registry', builderPlane.registry);
   container.register('builder.plane.store', builderPlane.store);
   container.register('builder.plane.lifecycle', builderPlane.lifecycle);
+  container.register('builder.plane.sessions', builderPlane.plane);
   container.register('diagnostics.registry', diagnostics.registry);
   container.register('diagnostics.executor', diagnostics.executor);
   container.register('log.service', log.service);
