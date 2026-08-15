@@ -35,6 +35,7 @@ import { databaseRoutes } from './routes/database.js';
 import { testRoutes } from './routes/test.js';
 import { browserRoutes } from './routes/browser.js';
 import { taskRoutes } from './routes/task.js';
+import { milestoneRoutes } from './routes/milestone.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -99,6 +100,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(testRoutes);
   await app.register(browserRoutes);
   await app.register(taskRoutes);
+  await app.register(milestoneRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

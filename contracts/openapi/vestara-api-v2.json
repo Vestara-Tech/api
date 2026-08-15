@@ -27276,6 +27276,898 @@
           }
         }
       }
+    },
+    "/api/v2/milestones": {
+      "get": {
+        "summary": "List milestones",
+        "tags": [
+          "milestones"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "title",
+                      "objective",
+                      "status",
+                      "taskIds",
+                      "childMilestoneIds",
+                      "progress",
+                      "revision"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "objective": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "parentMilestoneId": {
+                        "type": "string"
+                      },
+                      "taskIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "childMilestoneIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "progress": {
+                        "type": "object",
+                        "required": [
+                          "completion",
+                          "execution",
+                          "health",
+                          "completedTasks",
+                          "totalTasks",
+                          "blockedTasks"
+                        ],
+                        "properties": {
+                          "completion": {
+                            "type": "integer"
+                          },
+                          "execution": {
+                            "type": "integer"
+                          },
+                          "health": {
+                            "type": "string"
+                          },
+                          "completedTasks": {
+                            "type": "integer"
+                          },
+                          "totalTasks": {
+                            "type": "integer"
+                          },
+                          "blockedTasks": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "revision": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a milestone",
+        "tags": [
+          "milestones"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "title",
+                  "objective"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  },
+                  "parentMilestoneId": {
+                    "type": "string"
+                  },
+                  "targetDate": {
+                    "type": "string"
+                  },
+                  "successCriteria": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "description",
+                        "satisfied"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "satisfied": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "objective",
+                    "status",
+                    "taskIds",
+                    "childMilestoneIds",
+                    "progress",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "objective": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "parentMilestoneId": {
+                      "type": "string"
+                    },
+                    "taskIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "childMilestoneIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "progress": {
+                      "type": "object",
+                      "required": [
+                        "completion",
+                        "execution",
+                        "health",
+                        "completedTasks",
+                        "totalTasks",
+                        "blockedTasks"
+                      ],
+                      "properties": {
+                        "completion": {
+                          "type": "integer"
+                        },
+                        "execution": {
+                          "type": "integer"
+                        },
+                        "health": {
+                          "type": "string"
+                        },
+                        "completedTasks": {
+                          "type": "integer"
+                        },
+                        "totalTasks": {
+                          "type": "integer"
+                        },
+                        "blockedTasks": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}": {
+      "get": {
+        "summary": "Get a milestone",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "objective",
+                    "status",
+                    "taskIds",
+                    "childMilestoneIds",
+                    "progress",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "objective": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "parentMilestoneId": {
+                      "type": "string"
+                    },
+                    "taskIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "childMilestoneIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "progress": {
+                      "type": "object",
+                      "required": [
+                        "completion",
+                        "execution",
+                        "health",
+                        "completedTasks",
+                        "totalTasks",
+                        "blockedTasks"
+                      ],
+                      "properties": {
+                        "completion": {
+                          "type": "integer"
+                        },
+                        "execution": {
+                          "type": "integer"
+                        },
+                        "health": {
+                          "type": "string"
+                        },
+                        "completedTasks": {
+                          "type": "integer"
+                        },
+                        "totalTasks": {
+                          "type": "integer"
+                        },
+                        "blockedTasks": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/children": {
+      "get": {
+        "summary": "Sub-milestones",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "title",
+                      "objective",
+                      "status",
+                      "taskIds",
+                      "childMilestoneIds",
+                      "progress",
+                      "revision"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "objective": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "parentMilestoneId": {
+                        "type": "string"
+                      },
+                      "taskIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "childMilestoneIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "progress": {
+                        "type": "object",
+                        "required": [
+                          "completion",
+                          "execution",
+                          "health",
+                          "completedTasks",
+                          "totalTasks",
+                          "blockedTasks"
+                        ],
+                        "properties": {
+                          "completion": {
+                            "type": "integer"
+                          },
+                          "execution": {
+                            "type": "integer"
+                          },
+                          "health": {
+                            "type": "string"
+                          },
+                          "completedTasks": {
+                            "type": "integer"
+                          },
+                          "totalTasks": {
+                            "type": "integer"
+                          },
+                          "blockedTasks": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "revision": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/tasks": {
+      "post": {
+        "summary": "Add a task to the milestone (recomputes progress)",
+        "tags": [
+          "milestones"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "taskId"
+                ],
+                "properties": {
+                  "taskId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "objective",
+                    "status",
+                    "taskIds",
+                    "childMilestoneIds",
+                    "progress",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "objective": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "parentMilestoneId": {
+                      "type": "string"
+                    },
+                    "taskIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "childMilestoneIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "progress": {
+                      "type": "object",
+                      "required": [
+                        "completion",
+                        "execution",
+                        "health",
+                        "completedTasks",
+                        "totalTasks",
+                        "blockedTasks"
+                      ],
+                      "properties": {
+                        "completion": {
+                          "type": "integer"
+                        },
+                        "execution": {
+                          "type": "integer"
+                        },
+                        "health": {
+                          "type": "string"
+                        },
+                        "completedTasks": {
+                          "type": "integer"
+                        },
+                        "totalTasks": {
+                          "type": "integer"
+                        },
+                        "blockedTasks": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/progress": {
+      "get": {
+        "summary": "Derived progress",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "completion",
+                    "execution",
+                    "health",
+                    "completedTasks",
+                    "totalTasks",
+                    "blockedTasks"
+                  ],
+                  "properties": {
+                    "completion": {
+                      "type": "integer"
+                    },
+                    "execution": {
+                      "type": "integer"
+                    },
+                    "health": {
+                      "type": "string"
+                    },
+                    "completedTasks": {
+                      "type": "integer"
+                    },
+                    "totalTasks": {
+                      "type": "integer"
+                    },
+                    "blockedTasks": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/health": {
+      "get": {
+        "summary": "Milestone health + blocked/critical path",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "health",
+                    "blockedTasks",
+                    "totalTasks"
+                  ],
+                  "properties": {
+                    "health": {
+                      "type": "string"
+                    },
+                    "blockedTasks": {
+                      "type": "integer"
+                    },
+                    "totalTasks": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/verify": {
+      "post": {
+        "summary": "Verification/evidence gate",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "reasons"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "reasons": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/{id}/complete": {
+      "post": {
+        "summary": "Complete a milestone (requires evidence gate)",
+        "tags": [
+          "milestones"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "title",
+                    "objective",
+                    "status",
+                    "taskIds",
+                    "childMilestoneIds",
+                    "progress",
+                    "revision"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "objective": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "parentMilestoneId": {
+                      "type": "string"
+                    },
+                    "taskIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "childMilestoneIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "progress": {
+                      "type": "object",
+                      "required": [
+                        "completion",
+                        "execution",
+                        "health",
+                        "completedTasks",
+                        "totalTasks",
+                        "blockedTasks"
+                      ],
+                      "properties": {
+                        "completion": {
+                          "type": "integer"
+                        },
+                        "execution": {
+                          "type": "integer"
+                        },
+                        "health": {
+                          "type": "string"
+                        },
+                        "completedTasks": {
+                          "type": "integer"
+                        },
+                        "totalTasks": {
+                          "type": "integer"
+                        },
+                        "blockedTasks": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/milestones/events": {
+      "get": {
+        "summary": "Milestone events",
+        "tags": [
+          "milestones"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "milestoneId",
+                      "at"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "milestoneId": {
+                        "type": "string"
+                      },
+                      "at": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

@@ -44,6 +44,7 @@ import type { DatabasePlatform } from './database.js';
 import type { TestPlatform } from './test.js';
 import type { BrowserPlatform } from './browser.js';
 import type { TaskPlatform } from './task.js';
+import type { MilestonePlatform } from './milestone.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -68,6 +69,7 @@ import { buildDatabasePlatform } from './database.js';
 import { buildTestPlatform } from './test.js';
 import { buildBrowserPlatform } from './browser.js';
 import { buildTaskPlatform } from './task.js';
+import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -92,6 +94,7 @@ import { registerDatabaseCapability } from './database-capability.js';
 import { registerTestCapability } from './test-capability.js';
 import { registerBrowserCapability } from './browser-capability.js';
 import { registerTaskCapability } from './task-capability.js';
+import { registerMilestoneCapability } from './milestone-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -141,6 +144,7 @@ export interface Application {
   readonly test: TestPlatform;
   readonly browser: BrowserPlatform;
   readonly task: TaskPlatform;
+  readonly milestone: MilestonePlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -268,6 +272,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Task Module (TASK-001..) ──────────────────────────────
   const task = buildTaskPlatform();
 
+  // ── Milestone Module (MS-001..) ───────────────────────────
+  const milestone = buildMilestonePlatform({ tasks: task.service });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -292,6 +299,7 @@ export function createApplication(config: AppConfig): Application {
   registerTestCapability(capabilities, config);
   registerBrowserCapability(capabilities, config);
   registerTaskCapability(capabilities, config);
+  registerMilestoneCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -368,6 +376,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('browser.evidence', browser.evidence);
   container.register('task.service', task.service);
   container.register('task.store', task.store);
+  container.register('milestone.service', milestone.service);
+  container.register('milestone.store', milestone.store);
 
   const startedAt = Date.now();
 
@@ -409,6 +419,7 @@ export function createApplication(config: AppConfig): Application {
     test,
     browser,
     task,
+    milestone,
     shutdown,
     systemStatus(): SystemStatus {
       return {
