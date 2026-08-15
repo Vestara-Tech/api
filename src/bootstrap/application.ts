@@ -71,6 +71,8 @@ import { buildBrowserPlatform } from './browser.js';
 import { buildTaskPlatform } from './task.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
+import { buildComponentPlatform } from './component.js';
+import { registerComponentCapability } from './component-capability.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
 import { registerConfigCapability } from './config-capability.js';
@@ -278,11 +280,15 @@ export function createApplication(config: AppConfig): Application {
   // ── Milestone Module (MS-001..) ───────────────────────────
   const milestone = buildMilestonePlatform({ tasks: task.service });
 
+  // ── Component Module (COMP-001..013) ──────────────────────
+  const component = buildComponentPlatform({ resolveCapability: (cap) => capabilities.has(cap.split('.')[0] ?? cap) });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
   registerConfigCapability(capabilities, config);
   registerGeneratorCapability(capabilities, config);
+  registerComponentCapability(capabilities, config);
   registerOnboardingCapability(capabilities, config);
   registerSystemModuleCapability(capabilities, config);
   registerStartupCapability(capabilities, config);
@@ -383,6 +389,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('task.store', task.store);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
+  container.register('component.registry', component.registry);
+  container.register('component.service', component.service);
 
   const startedAt = Date.now();
 

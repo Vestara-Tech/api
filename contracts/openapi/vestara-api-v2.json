@@ -29163,6 +29163,807 @@
           }
         }
       }
+    },
+    "/api/v2/components": {
+      "get": {
+        "summary": "List registered components",
+        "tags": [
+          "components"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "displayName",
+                      "version",
+                      "category",
+                      "status",
+                      "capabilities",
+                      "slots",
+                      "events"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "slots": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "kind"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a component definition (module/marketplace contribution)",
+        "tags": [
+          "components"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "packageId",
+                  "name",
+                  "displayName",
+                  "version",
+                  "category",
+                  "renderer",
+                  "properties",
+                  "slots",
+                  "events",
+                  "actions",
+                  "capabilities",
+                  "permissions",
+                  "designTokens",
+                  "status",
+                  "metadata"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "renderer": {
+                    "type": "object",
+                    "required": [
+                      "kind"
+                    ],
+                    "properties": {
+                      "kind": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "properties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "type"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "slots": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "events": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "name",
+                        "kind"
+                      ],
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "kind"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "capabilities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "designTokens": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "displayName",
+                    "version",
+                    "category",
+                    "status",
+                    "capabilities",
+                    "slots",
+                    "events"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/{id}": {
+      "get": {
+        "summary": "Get a component definition",
+        "tags": [
+          "components"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "displayName",
+                    "version",
+                    "category",
+                    "status",
+                    "capabilities",
+                    "slots",
+                    "events"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "slots": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "kind"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/categories": {
+      "get": {
+        "summary": "Component categories with counts",
+        "tags": [
+          "components"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "count"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "count": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/search": {
+      "get": {
+        "summary": "Search components",
+        "tags": [
+          "components"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "q",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "displayName",
+                      "version",
+                      "category",
+                      "status",
+                      "capabilities",
+                      "slots",
+                      "events"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "capabilities": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "slots": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "events": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "kind"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "kind": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/{id}/versions": {
+      "get": {
+        "summary": "Component version history",
+        "tags": [
+          "components"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/{id}/availability": {
+      "get": {
+        "summary": "Component availability (capability resolution)",
+        "tags": [
+          "components"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "available",
+                    "missing"
+                  ],
+                  "properties": {
+                    "available": {
+                      "type": "boolean"
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/trees": {
+      "post": {
+        "summary": "Create a component tree",
+        "tags": [
+          "components"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "root"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "root": {}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "root"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "root": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List component trees",
+        "tags": [
+          "components"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/components/trees/{id}/validate": {
+      "post": {
+        "summary": "Validate a component tree (slot + property constraints)",
+        "tags": [
+          "components"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
