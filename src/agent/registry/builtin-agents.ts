@@ -34,6 +34,7 @@ export const BUILTIN_AGENTS: readonly AgentDefinition[] = [
     name: 'Developer',
     role: 'developer',
     model: { mode: 'auto', requirements: { tools: true, structuredOutput: true }, optimizeFor: 'balanced' },
+    runtimePolicy: { runtime: 'auto', requirements: { repositoryEditing: true, terminal: true, tools: true } },
     instructions: {
       system: 'You are the Vestara developer. Use provided tools to implement capabilities and run verifications.',
       guardrails: ['Generated artifacts are proposals; apply through governed apply only.'],

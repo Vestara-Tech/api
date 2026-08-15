@@ -21948,6 +21948,426 @@
           }
         }
       }
+    },
+    "/api/v2/car/runtimes": {
+      "get": {
+        "summary": "List coding agent runtimes and their capabilities",
+        "tags": [
+          "car"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "streaming",
+                      "sessions",
+                      "resumableSessions",
+                      "tools",
+                      "filesystem",
+                      "shell",
+                      "structuredOutput",
+                      "repositoryContext",
+                      "approvals",
+                      "cancellation"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "streaming": {
+                        "type": "boolean"
+                      },
+                      "sessions": {
+                        "type": "boolean"
+                      },
+                      "resumableSessions": {
+                        "type": "boolean"
+                      },
+                      "tools": {
+                        "type": "boolean"
+                      },
+                      "filesystem": {
+                        "type": "boolean"
+                      },
+                      "shell": {
+                        "type": "boolean"
+                      },
+                      "structuredOutput": {
+                        "type": "boolean"
+                      },
+                      "repositoryContext": {
+                        "type": "boolean"
+                      },
+                      "approvals": {
+                        "type": "boolean"
+                      },
+                      "cancellation": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/car/select": {
+      "post": {
+        "summary": "Select a runtime for an agent runtime policy (auto/fallback)",
+        "tags": [
+          "car"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "runtime"
+                ],
+                "properties": {
+                  "runtime": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "vestara"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "auto"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "opencode"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "claude-code"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "codex"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "gemini"
+                        ]
+                      }
+                    ]
+                  },
+                  "fallback": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "requirements": {
+                    "type": "object",
+                    "properties": {
+                      "repositoryEditing": {
+                        "type": "boolean"
+                      },
+                      "terminal": {
+                        "type": "boolean"
+                      },
+                      "tools": {
+                        "type": "boolean"
+                      },
+                      "resumableSessions": {
+                        "type": "boolean"
+                      },
+                      "structuredOutput": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "runtimeId",
+                    "viaFallback",
+                    "capabilities"
+                  ],
+                  "properties": {
+                    "runtimeId": {
+                      "type": "string"
+                    },
+                    "viaFallback": {
+                      "type": "boolean"
+                    },
+                    "capabilities": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "streaming",
+                        "sessions",
+                        "resumableSessions",
+                        "tools",
+                        "filesystem",
+                        "shell",
+                        "structuredOutput",
+                        "repositoryContext",
+                        "approvals",
+                        "cancellation"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "streaming": {
+                          "type": "boolean"
+                        },
+                        "sessions": {
+                          "type": "boolean"
+                        },
+                        "resumableSessions": {
+                          "type": "boolean"
+                        },
+                        "tools": {
+                          "type": "boolean"
+                        },
+                        "filesystem": {
+                          "type": "boolean"
+                        },
+                        "shell": {
+                          "type": "boolean"
+                        },
+                        "structuredOutput": {
+                          "type": "boolean"
+                        },
+                        "repositoryContext": {
+                          "type": "boolean"
+                        },
+                        "approvals": {
+                          "type": "boolean"
+                        },
+                        "cancellation": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/car/health": {
+      "get": {
+        "summary": "Runtime health",
+        "tags": [
+          "car"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "runtimeId",
+                      "healthy"
+                    ],
+                    "properties": {
+                      "runtimeId": {
+                        "type": "string"
+                      },
+                      "healthy": {
+                        "type": "boolean"
+                      },
+                      "message": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/car/sessions": {
+      "post": {
+        "summary": "Create a coding agent session",
+        "tags": [
+          "car"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agentId",
+                  "runId"
+                ],
+                "properties": {
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "runId": {
+                    "type": "string"
+                  },
+                  "workspace": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "runtimeId",
+                    "providerSessionId",
+                    "resumed",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "runtimeId": {
+                      "type": "string"
+                    },
+                    "providerSessionId": {
+                      "type": "string"
+                    },
+                    "resumed": {
+                      "type": "boolean"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/car/gateway/execute": {
+      "post": {
+        "summary": "Execute a tool request from an external coding runtime (governed)",
+        "tags": [
+          "car"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "runtimeId",
+                  "sessionId",
+                  "agentId",
+                  "toolId"
+                ],
+                "properties": {
+                  "runtimeId": {
+                    "type": "string"
+                  },
+                  "sessionId": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "toolId": {
+                    "type": "string"
+                  },
+                  "input": {},
+                  "principalId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "approved",
+                    "approvalRequired"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "output": {},
+                    "error": {
+                      "type": "string"
+                    },
+                    "approved": {
+                      "type": "boolean"
+                    },
+                    "approvalRequired": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

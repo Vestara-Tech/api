@@ -24,6 +24,19 @@ export interface AgentModelPolicy {
   readonly optimizeFor?: 'quality' | 'balanced' | 'cost' | 'latency' | 'local';
 }
 
+/** Runtime policy: a Vestara agent may execute through a coding runtime. */
+export interface AgentRuntimePolicy {
+  readonly runtime: 'vestara' | 'auto' | 'opencode' | 'claude-code' | 'codex' | 'gemini';
+  readonly fallback?: readonly ('opencode' | 'claude-code' | 'codex' | 'gemini')[];
+  readonly requirements?: {
+    readonly repositoryEditing?: boolean;
+    readonly terminal?: boolean;
+    readonly tools?: boolean;
+    readonly resumableSessions?: boolean;
+    readonly structuredOutput?: boolean;
+  };
+}
+
 export interface AgentInstructions {
   readonly system: string;
   readonly guardrails?: readonly string[];
@@ -54,6 +67,7 @@ export interface AgentDefinition {
   readonly description?: string;
   readonly role: AgentRole;
   readonly model: AgentModelPolicy;
+  readonly runtimePolicy?: AgentRuntimePolicy;
   readonly instructions: AgentInstructions;
   readonly tools: readonly ToolSelector[];
   readonly skills: readonly SkillSelector[];

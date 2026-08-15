@@ -647,6 +647,38 @@ PERM foundation complete · 16 tests · ADR-0018
 PERM-020 Permission Manager/Builder UI next
 ```
 
+### Coding Agent Runtime (CAR foundation)
+
+OpenCode, Claude Code, OpenAI Codex and Gemini are **agent execution engines**,
+not just model providers. They normalize behind one contract; Vestara owns
+tools, permissions, approvals and evidence.
+
+```text
+Vestara Agent -> CodingAgentRuntimeRegistry -> OpenCode | Claude | Codex | Gemini | Vestara native
+                    │
+              Tool Gateway (governed: auth + approval + evidence)
+```
+
+- `CodingAgentRuntime` contract (capabilities / sessions / execute / cancel /
+  close) + registry; provider SDKs never escape adapter directories
+- `RuntimeSelector` — `AgentRuntimePolicy` (vestara | auto | explicit +
+  fallback + requirements) with capability matching; fallback preserves
+  requirements and lands on the native runtime
+- `ToolGateway` — external runtimes request tools; Vestara owns authorization,
+  approval and evidence (control-risk tools register a pending approval)
+- `OpenCodeAdapter` reference adapter over the stable server/client HTTP
+  integration (plain fetch, no vendor SDK), degrading honestly when offline
+- `AgentRuntimePolicy` on `AgentDefinition`; the developer agent selects
+  `runtime: "auto"` — Vestara creates a Vestara agent, not an "OpenCode agent"
+- Control API: `/api/v2/car/runtimes`, `/select`, `/health`, `/sessions`,
+  `/gateway/execute` — capability `car`
+
+```text
+CAR foundation complete · 8 tests · ADR-0019
+CAR-012..014 Claude Code / Codex / Gemini adapters next
+CAR-015..020 sessions, telemetry, config, credential bridge next
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

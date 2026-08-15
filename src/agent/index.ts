@@ -1,6 +1,7 @@
 export type {
   AgentRole,
   AgentModelPolicy,
+  AgentRuntimePolicy,
   AgentInstructions,
   ToolSelector,
   SkillSelector,

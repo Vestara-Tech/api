@@ -25,6 +25,7 @@ import { workflowRoutes } from './routes/workflow.js';
 import { fileRoutes } from './routes/file.js';
 import { contextRoutes } from './routes/context.js';
 import { permissionRoutes } from './routes/permission.js';
+import { carRoutes } from './routes/car.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -79,6 +80,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(fileRoutes);
   await app.register(contextRoutes);
   await app.register(permissionRoutes);
+  await app.register(carRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 
