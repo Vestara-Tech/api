@@ -35096,6 +35096,1818 @@
           }
         }
       }
+    },
+    "/api/v2/pages": {
+      "get": {
+        "summary": "List page definitions",
+        "tags": [
+          "page-builder"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "route",
+                      "layout",
+                      "nodes",
+                      "dataSources",
+                      "actions",
+                      "permissions",
+                      "responsive",
+                      "metadata",
+                      "revision",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "route": {
+                        "type": "string"
+                      },
+                      "layout": {
+                        "type": "object",
+                        "required": [
+                          "type",
+                          "content"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "content": {}
+                        }
+                      },
+                      "nodes": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "dataSources": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "actions": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "responsive": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "required": [
+                          "title",
+                          "authRequired"
+                        ],
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "revision": {
+                        "type": "integer"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a page definition (declarative)",
+        "tags": [
+          "page-builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "route",
+                  "layout",
+                  "nodes",
+                  "dataSources",
+                  "actions",
+                  "permissions",
+                  "responsive",
+                  "metadata"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "route": {
+                    "type": "string"
+                  },
+                  "layout": {},
+                  "nodes": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "dataSources": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "actions": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "responsive": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "required": [
+                      "title",
+                      "authRequired"
+                    ],
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "authRequired": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "route",
+                    "layout",
+                    "nodes",
+                    "dataSources",
+                    "actions",
+                    "permissions",
+                    "responsive",
+                    "metadata",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "route": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "content"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "content": {}
+                      }
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "dataSources": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "responsive": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "title",
+                        "authRequired"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "authRequired": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pages/{id}": {
+      "get": {
+        "summary": "Get a page definition",
+        "tags": [
+          "page-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "route",
+                    "layout",
+                    "nodes",
+                    "dataSources",
+                    "actions",
+                    "permissions",
+                    "responsive",
+                    "metadata",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "route": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "content"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "content": {}
+                      }
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "dataSources": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "responsive": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "title",
+                        "authRequired"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "authRequired": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a page definition (bumps revision)",
+        "tags": [
+          "page-builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "route",
+                    "layout",
+                    "nodes",
+                    "dataSources",
+                    "actions",
+                    "permissions",
+                    "responsive",
+                    "metadata",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "route": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "type",
+                        "content"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "content": {}
+                      }
+                    },
+                    "nodes": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "dataSources": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "actions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "responsive": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "required": [
+                        "title",
+                        "authRequired"
+                      ],
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "authRequired": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a page definition",
+        "tags": [
+          "page-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "deleted"
+                  ],
+                  "properties": {
+                    "deleted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/pages/{id}/validate": {
+      "post": {
+        "summary": "Validate a page (components, routes, bindings)",
+        "tags": [
+          "page-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/applications": {
+      "get": {
+        "summary": "List application definitions",
+        "tags": [
+          "application-builder"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "version",
+                      "applicationType",
+                      "pages",
+                      "routes",
+                      "navigation",
+                      "apis",
+                      "databases",
+                      "authentication",
+                      "permissions",
+                      "workflows",
+                      "agents",
+                      "configuration",
+                      "integrations",
+                      "state",
+                      "lifecycle",
+                      "revision",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "applicationType": {
+                        "type": "string"
+                      },
+                      "pages": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "pageId",
+                            "path"
+                          ],
+                          "properties": {
+                            "pageId": {
+                              "type": "string"
+                            },
+                            "path": {
+                              "type": "string"
+                            },
+                            "default": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "routes": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "path",
+                            "pageId",
+                            "authRequired"
+                          ],
+                          "properties": {
+                            "path": {
+                              "type": "string"
+                            },
+                            "pageId": {
+                              "type": "string"
+                            },
+                            "authRequired": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "navigation": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "apis": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "databases": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "authentication": {
+                        "type": "object",
+                        "required": [
+                          "enabled",
+                          "provider"
+                        ],
+                        "properties": {
+                          "enabled": {
+                            "type": "boolean"
+                          },
+                          "provider": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "workflows": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "agents": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "configuration": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "integrations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "state": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "lifecycle": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "integer"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an application definition (declarative)",
+        "tags": [
+          "application-builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "version",
+                  "applicationType",
+                  "pages",
+                  "routes",
+                  "navigation",
+                  "apis",
+                  "databases",
+                  "authentication",
+                  "permissions",
+                  "workflows",
+                  "agents",
+                  "configuration",
+                  "integrations",
+                  "state"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "applicationType": {
+                    "type": "string"
+                  },
+                  "pages": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "routes": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "navigation": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "apis": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "databases": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "authentication": {
+                    "type": "object",
+                    "required": [
+                      "enabled",
+                      "provider"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "provider": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "workflows": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "agents": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "configuration": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "integrations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "state": {
+                    "type": "array",
+                    "items": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "applicationType",
+                    "pages",
+                    "routes",
+                    "navigation",
+                    "apis",
+                    "databases",
+                    "authentication",
+                    "permissions",
+                    "workflows",
+                    "agents",
+                    "configuration",
+                    "integrations",
+                    "state",
+                    "lifecycle",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "applicationType": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "pageId",
+                          "path"
+                        ],
+                        "properties": {
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "pageId",
+                          "authRequired"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "navigation": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "apis": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "databases": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "authentication": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "provider"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configuration": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "lifecycle": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/applications/{id}": {
+      "get": {
+        "summary": "Get an application definition",
+        "tags": [
+          "application-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "applicationType",
+                    "pages",
+                    "routes",
+                    "navigation",
+                    "apis",
+                    "databases",
+                    "authentication",
+                    "permissions",
+                    "workflows",
+                    "agents",
+                    "configuration",
+                    "integrations",
+                    "state",
+                    "lifecycle",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "applicationType": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "pageId",
+                          "path"
+                        ],
+                        "properties": {
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "pageId",
+                          "authRequired"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "navigation": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "apis": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "databases": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "authentication": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "provider"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configuration": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "lifecycle": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an application definition (bumps revision, validates)",
+        "tags": [
+          "application-builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "applicationType",
+                    "pages",
+                    "routes",
+                    "navigation",
+                    "apis",
+                    "databases",
+                    "authentication",
+                    "permissions",
+                    "workflows",
+                    "agents",
+                    "configuration",
+                    "integrations",
+                    "state",
+                    "lifecycle",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "applicationType": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "pageId",
+                          "path"
+                        ],
+                        "properties": {
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "pageId",
+                          "authRequired"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "navigation": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "apis": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "databases": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "authentication": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "provider"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configuration": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "lifecycle": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an application definition",
+        "tags": [
+          "application-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "deleted"
+                  ],
+                  "properties": {
+                    "deleted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/applications/{id}/model": {
+      "get": {
+        "summary": "Application model (definition + resolved pages)",
+        "tags": [
+          "application-builder"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "definition",
+                    "pages",
+                    "lifecycle"
+                  ],
+                  "properties": {
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "version",
+                        "applicationType",
+                        "pages",
+                        "routes",
+                        "navigation",
+                        "apis",
+                        "databases",
+                        "authentication",
+                        "permissions",
+                        "workflows",
+                        "agents",
+                        "configuration",
+                        "integrations",
+                        "state",
+                        "lifecycle",
+                        "revision",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "applicationType": {
+                          "type": "string"
+                        },
+                        "pages": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "pageId",
+                              "path"
+                            ],
+                            "properties": {
+                              "pageId": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "string"
+                              },
+                              "default": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "routes": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "pageId",
+                              "authRequired"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "pageId": {
+                                "type": "string"
+                              },
+                              "authRequired": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "navigation": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "apis": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "databases": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "authentication": {
+                          "type": "object",
+                          "required": [
+                            "enabled",
+                            "provider"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "provider": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "permissions": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "workflows": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "agents": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "configuration": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "integrations": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "state": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "lifecycle": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "pages": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "lifecycle": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/applications/{id}/transition": {
+      "post": {
+        "summary": "Transition application lifecycle (draft -> planning -> building -> ready -> published)",
+        "tags": [
+          "application-builder"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "to"
+                ],
+                "properties": {
+                  "to": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "version",
+                    "applicationType",
+                    "pages",
+                    "routes",
+                    "navigation",
+                    "apis",
+                    "databases",
+                    "authentication",
+                    "permissions",
+                    "workflows",
+                    "agents",
+                    "configuration",
+                    "integrations",
+                    "state",
+                    "lifecycle",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "applicationType": {
+                      "type": "string"
+                    },
+                    "pages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "pageId",
+                          "path"
+                        ],
+                        "properties": {
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "routes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "pageId",
+                          "authRequired"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "pageId": {
+                            "type": "string"
+                          },
+                          "authRequired": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "navigation": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "apis": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "databases": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "authentication": {
+                      "type": "object",
+                      "required": [
+                        "enabled",
+                        "provider"
+                      ],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "provider": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "workflows": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configuration": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "integrations": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "state": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "lifecycle": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

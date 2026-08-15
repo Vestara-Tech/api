@@ -71,6 +71,8 @@ import { buildTestPlatform } from './test.js';
 import { buildBrowserPlatform } from './browser.js';
 import { buildTaskPlatform } from './task.js';
 import { buildOsPlatform } from './os.js';
+import { buildPageBuilderPlatform } from './pagebuilder.js';
+import { buildApplicationBuilderPlatform } from './appbuilder.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
@@ -99,6 +101,7 @@ import { registerTestCapability } from './test-capability.js';
 import { registerBrowserCapability } from './browser-capability.js';
 import { registerTaskCapability } from './task-capability.js';
 import { registerOsCapability } from './os-capability.js';
+import { registerPageBuilderCapability, registerApplicationBuilderCapability } from './builder-capabilities.js';
 import { registerMilestoneCapability } from './milestone-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
@@ -291,6 +294,12 @@ export function createApplication(config: AppConfig): Application {
   // ── Component Module (COMP-001..013) ──────────────────────
   const component = buildComponentPlatform({ resolveCapability: (cap) => capabilities.has(cap.split('.')[0] ?? cap) });
 
+  // ── Page Builder (PAGE-001..) ─────────────────────────────
+  const pageBuilder = buildPageBuilderPlatform(component.registry);
+
+  // ── Application Builder (APP-001..) ───────────────────────
+  const applicationBuilder = buildApplicationBuilderPlatform(pageBuilder.service);
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -317,6 +326,8 @@ export function createApplication(config: AppConfig): Application {
   registerBrowserCapability(capabilities, config);
   registerTaskCapability(capabilities, config);
   registerOsCapability(capabilities, config);
+  registerPageBuilderCapability(capabilities, config);
+  registerApplicationBuilderCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
 
   container.register('commands', commands);
@@ -400,6 +411,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('task.service', task.service);
   container.register('task.store', task.store);
   container.register('os', os.service);
+  container.register('page-builder.service', pageBuilder.service);
+  container.register('application-builder.service', applicationBuilder.service);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
   container.register('component.registry', component.registry);
