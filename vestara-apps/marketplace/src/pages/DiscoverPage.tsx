@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Chip, Grid, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Chip, Grid, Stack, TextField, Typography } from '@mui/material';
 import { marketplaceApi, type PackageView } from '../api/marketplaceApi';
 import { PackageCard } from '../components/package/PackageCard';
 
@@ -8,9 +8,10 @@ export function DiscoverPage() {
   const [categories, setCategories] = useState<readonly { name: string; count: number }[]>([]);
   const [search, setSearch] = useState('');
   const [kind, setKind] = useState<string | undefined>(undefined);
+  const [offline, setOffline] = useState(false);
 
   useEffect(() => {
-    void marketplaceApi.packages(search || undefined, kind).then(setPackages).catch(() => undefined);
+    void marketplaceApi.packages(search || undefined, kind).then(setPackages).catch(() => setOffline(true));
   }, [search, kind]);
 
   useEffect(() => {
@@ -26,6 +27,12 @@ export function DiscoverPage() {
         The distribution surface for Vestara capabilities — agents, skills, tools,
         workflows, integrations, generators and more.
       </Typography>
+
+      {offline ? (
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Offline — showing locally available Vestara packages and cached catalog metadata.
+        </Alert>
+      ) : null}
 
       <TextField
         size="small"
