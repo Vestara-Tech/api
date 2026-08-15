@@ -432,6 +432,42 @@ Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.
 
+### AI Platform Module (AI-001..006, foundation)
+
+Shared AI infrastructure: consuming modules depend on `AiRuntime`, never on a
+concrete provider SDK.
+
+- **AI-001** domain contracts — `AiProvider`, `AiModel`, `AiModelSelector`
+  (explicit or capability-driven), `AiGenerateRequest/Result`, streaming,
+  embedding, usage records, `AI_CAPABILITIES`
+- **AI-002/003** provider abstraction + registry — `AiProviderAdapter`
+  (generate/stream), `AiProviderRegistry` (enabled providers, priority),
+  OpenAI-compatible adapter over plain fetch (no vendor SDK)
+- **AI-004** normalized `AiModelCatalog`
+- **AI-005** `ModelsDevCatalogAdapter` — models.dev metadata → normalized
+  catalog (models.dev is catalog metadata, not the runtime)
+- **AI-006** `CatalogCache` — validated, checksummed offline snapshot; AI
+  execution never depends on a network catalog call
+- **AI-012/013/014** `ModelRouter` — capability matching + optimization
+  profiles (quality/balanced/cost/latency/local/offline/auto)
+- **AI-007/008/009** `AiService` — normalized generation/streaming with usage
+  accounting and fallback chains
+
+Registered as capability `ai`; container keys `ai`, `ai.providers`,
+`ai.catalog`, `ai.router`. Providers are declared by default (disabled);
+credentials remain `secret://integrations/<provider>/api-key` references.
+
+```text
+AI-001..006 foundation complete · 11 tests · ADR-0013
+AI-007+ generation/streaming/structured-output/tool-calling/embedding next
+AI-012+ routing profiles + fallback chains next
+AI-023+ control API + OpenAPI contracts next
+```
+
+Agents, workflows, generators, database, Marketplace, and diagnostics are
+**not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
+runtimes stay behind ports; the API boots and passes tests without them.
+
 ## Quickstart
 
 ```bash

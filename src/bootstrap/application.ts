@@ -28,6 +28,7 @@ import type { GrubConfigurationService } from '../system/grub/service/grub-confi
 import type { StartupCoordinator } from '../startup/service/startup-coordinator.js';
 import type { LoginBroker } from '../login/service/login-broker.js';
 import type { ImageBuildService } from '../image/service/image-build-service.js';
+import type { AiService } from '../ai/runtime/ai-runtime.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -36,6 +37,7 @@ import { buildGrubConfigurationService } from './grub-configuration.js';
 import { buildStartupCoordinator } from './startup.js';
 import { buildLoginPlatform } from './login.js';
 import { buildImageBuilderService } from './image-builder.js';
+import { buildAiService } from './ai.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -46,6 +48,7 @@ import { registerSystemModuleCapability } from './system-capability.js';
 import { registerStartupCapability } from './startup-capability.js';
 import { registerLoginCapability } from './login-capability.js';
 import { registerImageCapability } from './image-capability.js';
+import { registerAiCapability } from './ai-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -79,6 +82,7 @@ export interface Application {
   readonly startup: StartupCoordinator;
   readonly login: LoginBroker;
   readonly imageBuilder: ImageBuildService;
+  readonly ai: AiService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -147,6 +151,9 @@ export function createApplication(config: AppConfig): Application {
   // ── OS Image Builder (IMG-001..026) ────────────────────────
   const imageBuilder = buildImageBuilderService();
 
+  // ── AI Platform (AI-001..006) ─────────────────────────────
+  const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -157,6 +164,7 @@ export function createApplication(config: AppConfig): Application {
   registerStartupCapability(capabilities, config);
   registerLoginCapability(capabilities, config);
   registerImageCapability(capabilities, config);
+  registerAiCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -182,6 +190,10 @@ export function createApplication(config: AppConfig): Application {
   container.register('login.sessions', loginPlatform.sessions);
   container.register('login.rateLimit', loginPlatform.rateLimit);
   container.register('imageBuilder', imageBuilder);
+  container.register('ai', ai);
+  container.register('ai.providers', aiProviders);
+  container.register('ai.catalog', aiCatalog);
+  container.register('ai.router', aiRouter);
 
   const startedAt = Date.now();
 
@@ -207,6 +219,7 @@ export function createApplication(config: AppConfig): Application {
     startup,
     login: loginPlatform.broker,
     imageBuilder,
+    ai,
     shutdown,
     systemStatus(): SystemStatus {
       return {
