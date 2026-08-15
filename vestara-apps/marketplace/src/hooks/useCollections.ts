@@ -9,7 +9,8 @@ export interface PackageCollection {
 
 const COLLECTIONS_KEY = 'vestara.marketplace.collections';
 
-function readCollections(): PackageCollection[] {
+/** Pure helpers (testable without a React renderer). */
+export function readCollections(): PackageCollection[] {
   try {
     if (typeof localStorage === 'undefined') return [];
     return JSON.parse(localStorage.getItem(COLLECTIONS_KEY) ?? '[]') as PackageCollection[];
@@ -18,12 +19,30 @@ function readCollections(): PackageCollection[] {
   }
 }
 
+export function writeCollections(next: readonly PackageCollection[]): void {
+  try {
+    if (typeof localStorage !== 'undefined') localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(next));
+  } catch {
+    // ignore storage failures (e.g. non-browser test environments)
+  }
+}
+
+export function addPackageToCollection(collection: PackageCollection, packageId: string): PackageCollection {
+  return collection.packageIds.includes(packageId)
+    ? collection
+    : { ...collection, packageIds: [...collection.packageIds, packageId] };
+}
+
+export function removePackageFromCollection(collection: PackageCollection, packageId: string): PackageCollection {
+  return { ...collection, packageIds: collection.packageIds.filter((p) => p !== packageId) };
+}
+
 export function useCollections() {
   const [collections, setCollections] = useState<readonly PackageCollection[]>(readCollections());
 
   const persist = useCallback((next: readonly PackageCollection[]) => {
     setCollections(next);
-    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(next));
+    writeCollections(next);
   }, []);
 
   const createCollection = useCallback(
@@ -41,7 +60,9 @@ export function useCollections() {
       const existing = readCollections();
       const next = existing.map((c) =>
         c.id === collectionId
-          ? { ...c, packageIds: c.packageIds.includes(packageId) ? c.packageIds.filter((p) => p !== packageId) : [...c.packageIds, packageId] }
+          ? c.packageIds.includes(packageId)
+            ? removePackageFromCollection(c, packageId)
+            : addPackageToCollection(c, packageId)
           : c,
       );
       persist(next);
