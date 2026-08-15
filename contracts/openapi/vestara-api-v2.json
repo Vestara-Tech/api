@@ -36908,6 +36908,1486 @@
           }
         }
       }
+    },
+    "/api/v2/users": {
+      "get": {
+        "summary": "List users",
+        "tags": [
+          "users"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "identityId",
+                      "username",
+                      "status",
+                      "profile",
+                      "preferences",
+                      "settings",
+                      "memberships",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "identityId": {
+                        "type": "string"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "profile": {
+                        "type": "object",
+                        "required": [
+                          "displayName"
+                        ],
+                        "properties": {
+                          "displayName": {
+                            "type": "string"
+                          },
+                          "avatar": {
+                            "type": "string"
+                          },
+                          "locale": {
+                            "type": "string"
+                          },
+                          "timezone": {
+                            "type": "string"
+                          },
+                          "jobTitle": {
+                            "type": "string"
+                          },
+                          "organization": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "preferences": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "settings": {
+                        "type": "object",
+                        "required": [
+                          "emailVerified",
+                          "twoFactorEnabled"
+                        ],
+                        "properties": {
+                          "emailVerified": {
+                            "type": "boolean"
+                          },
+                          "email": {
+                            "type": "string"
+                          },
+                          "twoFactorEnabled": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "memberships": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "organizationId",
+                            "roleIds"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "organizationId": {
+                              "type": "string"
+                            },
+                            "workspaceId": {
+                              "type": "string"
+                            },
+                            "roleIds": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "deletedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Provision a user (linked to an identity)",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "identityId",
+                  "username",
+                  "profile"
+                ],
+                "properties": {
+                  "identityId": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "profile": {
+                    "type": "object",
+                    "required": [
+                      "displayName"
+                    ],
+                    "properties": {
+                      "displayName": {
+                        "type": "string"
+                      },
+                      "avatar": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "timezone": {
+                        "type": "string"
+                      },
+                      "jobTitle": {
+                        "type": "string"
+                      },
+                      "organization": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "preferences": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "settings": {
+                    "type": "object",
+                    "properties": {
+                      "emailVerified": {
+                        "type": "boolean"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "twoFactorEnabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "memberships": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "organizationId",
+                        "roleIds"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "organizationId": {
+                          "type": "string"
+                        },
+                        "workspaceId": {
+                          "type": "string"
+                        },
+                        "roleIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}": {
+      "get": {
+        "summary": "Get a user",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/by-identity/{identityId}": {
+      "get": {
+        "summary": "Resolve a user by identity",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "identityId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/status": {
+      "patch": {
+        "summary": "Transition user lifecycle (active/suspended/disabled/deleted)",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "to"
+                ],
+                "properties": {
+                  "to": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/profile": {
+      "patch": {
+        "summary": "Update user profile",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "displayName"
+                ],
+                "properties": {
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "avatar": {
+                    "type": "string"
+                  },
+                  "locale": {
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  },
+                  "jobTitle": {
+                    "type": "string"
+                  },
+                  "organization": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/preferences": {
+      "patch": {
+        "summary": "Update namespaced user preferences",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/memberships": {
+      "post": {
+        "summary": "Add a membership",
+        "tags": [
+          "users"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "organizationId",
+                  "roleIds"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "organizationId": {
+                    "type": "string"
+                  },
+                  "workspaceId": {
+                    "type": "string"
+                  },
+                  "roleIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/users/{id}/memberships/{membershipId}": {
+      "delete": {
+        "summary": "Remove a membership",
+        "tags": [
+          "users"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "membershipId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "identityId",
+                    "username",
+                    "status",
+                    "profile",
+                    "preferences",
+                    "settings",
+                    "memberships",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "identityId": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "displayName"
+                      ],
+                      "properties": {
+                        "displayName": {
+                          "type": "string"
+                        },
+                        "avatar": {
+                          "type": "string"
+                        },
+                        "locale": {
+                          "type": "string"
+                        },
+                        "timezone": {
+                          "type": "string"
+                        },
+                        "jobTitle": {
+                          "type": "string"
+                        },
+                        "organization": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "preferences": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "settings": {
+                      "type": "object",
+                      "required": [
+                        "emailVerified",
+                        "twoFactorEnabled"
+                      ],
+                      "properties": {
+                        "emailVerified": {
+                          "type": "boolean"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "twoFactorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "memberships": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "organizationId",
+                          "roleIds"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "organizationId": {
+                            "type": "string"
+                          },
+                          "workspaceId": {
+                            "type": "string"
+                          },
+                          "roleIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "deletedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

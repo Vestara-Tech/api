@@ -43,6 +43,7 @@ import { systemV2Routes } from './routes/system-v2.js';
 import { osRoutes } from './routes/os.js';
 import { pageBuilderRoutes } from './routes/page-builder.js';
 import { applicationBuilderRoutes } from './routes/application-builder.js';
+import { userRoutes } from './routes/user.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -115,6 +116,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(osRoutes);
   await app.register(pageBuilderRoutes);
   await app.register(applicationBuilderRoutes);
+  await app.register(userRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

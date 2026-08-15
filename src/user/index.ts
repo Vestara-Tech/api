@@ -1,0 +1,11 @@
+export type { UserStatus, UserProfile, UserPreferences, UserSettings, MembershipReference, User, CreateUserInput } from './domain/user.js';
+export { USER_LIFECYCLE_TRANSITIONS, canTransition, isHumanIdentity, nextUserId } from './domain/user.js';
+export type { UserEventType, UserEvent } from './domain/user-events.js';
+export type { UserCapabilityKind, UserCapabilityDefinition } from './domain/user-capability.js';
+export { USER_CAPABILITIES, getUserCapability, hasUserCapability } from './domain/user-capability.js';
+export type { UserStorePort } from './store/user-store.js';
+export { InMemoryUserStore } from './store/user-store.js';
+export type { UserEventPublisher, UserServiceOptions } from './service/user-service.js';
+export { UserService } from './service/user-service.js';
+export type { UserContext, AuthenticationPort, OnboardingPort } from './integration/user-context.js';
+export { UserResolver, UserProvisioner } from './integration/user-context.js';
