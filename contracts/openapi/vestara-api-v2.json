@@ -5483,6 +5483,661 @@
           }
         }
       }
+    },
+    "/api/v2/config/schemas": {
+      "get": {
+        "summary": "List registered configuration namespaces",
+        "tags": [
+          "config"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "namespace",
+                      "version",
+                      "scope"
+                    ],
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "secretFields": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/keys": {
+      "get": {
+        "summary": "List all configuration keys (leaf) with defaults",
+        "tags": [
+          "config"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "namespace",
+                      "key",
+                      "name",
+                      "secret"
+                    ],
+                    "properties": {
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "key": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "secret": {
+                        "type": "boolean"
+                      },
+                      "defaultValue": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/resolved": {
+      "get": {
+        "summary": "Resolve all configuration values with their source scope",
+        "tags": [
+          "config"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "key",
+                      "value",
+                      "scope",
+                      "source",
+                      "secret"
+                    ],
+                    "properties": {
+                      "key": {
+                        "type": "string"
+                      },
+                      "value": {},
+                      "scope": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      },
+                      "secret": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/resolved/{key}": {
+      "get": {
+        "summary": "Resolve a single configuration key",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "key",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "key",
+                    "value",
+                    "scope",
+                    "source",
+                    "secret"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "value": {},
+                    "scope": {
+                      "type": "string"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "secret": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/drafts": {
+      "post": {
+        "summary": "Create a configuration draft (values per scope)",
+        "tags": [
+          "config"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "scope",
+                  "values"
+                ],
+                "properties": {
+                  "scope": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "scope",
+                    "status",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/drafts/{draftId}/validate": {
+      "post": {
+        "summary": "Validate a configuration draft",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "draftId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "error"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "warning"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/drafts/{draftId}/apply": {
+      "post": {
+        "summary": "Apply a configuration draft (validated → active + events)",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "draftId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "scope",
+                    "values",
+                    "status",
+                    "createdAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "values": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "appliedAt": {
+                      "type": "string"
+                    },
+                    "appliedBy": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/scopes/{scope}/revisions": {
+      "get": {
+        "summary": "List revision history for a scope",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "scope",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "scope",
+                      "values",
+                      "status",
+                      "createdAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      },
+                      "values": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "appliedAt": {
+                        "type": "string"
+                      },
+                      "appliedBy": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/config/scopes/{scope}/rollback": {
+      "post": {
+        "summary": "Roll back the applied configuration for a scope",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "scope",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message",
+                        "requestId",
+                        "correlationId",
+                        "retryable"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        },
+                        "details": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

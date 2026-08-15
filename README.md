@@ -114,10 +114,36 @@ identity model:
 - Auth capability registered (`auth` in `/api/v2/system`); 18 OpenAPI paths
   total with drift gate
 
+**CONFIG-001..008 — Configuration Platform (complete).** Vestara's typed,
+layered, observable configuration control plane — not a glorified `.env`
+reader. Configuration and Generator are independent platform modules: the API
+consumes them via capabilities, never the reverse:
+
+- **CONFIG-001** `ConfigurationDefinition<T>` — namespace, version, schema,
+  defaults, scopes, secret fields; extensible scope model (`system` →
+  `runtime` precedence)
+- **CONFIG-002** `SchemaRegistry` — packages register schemas; leaf-key
+  derivation from defaults
+- **CONFIG-003** `LayeredResolver` — deterministic precedence (defaults →
+  system → environment → … → runtime), runtime overrides
+- **CONFIG-004** `ConfigurationValidator` — definition + value + secret-field
+  diagnostics
+- **CONFIG-005** `SecretReference` — config stores references
+  (`secret://store/path`), never literal secrets
+- **CONFIG-006** draft → validate → apply → rollback lifecycle with revision
+  history
+- **CONFIG-007** change events + watchers with hot-reload / restart-required
+  semantics
+- **CONFIG-008** control API: `GET /api/v2/config/schemas|keys|resolved`,
+  `POST .../drafts|drafts/:id/validate|apply`, `GET .../scopes/:scope/revisions`,
+  `POST .../scopes/:scope/rollback`
+- Registered `config` capability; example definitions `vestara.api`,
+  `vestara.auth`; 27 OpenAPI paths total with drift gate
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — they become API2-004+ / AUTH-007+
-capabilities. PostgreSQL/Redis/NATS/Prisma and external runtimes stay behind
-ports; the API boots and passes tests without them.
+**not** part of the current stream — they become API2-004+ / AUTH-007+ /
+GEN-001+ capabilities. PostgreSQL/Redis/NATS/Prisma and external runtimes stay
+behind ports; the API boots and passes tests without them.
 
 ## Quickstart
 

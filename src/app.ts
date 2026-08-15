@@ -11,6 +11,7 @@ import { healthRoutes } from './routes/health.js';
 import { systemRoutes } from './routes/system.js';
 import { builderRoutes } from './routes/builder.js';
 import { authRoutes } from './routes/auth.js';
+import { configRoutes } from './routes/config.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -51,6 +52,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(systemRoutes);
   await app.register(builderRoutes);
   await app.register(authRoutes);
+  await app.register(configRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

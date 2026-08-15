@@ -17,9 +17,12 @@ import { AuthorizationService } from '../auth/service/authorization-service.js';
 import { InMemoryIdentityStore } from '../auth/store/in-memory-identity.js';
 import { InMemoryCredentialStore } from '../auth/store/in-memory-credential.js';
 import { InMemorySessionStore } from '../auth/store/in-memory-session.js';
+import type { ConfigurationService } from '../configuration/service/configuration-service.js';
+import { buildConfigurationService } from './configuration.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
+import { registerConfigCapability } from './config-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -43,6 +46,7 @@ export interface Application {
   readonly identities: IdentityService;
   readonly authentication: AuthenticationService;
   readonly authorization: AuthorizationService;
+  readonly configuration: ConfigurationService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -79,9 +83,13 @@ export function createApplication(config: AppConfig): Application {
   });
   const authorization = new AuthorizationService();
 
+  // ── Configuration (CONFIG-001..008) ─────────────────────────
+  const configuration = buildConfigurationService(config);
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
+  registerConfigCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -95,6 +103,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('auth.identityStore', identityStore);
   container.register('auth.credentialStore', credentialStore);
   container.register('auth.sessionStore', sessionStore);
+  container.register('configuration', configuration);
 
   const startedAt = Date.now();
 
@@ -110,6 +119,7 @@ export function createApplication(config: AppConfig): Application {
     identities,
     authentication,
     authorization,
+    configuration,
     shutdown,
     systemStatus(): SystemStatus {
       return {
