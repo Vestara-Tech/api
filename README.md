@@ -140,10 +140,38 @@ consumes them via capabilities, never the reverse:
 - Registered `config` capability; example definitions `vestara.api`,
   `vestara.auth`; 27 OpenAPI paths total with drift gate
 
+**GEN-001..006 — Generator Platform (complete).** A general Vestara artifact
+generation platform — not an API-code generator specifically. Independent
+module (API → Generator); consumed via capabilities:
+
+- **GEN-001** `Generator<TInput, TOutput>` contracts + governed lifecycle
+  (`REQUEST → PLAN → GENERATE → ARTIFACT SET → VALIDATE → PREVIEW/DIFF →
+  POLICY/APPROVAL → APPLY → VERIFY → EVIDENCE`)
+- **ConfigurationSnapshot into GenerationContext** — generators receive an
+  immutable resolved-config snapshot (snapshotHash, values, source scopes,
+  secret references); never reach into Configuration globally
+- **GEN-002** `GeneratorRegistry` — register/unregister/discover/capabilities/
+  compatibility
+- **GEN-003** `GenerationPlan`/`GenerationStep` — dependencies, requirements,
+  warnings, planHash
+- **GEN-004** Template platform — `TemplateDefinition`, `TemplateRegistry`,
+  `TemplateRenderer` (deterministic `{{ }}` substitution), versioning
+- **GEN-005** Artifact model — `Artifact`, `ArtifactSet`, `ArtifactManifest`,
+  content hashing, provenance; generators never write files (they emit an
+  ArtifactSet an apply port consumes)
+- **GEN-006** Determinism boundary — `GenerationEvidence`
+  (generator version + input hash + configuration hash + template hashes →
+  output hash → evidenceHash); same inputs ⇒ same evidence
+- **Secret rule** — generators only see `secret://` references; a
+  secrets-requiring generator is rejected unless policy approves, and
+  `secretsResolved` stays false in the snapshot
+- Example generator `generator.api.typescript` (template-driven TS client)
+  registered; `generator` capability exposed
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — they become API2-004+ / AUTH-007+ /
-GEN-001+ capabilities. PostgreSQL/Redis/NATS/Prisma and external runtimes stay
-behind ports; the API boots and passes tests without them.
+**not** part of the current stream — GEN-007+ (preview/apply/verify/evidence),
+AUTH-007+, and API2-004+ come next. PostgreSQL/Redis/NATS/Prisma and external
+runtimes stay behind ports; the API boots and passes tests without them.
 
 ## Quickstart
 
