@@ -1,32 +1,21 @@
-import { strict as assert } from 'node:assert';
-import test from 'node:test';
+import { describe, expect, it } from 'vitest';
 import { CapabilityRegistry } from '../../src/capabilities/registry.js';
 
-test('capability registry registers, enables, and lists', () => {
-  const registry = new CapabilityRegistry();
-  registry.register({
-    id: 'vestara.api.system',
-    namespace: 'system',
-    version: 'v2',
-    permissions: [],
-    operations: ['system.status'],
-  });
-  registry.register({
-    id: 'vestara.api.operations',
-    namespace: 'operations',
-    version: 'v2',
-    permissions: [],
-    operations: ['operation.list'],
-  });
+describe('capability registry', () => {
+  it('registers, enables, and lists', () => {
+    const registry = new CapabilityRegistry();
+    registry.register({ id: 'vestara.api.system', namespace: 'system', version: 'v2', permissions: [], operations: ['system.status'] });
+    registry.register({ id: 'vestara.api.operations', namespace: 'operations', version: 'v2', permissions: [], operations: ['operation.list'] });
 
-  assert.equal(registry.has('system'), true);
-  assert.equal(registry.get('operations')?.enabled, true);
-  assert.equal(registry.list().length, 2);
-  assert.equal(registry.listEnabled().length, 2);
+    expect(registry.has('system')).toBe(true);
+    expect(registry.get('operations')?.enabled).toBe(true);
+    expect(registry.list()).toHaveLength(2);
+    expect(registry.listEnabled()).toHaveLength(2);
 
-  registry.disable('operations');
-  assert.equal(registry.listEnabled().length, 1);
-  registry.enable('operations');
-  assert.equal(registry.listEnabled().length, 2);
-  assert.equal(registry.unregister('missing'), false);
+    registry.disable('operations');
+    expect(registry.listEnabled()).toHaveLength(1);
+    registry.enable('operations');
+    expect(registry.listEnabled()).toHaveLength(2);
+    expect(registry.unregister('missing')).toBe(false);
+  });
 });

@@ -10,18 +10,35 @@
     "node": ">=22"
   },
   "scripts": {
-    "build": "tsc -b",
-    "dev": "node --watch dist/main.js",
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
-    "typecheck": "tsc -b --noEmit",
-    "test": "node --test --test-reporter=spec dist/tests/**/*.test.js",
-    "test:unit": "node --test dist/tests/unit/**/*.test.js",
-    "test:integration": "node --test dist/tests/integration/**/*.test.js",
-    "test:contract": "node --test dist/tests/contract/**/*.test.js"
+    "typecheck": "tsc -p tsconfig.build.json --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:contract": "vitest run tests/contract",
+    "openapi:generate": "tsx scripts/generate-openapi.ts",
+    "openapi:check": "tsx scripts/check-openapi.ts"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/type-provider-typebox": "^6.1.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@scalar/fastify-api-reference": "^1.65.1",
+    "@sinclair/typebox": "^0.34.52",
+    "fastify": "^5.12.0",
+    "pino": "^10.3.1"
+  },
   "devDependencies": {
     "@types/node": "^26.1.1",
-    "typescript": "5.9.3"
+    "tsx": "^4.23.12",
+    "typescript": "5.9.3",
+    "vitest": "^4.1.10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

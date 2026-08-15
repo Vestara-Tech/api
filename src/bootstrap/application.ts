@@ -5,11 +5,17 @@ import { CommandBus } from '../core/commands.js';
 import { EventBus } from '../core/events.js';
 import { OperationStore } from '../core/operations.js';
 import { QueryBus } from '../core/queries.js';
-import type { Logger } from '../infrastructure/logger.js';
-import { JsonLogger } from '../infrastructure/logger.js';
 import { registerSystemCapability } from './capabilities.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
+
+export interface SystemStatus {
+  readonly service: string;
+  readonly apiVersion: string;
+  readonly uptimeMs: number;
+  readonly startedAt: string;
+  readonly capabilities: string[];
+}
 
 export interface Application {
   readonly config: AppConfig;
@@ -19,14 +25,12 @@ export interface Application {
   readonly events: EventBus;
   readonly operations: OperationStore;
   readonly capabilities: CapabilityRegistry;
-  readonly logger: Logger;
   readonly shutdown: ShutdownCoordinator;
-  systemStatus(): Record<string, unknown>;
+  systemStatus(): SystemStatus;
   close(): Promise<void>;
 }
 
 export function createApplication(config: AppConfig): Application {
-  const logger = new JsonLogger(config.logLevel);
   const container = new Container();
   const commands = new CommandBus();
   const queries = new QueryBus();
@@ -37,7 +41,6 @@ export function createApplication(config: AppConfig): Application {
 
   registerSystemCapability(capabilities, config);
 
-  container.register('logger', logger);
   container.register('commands', commands);
   container.register('queries', queries);
   container.register('events', events);
@@ -54,10 +57,11 @@ export function createApplication(config: AppConfig): Application {
     events,
     operations,
     capabilities,
-    logger,
     shutdown,
-    systemStatus() {
+    systemStatus(): SystemStatus {
       return {
+        service: config.service,
+        apiVersion: config.apiVersion,
         uptimeMs: Date.now() - startedAt,
         startedAt: new Date(startedAt).toISOString(),
         capabilities: capabilities.listEnabled().map((c) => c.namespace),

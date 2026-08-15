@@ -1,89 +1,97 @@
-import { strict as assert } from 'node:assert';
-import test from 'node:test';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { buildApp, type VestaraFastifyInstance } from '../../src/app.js';
 import { createApplication } from '../../src/bootstrap/application.js';
 import { loadConfig } from '../../src/config/schema.js';
-import { VestaraApiServer } from '../../src/server.js';
-import type { AddressInfo } from 'node:net';
 
-async function withServer<T>(fn: (baseUrl: string) => Promise<T>): Promise<T> {
+let app: VestaraFastifyInstance;
+
+beforeEach(async () => {
   const config = loadConfig({ VESTARA_API_PORT: '0', VESTARA_API_HOST: '127.0.0.1' });
   const application = createApplication(config);
-  const server = new VestaraApiServer({
-    config,
-    logger: application.logger,
-    systemStatus: () => application.systemStatus(),
-  });
-  await server.listen();
-  const address = server['server'].address() as AddressInfo;
-  const baseUrl = `http://127.0.0.1:${address.port}`;
-  try {
-    return await fn(baseUrl);
-  } finally {
-    await server.close();
-  }
-}
+  app = await buildApp({ config, application });
+  await app.ready();
+});
 
-test('GET /health/live returns 200 live', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/health/live`);
-    assert.equal(res.status, 200);
-    const body = (await res.json()) as { status: string; service: string };
-    assert.equal(body.status, 'live');
-    assert.equal(body.service, 'vestara-api');
+afterEach(async () => {
+  await app.close();
+});
+
+describe('health routes', () => {
+  it('GET /health/live returns 200 live', async () => {
+    const res = await app.inject({ method: 'GET', url: '/health/live' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ status: 'live', service: 'vestara-api' });
+  });
+
+  it('GET /health/ready returns 200 ready', async () => {
+    const res = await app.inject({ method: 'GET', url: '/health/ready' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toEqual({ status: 'ready', service: 'vestara-api' });
   });
 });
 
-test('GET /health/ready returns 200 ready after listen', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/health/ready`);
-    assert.equal(res.status, 200);
-    const body = (await res.json()) as { status: string };
-    assert.equal(body.status, 'ready');
+describe('system routes', () => {
+  it('GET /api/v2 returns service identity', async () => {
+    const res = await app.inject({ method: 'GET', url: '/api/v2' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body.apiVersion).toBe('v2');
+    expect(body.service).toBe('vestara-api');
+  });
+
+  it('GET /api/v2/system returns system status with capabilities', async () => {
+    const res = await app.inject({ method: 'GET', url: '/api/v2/system' });
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body.service).toBe('vestara-api');
+    expect(body.apiVersion).toBe('v2');
+    expect(body.uptimeMs).toBeGreaterThanOrEqual(0);
+    expect(body.capabilities).toContain('system');
   });
 });
 
-test('GET /api/v2/system returns system status with capabilities', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/api/v2/system`);
-    assert.equal(res.status, 200);
-    const body = (await res.json()) as {
-      service: string;
-      apiVersion: string;
-      uptimeMs: number;
-      capabilities: string[];
-    };
-    assert.equal(body.service, 'vestara-api');
-    assert.equal(body.apiVersion, 'v2');
-    assert.ok(body.uptimeMs >= 0);
-    assert.ok(body.capabilities.includes('system'));
+describe('error handling', () => {
+  it('unknown route returns canonical VestaraError 404', async () => {
+    const res = await app.inject({ method: 'GET', url: '/api/v2/nope' });
+    expect(res.statusCode).toBe(404);
+    const body = res.json();
+    expect(body.error.code).toBe('NOT_FOUND');
+    expect(body.error.requestId).toMatch(/^req_/);
+    expect(body.error.retryable).toBe(false);
+  });
+
+  it('propagates a supplied correlation id', async () => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/v2/nope',
+      headers: { 'x-correlation-id': 'cor_abc123' },
+    });
+    expect(res.statusCode).toBe(404);
+    expect(res.json().error.correlationId).toBe('cor_abc123');
+  });
+
+  it('sets correlation headers on success responses', async () => {
+    const res = await app.inject({ method: 'GET', url: '/health/live' });
+    expect(res.headers['x-request-id']).toMatch(/^req_/);
+    expect(res.headers['x-correlation-id']).toBeDefined();
+    expect(res.headers['x-trace-id']).toMatch(/^trc_/);
   });
 });
 
-test('GET /api/v2 returns service identity', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/api/v2`);
-    assert.equal(res.status, 200);
-    const body = (await res.json()) as { service: string; apiVersion: string };
-    assert.equal(body.apiVersion, 'v2');
+describe('openapi + docs', () => {
+  it('serves generated OpenAPI at /docs/openapi.json', async () => {
+    const res = await app.inject({ method: 'GET', url: '/docs/openapi.json' });
+    expect(res.statusCode).toBe(200);
+    const spec = res.json();
+    expect(spec.openapi).toBe('3.1.0');
+    expect(spec.info.title).toBe('Vestara API v2');
+    expect(spec.paths['/health/live']).toBeDefined();
+    expect(spec.paths['/api/v2/system']).toBeDefined();
   });
-});
 
-test('unknown route returns canonical VestaraError 404', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/api/v2/nope`);
-    assert.equal(res.status, 404);
-    const body = (await res.json()) as { error: { code: string; requestId: string; correlationId: string; retryable: boolean } };
-    assert.equal(body.error.code, 'NOT_FOUND');
-    assert.ok(body.error.requestId.startsWith('req_'));
-    assert.equal(body.error.retryable, false);
-  });
-});
-
-test('request propagates a supplied correlationId', async () => {
-  await withServer(async (base) => {
-    const res = await fetch(`${base}/api/v2/nope?correlationId=cor_abc123`);
-    assert.equal(res.status, 404);
-    const body = (await res.json()) as { error: { correlationId: string } };
-    assert.equal(body.error.correlationId, 'cor_abc123');
+  it('serves the Scalar docs UI at /docs', async () => {
+    const res = await app.inject({ method: 'GET', url: '/docs/' });
+    expect(res.statusCode).toBe(200);
+    expect(res.headers['content-type']).toContain('text/html');
   });
 });
