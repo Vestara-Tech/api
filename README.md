@@ -462,7 +462,8 @@ AI-001..006 foundation complete · ADR-0013
 AI-007..011 generate/stream/structured-output/tool-calling/embedding
 AI-012..015 routing profiles + capability-preserving fallback chains
 AI-019..021 usage accounting + cost estimation + budget policies
-AI-023+ control API + OpenAPI contracts next
+AI-023 control API: /api/v2/ai/providers|models|routing/resolve|usage|capabilities
+AI-024 OpenAPI contracts (92 total paths) · AI-025..029 module integrations next
 ```
 
 ### Agent Platform (AGENT-001..006 + TOOL-001..005 + SKILL-001..005)
@@ -496,8 +497,10 @@ capability `agents`; container keys `agents`, `agent.registry`, `agent.runs`,
 AGENT/TOOL/SKILL foundation complete · ADR-0014
 AGENT-007 tool-call loop: AI tool calls -> authorized ToolRuntime -> results fed back
 AGENT-013 generator tools: list/plan/run/preview + governed apply (Generate != Write)
+AGENT-024 control API: /api/v2/agents, /api/v2/agent-runs(+/events|/cancel|/resume),
+  /api/v2/tools, /api/v2/skills · OpenAPI contracts (92 total paths)
 AGENT-015..018 config/system/image/auth tools next
-AGENT-024+ control API + OpenAPI contracts + UIs next
+AGENT-026+ Agent/Tool/Skill Builder UIs next
 ```
 
 Agents, workflows, generators, database, Marketplace, and diagnostics are
