@@ -616,6 +616,37 @@ CTX-018 AI-assisted retrieval next
 CTX-020 Context Inspector/Builder UI next
 ```
 
+### Permission Module (PERM foundation)
+
+Capability-oriented authorization extracted from Auth into a first-class
+module — RBAC + ABAC + capability-based authorization:
+
+```text
+AUTHENTICATION ("Who are you?") -> PRINCIPAL -> PERMISSION -> POLICY ->
+APPROVAL -> CAPABILITY -> MODULE/SERVICE -> EVIDENCE/AUDIT
+```
+
+- `PermissionDefinition` (resource/action/risk/approval/constraints) —
+  `file.*`, `agent.*`, `workflow.*`, `generator.*`, `system.*`,
+  `integration.*` contributed per module
+- `PermissionRegistry` (definitions, roles, principal grants, contributors)
+- `PermissionEngine` — deny precedence, risk classification
+  (low/medium/high/critical), explicit approval, constraints
+- `PermissionService` — structured `PermissionDecision` (not a boolean),
+  effective-permission resolver, **bounded delegation** (delegated ⊆
+  delegator's effective permissions), temporary grants/leases (scope, expiry,
+  max uses, approver)
+- Auth → Permission adapter preserves the existing `AuthorizationService`
+  contract; Context + File gate on Permission before exposing/operating
+- Control API: `/api/v2/permissions`, `/roles`, `/evaluate`, `/effective`,
+  `/grants`, `/delegate`, `/temporary` — 124 OpenAPI paths, capability
+  `permissions`
+
+```text
+PERM foundation complete · 16 tests · ADR-0018
+PERM-020 Permission Manager/Builder UI next
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.

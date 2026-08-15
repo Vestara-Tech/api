@@ -33,6 +33,7 @@ import type { AgentPlatform } from './agent-platform.js';
 import type { WorkflowPlatform } from './workflow.js';
 import type { FilePlatform } from './file.js';
 import type { ContextPlatform } from './context.js';
+import type { PermissionPlatform } from './permission.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -46,6 +47,7 @@ import { buildAgentPlatform } from './agent-platform.js';
 import { buildWorkflowPlatform } from './workflow.js';
 import { buildFilePlatform } from './file.js';
 import { buildContextPlatform } from './context.js';
+import { buildPermissionPlatform } from './permission.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -61,6 +63,7 @@ import { registerAgentCapability } from './agent-capability.js';
 import { registerWorkflowCapability } from './workflow-capability.js';
 import { registerFileCapability } from './file-capability.js';
 import { registerContextCapability } from './context-capability.js';
+import { registerPermissionCapability } from './permission-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -99,6 +102,7 @@ export interface Application {
   readonly workflow: WorkflowPlatform;
   readonly file: FilePlatform;
   readonly context: ContextPlatform;
+  readonly permission: PermissionPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -182,6 +186,15 @@ export function createApplication(config: AppConfig): Application {
   // ── Context Module (CTX-001..) ────────────────────────────
   const context = buildContextPlatform({ agents: agents.agents, workflow: workflow.runtime });
 
+  // ── Permission Module (PERM-001..) ────────────────────────
+  const permission = buildPermissionPlatform({
+    roles: [
+      { id: 'engineering.developer', name: 'Developer', permissions: ['file.read', 'file.write', 'file.search', 'agent.run', 'workflow.execute', 'generator.plan', 'generator.run'] },
+      { id: 'engineering.reviewer', name: 'Reviewer', permissions: ['file.read', 'file.search', 'workflow.read'] },
+      { id: 'engineering.observer', name: 'Observer', permissions: ['file.read', 'workflow.read'] },
+    ],
+  });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -197,6 +210,7 @@ export function createApplication(config: AppConfig): Application {
   registerWorkflowCapability(capabilities, config);
   registerFileCapability(capabilities, config);
   registerContextCapability(capabilities, config);
+  registerPermissionCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -238,6 +252,9 @@ export function createApplication(config: AppConfig): Application {
   container.register('file', file.service);
   container.register('context', context.service);
   container.register('context.registry', context.registry);
+  container.register('permission', permission.service);
+  container.register('permission.registry', permission.registry);
+  container.register('permission.grants', permission.grants);
 
   const startedAt = Date.now();
 
@@ -268,6 +285,7 @@ export function createApplication(config: AppConfig): Application {
     workflow,
     file,
     context,
+    permission,
     shutdown,
     systemStatus(): SystemStatus {
       return {

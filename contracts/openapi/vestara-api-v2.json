@@ -20194,6 +20194,532 @@
           }
         }
       }
+    },
+    "/api/v2/permissions": {
+      "get": {
+        "summary": "List permission definitions",
+        "tags": [
+          "permissions"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "resource",
+                      "action",
+                      "risk"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "resource": {
+                        "type": "string"
+                      },
+                      "action": {
+                        "type": "string"
+                      },
+                      "risk": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "low"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "medium"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "high"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "critical"
+                            ]
+                          }
+                        ]
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/roles": {
+      "get": {
+        "summary": "List permission roles",
+        "tags": [
+          "permissions"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "permissions"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/evaluate": {
+      "post": {
+        "summary": "Evaluate a permission request",
+        "tags": [
+          "permissions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "permission",
+                  "principalId"
+                ],
+                "properties": {
+                  "permission": {
+                    "type": "string"
+                  },
+                  "principalId": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  },
+                  "resource": {
+                    "type": "string"
+                  },
+                  "approved": {
+                    "type": "boolean"
+                  },
+                  "temporaryGrantId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "effect",
+                    "permission",
+                    "principalId",
+                    "reason",
+                    "matchedPolicies",
+                    "risk"
+                  ],
+                  "properties": {
+                    "effect": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "allow"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "deny"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "approval-required"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "constrained"
+                          ]
+                        }
+                      ]
+                    },
+                    "permission": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "matchedPolicies": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "risk": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/effective": {
+      "get": {
+        "summary": "Effective permissions for a principal",
+        "tags": [
+          "permissions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "principalId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "scope",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/grants": {
+      "post": {
+        "summary": "Grant a permission to a principal",
+        "tags": [
+          "permissions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "principalId",
+                  "permission"
+                ],
+                "properties": {
+                  "principalId": {
+                    "type": "string"
+                  },
+                  "permission": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "granted"
+                  ],
+                  "properties": {
+                    "granted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/delegate": {
+      "post": {
+        "summary": "Delegate permissions (bounded by delegator effective permissions)",
+        "tags": [
+          "permissions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "delegatorId",
+                  "delegateeId",
+                  "permissions"
+                ],
+                "properties": {
+                  "delegatorId": {
+                    "type": "string"
+                  },
+                  "delegateeId": {
+                    "type": "string"
+                  },
+                  "permissions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "scope": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "delegated"
+                  ],
+                  "properties": {
+                    "delegated": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/permissions/temporary": {
+      "post": {
+        "summary": "Issue a temporary permission grant (lease)",
+        "tags": [
+          "permissions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "principalId",
+                  "permission",
+                  "reason",
+                  "durationSeconds"
+                ],
+                "properties": {
+                  "principalId": {
+                    "type": "string"
+                  },
+                  "permission": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  },
+                  "durationSeconds": {
+                    "type": "integer"
+                  },
+                  "maxUses": {
+                    "type": "integer"
+                  },
+                  "approvedBy": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "permission",
+                    "principalId",
+                    "expiresAt",
+                    "reason"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "permission": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string"
+                    },
+                    "expiresAt": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List temporary permission grants",
+        "tags": [
+          "permissions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "principalId",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "principalId",
+                      "permission",
+                      "reason",
+                      "issuedAt",
+                      "expiresAt",
+                      "uses"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "principalId": {
+                        "type": "string"
+                      },
+                      "permission": {
+                        "type": "string"
+                      },
+                      "reason": {
+                        "type": "string"
+                      },
+                      "issuedAt": {
+                        "type": "string"
+                      },
+                      "expiresAt": {
+                        "type": "string"
+                      },
+                      "uses": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
