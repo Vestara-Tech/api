@@ -674,7 +674,40 @@ Vestara Agent -> CodingAgentRuntimeRegistry -> OpenCode | Claude | Codex | Gemin
   `/gateway/execute` — capability `car`
 
 ```text
-CAR foundation complete · 8 tests · ADR-0019
+MKT foundation complete · 16 tests · ADR-0020
+MKT-022 events/audit + MKT-024 Marketplace UI next
+```
+
+### Marketplace Module (MKT foundation)
+
+**Marketplace = distribution plane. Modules = execution plane.** Marketplace
+manages discovery, acquisition, installation state, provenance, compatibility,
+updates and lifecycle; the underlying systems load and execute what was
+installed.
+
+```text
+Marketplace Module
+  ├── Catalog / Package Registry / Resolver / Dependency Resolver
+  ├── Compatibility Analyzer / Provenance & Trust
+  ├── Governed Installation / Update / Rollback / Lifecycle
+  └── Contribution Registry -> Agent/Tool/Skill/Workflow/Generator/Module
+```
+
+- `VestaraPackage` universal artifact (app/module/agent/skill/tool/workflow/
+  integration/generator/builder/providers/templates/standards/os-components)
+- **Local registry is authoritative** (offline works); bundled builtin catalog
+- Invariants: Downloaded ≠ Installed ≠ Enabled ≠ Running (full lifecycle states)
+- Governed install: resolve deps -> compatibility -> permission analysis ->
+  **approval gate** -> stage -> verify -> register; Marketplace only DECLARES
+  permissions, Permission Module decides
+- Permission (authority requested) vs Capability (functionality contributed)
+- Contribution registry is the extension seam for the whole platform
+- Control API: /api/v2/marketplace/packages (+:id), /categories, /installed,
+  /install, packages/:id enable|disable|update|rollback, DELETE :id —
+  capability `marketplace`
+
+```text
+CAR foundation complete · 8 tests · ADR-0019 · 8 tests · ADR-0019
 CAR-012..014 Claude Code / Codex / Gemini adapters next
 CAR-015..020 sessions, telemetry, config, credential bridge next
 ```

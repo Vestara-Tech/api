@@ -35,6 +35,7 @@ import type { FilePlatform } from './file.js';
 import type { ContextPlatform } from './context.js';
 import type { PermissionPlatform } from './permission.js';
 import type { CarPlatform } from './car.js';
+import type { MarketplacePlatform } from './marketplace.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -50,6 +51,7 @@ import { buildFilePlatform } from './file.js';
 import { buildContextPlatform } from './context.js';
 import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
+import { buildMarketplacePlatform } from './marketplace.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -67,6 +69,7 @@ import { registerFileCapability } from './file-capability.js';
 import { registerContextCapability } from './context-capability.js';
 import { registerPermissionCapability } from './permission-capability.js';
 import { registerCarCapability } from './car-capability.js';
+import { registerMarketplaceCapability } from './marketplace-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -107,6 +110,7 @@ export interface Application {
   readonly context: ContextPlatform;
   readonly permission: PermissionPlatform;
   readonly car: CarPlatform;
+  readonly marketplace: MarketplacePlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -202,6 +206,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Coding Agent Runtime (CAR-001..) ──────────────────────
   const car = buildCarPlatform({ agents: agents.runtime, tools: agents.toolRuntime, approvals: agents.approvals });
 
+  // ── Marketplace (MKT-001..) ────────────────────────────────
+  const marketplace = buildMarketplacePlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -219,6 +226,7 @@ export function createApplication(config: AppConfig): Application {
   registerContextCapability(capabilities, config);
   registerPermissionCapability(capabilities, config);
   registerCarCapability(capabilities, config);
+  registerMarketplaceCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -267,6 +275,14 @@ export function createApplication(config: AppConfig): Application {
   container.register('car', car.selector);
   container.register('car.registry', car.registry);
   container.register('car.gateway', car.gateway);
+  container.register('marketplace', marketplace.catalog);
+  container.register('marketplace.catalog', marketplace.catalog);
+  container.register('marketplace.registry', marketplace.registry);
+  container.register('marketplace.installer', marketplace.installer);
+  container.register('marketplace.lifecycle', marketplace.lifecycle);
+  container.register('marketplace.dependencies', marketplace.dependencies);
+  container.register('marketplace.compatibility', marketplace.compatibility);
+  container.register('marketplace.permissions', marketplace.permissions);
 
   const startedAt = Date.now();
 
@@ -299,6 +315,7 @@ export function createApplication(config: AppConfig): Application {
     context,
     permission,
     car,
+    marketplace,
     shutdown,
     systemStatus(): SystemStatus {
       return {
