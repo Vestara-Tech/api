@@ -31763,6 +31763,910 @@
           }
         }
       }
+    },
+    "/api/v2/system/snapshot": {
+      "get": {
+        "summary": "Captured system inventory (SystemSnapshot)",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "identity",
+                    "operatingSystem",
+                    "firmware",
+                    "cpu",
+                    "memory",
+                    "storage",
+                    "filesystems",
+                    "network",
+                    "graphics",
+                    "devices",
+                    "power",
+                    "thermal",
+                    "kernel",
+                    "boot",
+                    "capturedAt"
+                  ],
+                  "properties": {
+                    "identity": {
+                      "type": "object",
+                      "required": [
+                        "hostname"
+                      ],
+                      "properties": {
+                        "hostname": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "operatingSystem": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "version",
+                        "kernel",
+                        "architecture",
+                        "bootMode"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "kernel": {
+                          "type": "string"
+                        },
+                        "architecture": {
+                          "type": "string"
+                        },
+                        "bootMode": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "firmware": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "cpu": {
+                      "type": "object",
+                      "required": [
+                        "logicalCores",
+                        "status"
+                      ],
+                      "properties": {
+                        "logicalCores": {
+                          "type": "integer"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "memory": {
+                      "type": "object",
+                      "required": [
+                        "totalBytes",
+                        "status"
+                      ],
+                      "properties": {
+                        "totalBytes": {
+                          "type": "integer"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "storage": {
+                      "type": "object",
+                      "required": [
+                        "devices",
+                        "totalBytes",
+                        "status"
+                      ],
+                      "properties": {
+                        "devices": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "sizeBytes"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "sizeBytes": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        },
+                        "totalBytes": {
+                          "type": "integer"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "filesystems": {
+                      "type": "object",
+                      "required": [
+                        "filesystems",
+                        "status"
+                      ],
+                      "properties": {
+                        "filesystems": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "network": {
+                      "type": "object",
+                      "required": [
+                        "interfaces",
+                        "status"
+                      ],
+                      "properties": {
+                        "interfaces": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "name",
+                              "up"
+                            ],
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "up": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "graphics": {
+                      "type": "object",
+                      "required": [
+                        "devices",
+                        "status"
+                      ],
+                      "properties": {
+                        "devices": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "devices": {
+                      "type": "object",
+                      "required": [
+                        "devices",
+                        "status"
+                      ],
+                      "properties": {
+                        "devices": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "power": {
+                      "type": "object",
+                      "required": [
+                        "info",
+                        "status"
+                      ],
+                      "properties": {
+                        "info": {},
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "thermal": {
+                      "type": "object",
+                      "required": [
+                        "info",
+                        "status"
+                      ],
+                      "properties": {
+                        "info": {},
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "kernel": {
+                      "type": "object",
+                      "required": [
+                        "release",
+                        "modules",
+                        "status"
+                      ],
+                      "properties": {
+                        "release": {
+                          "type": "string"
+                        },
+                        "modules": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "boot": {
+                      "type": "object",
+                      "required": [
+                        "entries",
+                        "status"
+                      ],
+                      "properties": {
+                        "entries": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "capturedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/services": {
+      "get": {
+        "summary": "List systemd services",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "status"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      },
+                      "pid": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/processes": {
+      "get": {
+        "summary": "List processes",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "pid",
+                      "name"
+                    ],
+                    "properties": {
+                      "pid": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "memoryBytes": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/kernel": {
+      "get": {
+        "summary": "Kernel release and loaded modules",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "release",
+                    "modules",
+                    "status"
+                  ],
+                  "properties": {
+                    "release": {
+                      "type": "string"
+                    },
+                    "modules": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "status"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/storage": {
+      "get": {
+        "summary": "Storage disks and mounts (read-only)",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "disks",
+                    "mounts"
+                  ],
+                  "properties": {
+                    "disks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "name",
+                          "sizeBytes"
+                        ],
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "sizeBytes": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "mounts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "device",
+                          "mountPoint",
+                          "filesystem",
+                          "readOnly"
+                        ],
+                        "properties": {
+                          "device": {
+                            "type": "string"
+                          },
+                          "mountPoint": {
+                            "type": "string"
+                          },
+                          "filesystem": {
+                            "type": "string"
+                          },
+                          "readOnly": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/operations": {
+      "post": {
+        "summary": "Request a typed privileged operation (goes to the journal for approval)",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "target",
+                  "requestedBy"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "requestedBy": {
+                    "type": "string"
+                  },
+                  "payload": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "kind",
+                    "risk",
+                    "target",
+                    "status",
+                    "requestedBy",
+                    "requestedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "risk": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "requestedBy": {
+                      "type": "string"
+                    },
+                    "requestedAt": {
+                      "type": "string"
+                    },
+                    "approvedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "approvedBy": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Operation journal",
+        "tags": [
+          "system"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "kind",
+                      "risk",
+                      "target",
+                      "status",
+                      "requestedBy",
+                      "requestedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "risk": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "requestedBy": {
+                        "type": "string"
+                      },
+                      "requestedAt": {
+                        "type": "string"
+                      },
+                      "approvedAt": {
+                        "type": "string"
+                      },
+                      "completedAt": {
+                        "type": "string"
+                      },
+                      "error": {
+                        "type": "string"
+                      },
+                      "approvedBy": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/operations/{id}/approve": {
+      "post": {
+        "summary": "Approve a pending operation",
+        "tags": [
+          "system"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "approvedBy"
+                ],
+                "properties": {
+                  "approvedBy": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "kind",
+                    "risk",
+                    "target",
+                    "status",
+                    "requestedBy",
+                    "requestedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "risk": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "requestedBy": {
+                      "type": "string"
+                    },
+                    "requestedAt": {
+                      "type": "string"
+                    },
+                    "approvedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "approvedBy": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/operations/{id}/execute": {
+      "post": {
+        "summary": "Execute an approved operation via the privileged daemon",
+        "tags": [
+          "system"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "kind",
+                    "risk",
+                    "target",
+                    "status",
+                    "requestedBy",
+                    "requestedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "risk": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "requestedBy": {
+                      "type": "string"
+                    },
+                    "requestedAt": {
+                      "type": "string"
+                    },
+                    "approvedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "approvedBy": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/system/operations/{id}": {
+      "get": {
+        "summary": "Get an operation journal entry",
+        "tags": [
+          "system"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "kind",
+                    "risk",
+                    "target",
+                    "status",
+                    "requestedBy",
+                    "requestedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "kind": {
+                      "type": "string"
+                    },
+                    "risk": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "requestedBy": {
+                      "type": "string"
+                    },
+                    "requestedAt": {
+                      "type": "string"
+                    },
+                    "approvedAt": {
+                      "type": "string"
+                    },
+                    "completedAt": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "string"
+                    },
+                    "approvedBy": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

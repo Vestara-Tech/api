@@ -39,6 +39,7 @@ import { taskRoutes } from './routes/task.js';
 import { milestoneRoutes } from './routes/milestone.js';
 import { componentRoutes } from './routes/component.js';
 import { imagePlatformRoutes } from './routes/image-platform.js';
+import { systemV2Routes } from './routes/system-v2.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -107,6 +108,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(milestoneRoutes);
   await app.register(componentRoutes);
   await app.register(imagePlatformRoutes);
+  await app.register(systemV2Routes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

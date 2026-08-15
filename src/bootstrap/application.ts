@@ -23,6 +23,7 @@ import type { GenerationService } from '../generator/service/generation-service.
 import type { OnboardingService } from '../onboarding/service/onboarding-service.js';
 import type { SystemService } from '../system/service/system-service.js';
 import { SystemService as SystemServiceImpl } from '../system/service/system-service.js';
+import { SystemV2Service } from '../system/service/system-v2-service.js';
 import type { BootPresentationService } from '../system/boot-presentation/service/boot-presentation-service.js';
 import type { GrubConfigurationService } from '../system/grub/service/grub-configuration-service.js';
 import type { StartupCoordinator } from '../startup/service/startup-coordinator.js';
@@ -203,6 +204,7 @@ export function createApplication(config: AppConfig): Application {
 
   // ── System/Firmware (SYS-001..014) ─────────────────────────
   const system = new SystemServiceImpl({ authorization });
+  const systemV2 = new SystemV2Service();
 
   // ── Boot presentation (SYS-015..025) ───────────────────────
   const bootPresentation = buildBootPresentationService();
@@ -330,6 +332,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('generator.service', generatorService);
   container.register('onboarding', onboarding);
   container.register('system', system);
+  container.register('system.v2', systemV2);
   container.register('bootPresentation', bootPresentation);
   container.register('grubConfiguration', grubConfiguration);
   container.register('startup', startup);
