@@ -38388,6 +38388,3234 @@
           }
         }
       }
+    },
+    "/api/v2/dashboards": {
+      "get": {
+        "summary": "List dashboards",
+        "tags": [
+          "dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "scope",
+                      "layout",
+                      "widgets",
+                      "filters",
+                      "refreshPolicy",
+                      "revision",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      },
+                      "layout": {
+                        "type": "object",
+                        "required": [
+                          "columns",
+                          "rowHeight",
+                          "gap",
+                          "placements"
+                        ],
+                        "properties": {
+                          "columns": {
+                            "type": "integer"
+                          },
+                          "rowHeight": {
+                            "type": "integer"
+                          },
+                          "gap": {
+                            "type": "integer"
+                          },
+                          "placements": {
+                            "type": "array",
+                            "items": {}
+                          }
+                        }
+                      },
+                      "widgets": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "type",
+                            "configuration",
+                            "placement",
+                            "state"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "configuration": {
+                              "type": "object",
+                              "additionalProperties": {}
+                            },
+                            "placement": {
+                              "type": "object",
+                              "required": [
+                                "x",
+                                "y",
+                                "width",
+                                "height",
+                                "breakpoint"
+                              ],
+                              "properties": {
+                                "x": {
+                                  "type": "integer"
+                                },
+                                "y": {
+                                  "type": "integer"
+                                },
+                                "width": {
+                                  "type": "integer"
+                                },
+                                "height": {
+                                  "type": "integer"
+                                },
+                                "breakpoint": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "refreshIntervalSeconds": {
+                              "type": "integer"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "lastUpdatedAt": {
+                              "type": "string"
+                            },
+                            "error": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "filters": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "refreshPolicy": {
+                        "type": "object",
+                        "required": [
+                          "mode"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "type": "string"
+                          },
+                          "intervalSeconds": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "ownerUserId": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "integer"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a dashboard (declarative definition)",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "scope",
+                  "layout",
+                  "widgets",
+                  "filters",
+                  "refreshPolicy"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  },
+                  "layout": {
+                    "type": "object",
+                    "required": [
+                      "columns",
+                      "rowHeight",
+                      "gap",
+                      "placements"
+                    ],
+                    "properties": {
+                      "columns": {
+                        "type": "integer"
+                      },
+                      "rowHeight": {
+                        "type": "integer"
+                      },
+                      "gap": {
+                        "type": "integer"
+                      },
+                      "placements": {
+                        "type": "array",
+                        "items": {}
+                      }
+                    }
+                  },
+                  "widgets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "type",
+                        "configuration",
+                        "placement",
+                        "state"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "configuration": {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        "placement": {
+                          "type": "object",
+                          "required": [
+                            "x",
+                            "y",
+                            "width",
+                            "height",
+                            "breakpoint"
+                          ],
+                          "properties": {
+                            "x": {
+                              "type": "integer"
+                            },
+                            "y": {
+                              "type": "integer"
+                            },
+                            "width": {
+                              "type": "integer"
+                            },
+                            "height": {
+                              "type": "integer"
+                            },
+                            "breakpoint": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "refreshIntervalSeconds": {
+                          "type": "integer"
+                        },
+                        "state": {
+                          "type": "string"
+                        },
+                        "lastUpdatedAt": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "filters": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "refreshPolicy": {
+                    "type": "object",
+                    "required": [
+                      "mode"
+                    ],
+                    "properties": {
+                      "mode": {
+                        "type": "string"
+                      },
+                      "intervalSeconds": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "ownerUserId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}": {
+      "get": {
+        "summary": "Get a dashboard (permission-filtered widgets)",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a dashboard (bumps revision, validates)",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a dashboard",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "deleted"
+                  ],
+                  "properties": {
+                    "deleted": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/clone": {
+      "post": {
+        "summary": "Clone a dashboard (new id, revision 1)",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/reset": {
+      "post": {
+        "summary": "Reset a dashboard to revision 1",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/validate": {
+      "post": {
+        "summary": "Validate a dashboard (widgets, layout, permissions)",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/publish": {
+      "post": {
+        "summary": "Publish a dashboard (freezes revision)",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/widgets": {
+      "get": {
+        "summary": "List available widgets (module lifecycle honored)",
+        "tags": [
+          "dashboard"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "moduleId",
+                      "title",
+                      "defaultSize",
+                      "dataSource",
+                      "permissions",
+                      "configurable"
+                    ],
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "moduleId": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "defaultSize": {
+                        "type": "object",
+                        "required": [
+                          "minWidth",
+                          "minHeight"
+                        ],
+                        "properties": {
+                          "minWidth": {
+                            "type": "integer"
+                          },
+                          "minHeight": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "dataSource": {
+                        "type": "object",
+                        "required": [
+                          "type"
+                        ],
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "moduleId": {
+                            "type": "string"
+                          },
+                          "projection": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "configurable": {
+                        "type": "boolean"
+                      },
+                      "refreshIntervalSeconds": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/widgets/{type}": {
+      "get": {
+        "summary": "Get a widget definition",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "type",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "type",
+                    "moduleId",
+                    "title",
+                    "defaultSize",
+                    "dataSource",
+                    "permissions",
+                    "configurable"
+                  ],
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "moduleId": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "defaultSize": {
+                      "type": "object",
+                      "required": [
+                        "minWidth",
+                        "minHeight"
+                      ],
+                      "properties": {
+                        "minWidth": {
+                          "type": "integer"
+                        },
+                        "minHeight": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "dataSource": {
+                      "type": "object",
+                      "required": [
+                        "type"
+                      ],
+                      "properties": {
+                        "type": {
+                          "type": "string"
+                        },
+                        "moduleId": {
+                          "type": "string"
+                        },
+                        "projection": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "permissions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "configurable": {
+                      "type": "boolean"
+                    },
+                    "refreshIntervalSeconds": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/widgets": {
+      "post": {
+        "summary": "Add a widget to a dashboard",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "type",
+                  "configuration",
+                  "placement",
+                  "state"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "configuration": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "placement": {
+                    "type": "object",
+                    "required": [
+                      "x",
+                      "y",
+                      "width",
+                      "height",
+                      "breakpoint"
+                    ],
+                    "properties": {
+                      "x": {
+                        "type": "integer"
+                      },
+                      "y": {
+                        "type": "integer"
+                      },
+                      "width": {
+                        "type": "integer"
+                      },
+                      "height": {
+                        "type": "integer"
+                      },
+                      "breakpoint": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "refreshIntervalSeconds": {
+                    "type": "integer"
+                  },
+                  "state": {
+                    "type": "string"
+                  },
+                  "lastUpdatedAt": {
+                    "type": "string"
+                  },
+                  "error": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/widgets/{widgetId}": {
+      "patch": {
+        "summary": "Update a widget on a dashboard",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "widgetId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a widget from a dashboard",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "widgetId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboards/{id}/projection": {
+      "get": {
+        "summary": "Aggregate projections for a dashboard",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "projectionId",
+                      "moduleId",
+                      "state"
+                    ],
+                    "properties": {
+                      "projectionId": {
+                        "type": "string"
+                      },
+                      "moduleId": {
+                        "type": "string"
+                      },
+                      "state": {
+                        "type": "string"
+                      },
+                      "data": {},
+                      "error": {
+                        "type": "string"
+                      },
+                      "durationMs": {
+                        "type": "integer"
+                      },
+                      "cachedAt": {
+                        "type": "string"
+                      },
+                      "stale": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/projections/{projection}": {
+      "get": {
+        "summary": "Fetch a single projection (isolated provider)",
+        "tags": [
+          "dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "projection",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "projectionId",
+                    "moduleId",
+                    "state"
+                  ],
+                  "properties": {
+                    "projectionId": {
+                      "type": "string"
+                    },
+                    "moduleId": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string"
+                    },
+                    "data": {},
+                    "error": {
+                      "type": "string"
+                    },
+                    "durationMs": {
+                      "type": "integer"
+                    },
+                    "cachedAt": {
+                      "type": "string"
+                    },
+                    "stale": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/generate": {
+      "post": {
+        "summary": "Generate a dashboard from available modules/widgets",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "moduleIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "widgetTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "layoutColumns": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "plan",
+                    "definition",
+                    "definitionHash"
+                  ],
+                  "properties": {
+                    "plan": {
+                      "type": "object",
+                      "required": [
+                        "planId",
+                        "title",
+                        "scope",
+                        "widgetTypes",
+                        "sourceModuleIds"
+                      ],
+                      "properties": {
+                        "planId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "string"
+                        },
+                        "widgetTypes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "sourceModuleIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "scope",
+                        "layout",
+                        "widgets",
+                        "filters",
+                        "refreshPolicy",
+                        "revision",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "string"
+                        },
+                        "layout": {
+                          "type": "object",
+                          "required": [
+                            "columns",
+                            "rowHeight",
+                            "gap",
+                            "placements"
+                          ],
+                          "properties": {
+                            "columns": {
+                              "type": "integer"
+                            },
+                            "rowHeight": {
+                              "type": "integer"
+                            },
+                            "gap": {
+                              "type": "integer"
+                            },
+                            "placements": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "widgets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "type",
+                              "configuration",
+                              "placement",
+                              "state"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "configuration": {
+                                "type": "object",
+                                "additionalProperties": {}
+                              },
+                              "placement": {
+                                "type": "object",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "breakpoint"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "integer"
+                                  },
+                                  "y": {
+                                    "type": "integer"
+                                  },
+                                  "width": {
+                                    "type": "integer"
+                                  },
+                                  "height": {
+                                    "type": "integer"
+                                  },
+                                  "breakpoint": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "refreshIntervalSeconds": {
+                                "type": "integer"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "lastUpdatedAt": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "filters": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "refreshPolicy": {
+                          "type": "object",
+                          "required": [
+                            "mode"
+                          ],
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "intervalSeconds": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "ownerUserId": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "definitionHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/builder/open": {
+      "post": {
+        "summary": "Open a builder session (from a dashboard or blank)",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "baseDashboardId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "sessionId",
+                    "draftId",
+                    "status",
+                    "definition"
+                  ],
+                  "properties": {
+                    "sessionId": {
+                      "type": "string"
+                    },
+                    "draftId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "definition": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name",
+                        "scope",
+                        "layout",
+                        "widgets",
+                        "filters",
+                        "refreshPolicy",
+                        "revision",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "string"
+                        },
+                        "layout": {
+                          "type": "object",
+                          "required": [
+                            "columns",
+                            "rowHeight",
+                            "gap",
+                            "placements"
+                          ],
+                          "properties": {
+                            "columns": {
+                              "type": "integer"
+                            },
+                            "rowHeight": {
+                              "type": "integer"
+                            },
+                            "gap": {
+                              "type": "integer"
+                            },
+                            "placements": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "widgets": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "type",
+                              "configuration",
+                              "placement",
+                              "state"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "configuration": {
+                                "type": "object",
+                                "additionalProperties": {}
+                              },
+                              "placement": {
+                                "type": "object",
+                                "required": [
+                                  "x",
+                                  "y",
+                                  "width",
+                                  "height",
+                                  "breakpoint"
+                                ],
+                                "properties": {
+                                  "x": {
+                                    "type": "integer"
+                                  },
+                                  "y": {
+                                    "type": "integer"
+                                  },
+                                  "width": {
+                                    "type": "integer"
+                                  },
+                                  "height": {
+                                    "type": "integer"
+                                  },
+                                  "breakpoint": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "refreshIntervalSeconds": {
+                                "type": "integer"
+                              },
+                              "state": {
+                                "type": "string"
+                              },
+                              "lastUpdatedAt": {
+                                "type": "string"
+                              },
+                              "error": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "filters": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "refreshPolicy": {
+                          "type": "object",
+                          "required": [
+                            "mode"
+                          ],
+                          "properties": {
+                            "mode": {
+                              "type": "string"
+                            },
+                            "intervalSeconds": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "ownerUserId": {
+                          "type": "string"
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "publishedAt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/dashboard/builder/publish": {
+      "post": {
+        "summary": "Publish a builder draft into the dashboard registry",
+        "tags": [
+          "dashboard"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "definition"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "definition": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "scope",
+                      "layout",
+                      "widgets",
+                      "filters",
+                      "refreshPolicy",
+                      "revision",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "scope": {
+                        "type": "string"
+                      },
+                      "layout": {
+                        "type": "object",
+                        "required": [
+                          "columns",
+                          "rowHeight",
+                          "gap",
+                          "placements"
+                        ],
+                        "properties": {
+                          "columns": {
+                            "type": "integer"
+                          },
+                          "rowHeight": {
+                            "type": "integer"
+                          },
+                          "gap": {
+                            "type": "integer"
+                          },
+                          "placements": {
+                            "type": "array",
+                            "items": {}
+                          }
+                        }
+                      },
+                      "widgets": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "type",
+                            "configuration",
+                            "placement",
+                            "state"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "configuration": {
+                              "type": "object",
+                              "additionalProperties": {}
+                            },
+                            "placement": {
+                              "type": "object",
+                              "required": [
+                                "x",
+                                "y",
+                                "width",
+                                "height",
+                                "breakpoint"
+                              ],
+                              "properties": {
+                                "x": {
+                                  "type": "integer"
+                                },
+                                "y": {
+                                  "type": "integer"
+                                },
+                                "width": {
+                                  "type": "integer"
+                                },
+                                "height": {
+                                  "type": "integer"
+                                },
+                                "breakpoint": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "refreshIntervalSeconds": {
+                              "type": "integer"
+                            },
+                            "state": {
+                              "type": "string"
+                            },
+                            "lastUpdatedAt": {
+                              "type": "string"
+                            },
+                            "error": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "filters": {
+                        "type": "array",
+                        "items": {}
+                      },
+                      "refreshPolicy": {
+                        "type": "object",
+                        "required": [
+                          "mode"
+                        ],
+                        "properties": {
+                          "mode": {
+                            "type": "string"
+                          },
+                          "intervalSeconds": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "ownerUserId": {
+                        "type": "string"
+                      },
+                      "revision": {
+                        "type": "integer"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "scope",
+                    "layout",
+                    "widgets",
+                    "filters",
+                    "refreshPolicy",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "layout": {
+                      "type": "object",
+                      "required": [
+                        "columns",
+                        "rowHeight",
+                        "gap",
+                        "placements"
+                      ],
+                      "properties": {
+                        "columns": {
+                          "type": "integer"
+                        },
+                        "rowHeight": {
+                          "type": "integer"
+                        },
+                        "gap": {
+                          "type": "integer"
+                        },
+                        "placements": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "widgets": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "type",
+                          "configuration",
+                          "placement",
+                          "state"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "configuration": {
+                            "type": "object",
+                            "additionalProperties": {}
+                          },
+                          "placement": {
+                            "type": "object",
+                            "required": [
+                              "x",
+                              "y",
+                              "width",
+                              "height",
+                              "breakpoint"
+                            ],
+                            "properties": {
+                              "x": {
+                                "type": "integer"
+                              },
+                              "y": {
+                                "type": "integer"
+                              },
+                              "width": {
+                                "type": "integer"
+                              },
+                              "height": {
+                                "type": "integer"
+                              },
+                              "breakpoint": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "refreshIntervalSeconds": {
+                            "type": "integer"
+                          },
+                          "state": {
+                            "type": "string"
+                          },
+                          "lastUpdatedAt": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "filters": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "refreshPolicy": {
+                      "type": "object",
+                      "required": [
+                        "mode"
+                      ],
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "intervalSeconds": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

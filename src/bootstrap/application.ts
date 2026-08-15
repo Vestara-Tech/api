@@ -74,6 +74,7 @@ import { buildOsPlatform } from './os.js';
 import { buildPageBuilderPlatform } from './pagebuilder.js';
 import { buildApplicationBuilderPlatform } from './appbuilder.js';
 import { buildUserPlatform } from './user.js';
+import { buildDashboardPlatform } from './dashboard.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
@@ -104,6 +105,7 @@ import { registerTaskCapability } from './task-capability.js';
 import { registerOsCapability } from './os-capability.js';
 import { registerPageBuilderCapability, registerApplicationBuilderCapability } from './builder-capabilities.js';
 import { registerUserCapability } from './user-capability.js';
+import { registerDashboardCapability } from './dashboard-capability.js';
 import { registerMilestoneCapability } from './milestone-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
@@ -305,6 +307,9 @@ export function createApplication(config: AppConfig): Application {
   // ── User Module (USR-001..) ───────────────────────────────
   const users = buildUserPlatform();
 
+  // ── Dashboard Module (DASH-001..) ─────────────────────────
+  const dashboard = buildDashboardPlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -334,6 +339,7 @@ export function createApplication(config: AppConfig): Application {
   registerPageBuilderCapability(capabilities, config);
   registerApplicationBuilderCapability(capabilities, config);
   registerUserCapability(capabilities, config);
+  registerDashboardCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
 
   container.register('commands', commands);
@@ -420,6 +426,11 @@ export function createApplication(config: AppConfig): Application {
   container.register('page-builder.service', pageBuilder.service);
   container.register('application-builder.service', applicationBuilder.service);
   container.register('users', users.service);
+  container.register('dashboard.registry', dashboard.registry);
+  container.register('dashboard.service', dashboard.service);
+  container.register('dashboard.projections', dashboard.projections);
+  container.register('dashboard.builder', dashboard.builder);
+  container.register('dashboard.generator', dashboard.generator);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
   container.register('component.registry', component.registry);
