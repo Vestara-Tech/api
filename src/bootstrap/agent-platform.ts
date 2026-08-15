@@ -2,6 +2,7 @@ import type { AiService } from '../ai/runtime/ai-runtime.js';
 import type { ApiDefinitionService } from '../builder/service/api-definition-service.js';
 import type { GeneratorRegistry } from '../generator/registry/generator-registry.js';
 import type { GenerationService } from '../generator/service/generation-service.js';
+import type { FileService } from '../file/service/file-service.js';
 import { AgentRegistry } from '../agent/registry/agent-registry.js';
 import { BUILTIN_AGENTS } from '../agent/registry/builtin-agents.js';
 import { AgentRunStateMachine } from '../agent/runtime/run-state-machine.js';
@@ -11,6 +12,7 @@ import { ToolPolicy } from '../tool/policy/tool-policy.js';
 import { ToolRuntime } from '../tool/runtime/tool-runtime.js';
 import { apiBuilderToolContributions } from '../tool/contributions/api-builder-tools.js';
 import { generatorToolContributions } from '../tool/contributions/generator-tools.js';
+import { fileToolContributions } from '../file/tools/file-tools.js';
 import { SkillRegistry } from '../skill/registry/skill-registry.js';
 import { SkillResolver } from '../skill/resolver/skill-resolver.js';
 import { defineBuiltinSkills } from './skills.js';
@@ -21,6 +23,7 @@ export interface AgentPlatformOptions {
   readonly builder: ApiDefinitionService;
   readonly generatorRegistry: GeneratorRegistry;
   readonly generation: GenerationService;
+  readonly file?: FileService;
   readonly snapshot?: ConfigurationSnapshot;
 }
 
@@ -48,6 +51,11 @@ export function buildAgentPlatform(options: AgentPlatformOptions): AgentPlatform
   const snapshot = options.snapshot ?? createConfigurationSnapshot([]);
   for (const contribution of generatorToolContributions(options.generatorRegistry, options.generation, snapshot)) {
     tools.registerContribution(contribution);
+  }
+  if (options.file) {
+    for (const contribution of fileToolContributions(options.file)) {
+      tools.registerContribution(contribution);
+    }
   }
   const policy = new ToolPolicy({ autoApproveRisks: ['read', 'write'] });
   const toolRuntime = new ToolRuntime({ registry: tools, policy });

@@ -31,6 +31,7 @@ import type { ImageBuildService } from '../image/service/image-build-service.js'
 import type { AiService } from '../ai/runtime/ai-runtime.js';
 import type { AgentPlatform } from './agent-platform.js';
 import type { WorkflowPlatform } from './workflow.js';
+import type { FilePlatform } from './file.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -42,6 +43,7 @@ import { buildImageBuilderService } from './image-builder.js';
 import { buildAiService } from './ai.js';
 import { buildAgentPlatform } from './agent-platform.js';
 import { buildWorkflowPlatform } from './workflow.js';
+import { buildFilePlatform } from './file.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -55,6 +57,7 @@ import { registerImageCapability } from './image-capability.js';
 import { registerAiCapability } from './ai-capability.js';
 import { registerAgentCapability } from './agent-capability.js';
 import { registerWorkflowCapability } from './workflow-capability.js';
+import { registerFileCapability } from './file-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -91,6 +94,7 @@ export interface Application {
   readonly ai: AiService;
   readonly agents: AgentPlatform;
   readonly workflow: WorkflowPlatform;
+  readonly file: FilePlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -162,8 +166,11 @@ export function createApplication(config: AppConfig): Application {
   // ── AI Platform (AI-001..006) ─────────────────────────────
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
 
+  // ── File Module (FILE-001..) ──────────────────────────────
+  const file = buildFilePlatform();
+
   // ── Agent Platform (AGENT + TOOL + SKILL) ─────────────────
-  const agents = buildAgentPlatform({ ai, builder, generatorRegistry, generation: generatorService });
+  const agents = buildAgentPlatform({ ai, builder, generatorRegistry, generation: generatorService, file: file.service });
 
   // ── Workflow Module (WF-001..015) ─────────────────────────
   const workflow = buildWorkflowPlatform({ agents: agents.runtime, tools: agents.toolRuntime });
@@ -181,6 +188,7 @@ export function createApplication(config: AppConfig): Application {
   registerAiCapability(capabilities, config);
   registerAgentCapability(capabilities, config);
   registerWorkflowCapability(capabilities, config);
+  registerFileCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -219,6 +227,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('workflow', workflow.service);
   container.register('workflow.registry', workflow.registry);
   container.register('workflow.runtime', workflow.runtime);
+  container.register('file', file.service);
 
   const startedAt = Date.now();
 
@@ -247,6 +256,7 @@ export function createApplication(config: AppConfig): Application {
     ai,
     agents,
     workflow,
+    file,
     shutdown,
     systemStatus(): SystemStatus {
       return {

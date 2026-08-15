@@ -21,6 +21,7 @@ import { imageBuilderRoutes } from './routes/image-builder.js';
 import { aiRoutes } from './routes/ai.js';
 import { agentRoutes } from './routes/agents.js';
 import { workflowRoutes } from './routes/workflow.js';
+import { fileRoutes } from './routes/file.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -71,6 +72,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(aiRoutes);
   await app.register(agentRoutes);
   await app.register(workflowRoutes);
+  await app.register(fileRoutes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

@@ -542,6 +542,53 @@ WF-017 Workflow Builder UI next
 WF-020 Activity Room integration next
 ```
 
+### File Module (FILE foundation)
+
+Modules do not directly manipulate arbitrary files — they request governed file
+capabilities from the File Module:
+
+```text
+Agent / Workflow / Generator / Builders / Apps
+                    │
+                    ▼
+               File Module
+                    │
+        ┌───────────┼────────────┐
+        ▼           ▼            ▼
+   Workspace     Storage      Virtual Files
+   Filesystem    Providers    / Artifacts
+        │
+        ▼
+ Privileged OS File Adapter
+```
+
+- **Contracts** — `FileResource` with namespaced paths
+  (`workspace://`, `artifact://`, `temp://`, `system://`), `file.*` capability
+  set with risk classification (read/low/high/critical), `FileWorkspace`,
+  `FileOperation`, `FileTransaction`
+- **Sandbox** — `WorkspaceSandbox` resolves include/exclude patterns before any
+  provider operation; `.env`/`secrets/**`/`.git/**` are never reachable
+- **Providers** — `FileProviderPort` + `MemoryProvider` + `LocalProvider`
+  (single host dir, read-only by default); S3/Git/SFTP/remote later via
+  Integration
+- **Governed service** — read/list/stat/search, transactions
+  (draft → validated → awaiting-approval → applied | failed → rolled-back)
+  with preview/diff and snapshot rollback, lightweight version records
+  (revision/hash/operation/principal) — Generate ≠ Write is preserved
+- **Events** — `file.*`, `file.transaction.*`, `workspace.*` feed Workflow,
+  Agent context, Activity Room
+- **Agent tools** — `file.read/list/search/write` (writes via governed
+  transaction)
+- **Control API** — `/api/v2/files/workspaces`, read/list/search, transactions
+  (+validate/preview/apply/rollback), versions, events — 114 OpenAPI paths,
+  capability `files`
+
+```text
+FILE foundation complete · 18 tests · ADR-0016
+FILE-018 AI file operations next
+FILE-019 File Manager UI (reusable explorer) next
+```
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
 **not** part of the current stream. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.
