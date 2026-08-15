@@ -20,13 +20,16 @@ import { InMemorySessionStore } from '../auth/store/in-memory-session.js';
 import type { ConfigurationService } from '../configuration/service/configuration-service.js';
 import type { GeneratorRegistry } from '../generator/registry/generator-registry.js';
 import type { GenerationService } from '../generator/service/generation-service.js';
+import type { OnboardingService } from '../onboarding/service/onboarding-service.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
+import { buildOnboardingService } from './onboarding.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
 import { registerConfigCapability } from './config-capability.js';
 import { registerGeneratorCapability } from './generator-capability.js';
+import { registerOnboardingCapability } from './onboarding-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -53,6 +56,7 @@ export interface Application {
   readonly configuration: ConfigurationService;
   readonly generators: GeneratorRegistry;
   readonly generation: GenerationService;
+  readonly onboarding: OnboardingService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -92,14 +96,23 @@ export function createApplication(config: AppConfig): Application {
   // ── Configuration (CONFIG-001..008) ─────────────────────────
   const configuration = buildConfigurationService(config);
 
-  // ── Generator (GEN-001..006) ────────────────────────────────
+  // ── Generator (GEN-001..012) ───────────────────────────────
   const { registry: generatorRegistry, service: generatorService } = buildGeneratorPlatform();
+
+  // ── Onboarding (ONB-001..009) ──────────────────────────────
+  const onboarding = buildOnboardingService({
+    capabilities,
+    configuration,
+    generators: generatorRegistry,
+    identities,
+  });
 
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
   registerConfigCapability(capabilities, config);
   registerGeneratorCapability(capabilities, config);
+  registerOnboardingCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -116,6 +129,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('configuration', configuration);
   container.register('generator.registry', generatorRegistry);
   container.register('generator.service', generatorService);
+  container.register('onboarding', onboarding);
 
   const startedAt = Date.now();
 
@@ -134,6 +148,7 @@ export function createApplication(config: AppConfig): Application {
     configuration,
     generators: generatorRegistry,
     generation: generatorService,
+    onboarding,
     shutdown,
     systemStatus(): SystemStatus {
       return {

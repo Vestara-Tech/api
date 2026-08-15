@@ -188,9 +188,36 @@ generate→apply pipeline that gives the Publish/Review flow meaning:
 - **GEN-012 Builder contracts** — `GenerationReview`, `AppliedGenerationRecord`,
   `DiffLine`, review decision types for the future Builder UI
 
+**ONB-001..009 — Onboarding Foundation + Planning (checkpoint, no execution).**
+Onboarding orchestrates setup; it does not own the systems it configures:
+
+- **ONB-001** `InstallationState` + explicit state machine
+  (`uninitialized → bootstrap → planning → awaiting-approval → configuring →
+  verifying → ready`, `failed` → retry/resume/rollback). First-run is never
+  inferred from "no users".
+- **ONB-002** `InstallationStore` port + in-memory (durable state)
+- **ONB-003** Bootstrap security — restricted onboarding API gated by a
+  one-time token; completing first owner invalidates it irreversibly
+- **ONB-004** `OnboardingSession` — answers editable until plan approval;
+  approved plan is immutable, changes require a new plan + new hash + new
+  approval
+- **ONB-005** `OnboardingContributor` contract
+  (`isAvailable/describe/validate/plan`) + step registry — the future UI renders
+  these instead of a fixed wizard
+- **ONB-006** Environment discovery (OS/arch/node/capability presence)
+- **ONB-007** Deployment profiles (personal/developer/team/server/organization/
+  custom) with defaults
+- **ONB-008** Capability discovery — what this installation can actually do
+- **ONB-009** `OnboardingPlan` — operations, requirements, warnings, planHash,
+  immutable once approved
+- Real contributors registered for the three present capabilities: auth (owner
+  setup), configuration (platform config), generator (generator setup)
+- `onboarding` capability exposed; **no execution engine yet** (ONB-010..016 are
+  deliberately deferred — this is the pre-mutation checkpoint)
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of the current stream — the next streams are ONB (onboarding),
-SYS (system/firmware), AUTH-007+ (OAuth), API2-004+ (compat). PostgreSQL/
+**not** part of the current stream — ONB-010+ (execution), SYS-001+ (system/
+firmware), AUTH-007+ (OAuth), API2-004+ (compat) come next. PostgreSQL/
 Redis/NATS/Prisma and external runtimes stay behind ports; the API boots and
 passes tests without them.
 
