@@ -5,6 +5,7 @@ import { spawnSync } from 'node:child_process';
 const targets = [
   resolve('vestara-apps', 'api-builder', 'src', 'api', 'contracts.ts'),
   resolve('vestara-apps', 'os-image-builder', 'src', 'api', 'contracts.ts'),
+  resolve('packages', 'ai-ui', 'src', 'api', 'contracts.ts'),
 ];
 
 async function main(): Promise<void> {

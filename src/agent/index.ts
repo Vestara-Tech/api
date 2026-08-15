@@ -18,3 +18,5 @@ export type { AgentContextInput, AssembledAgentContext } from './context/context
 export { assembleAgentContext } from './context/context-assembler.js';
 export type { AgentRunInput, AgentRuntimeOptions } from './runtime/agent-runtime.js';
 export { AgentRuntime } from './runtime/agent-runtime.js';
+export type { PendingApproval, ApprovalRuntimeOptions } from './approval/approval-runtime.js';
+export { ApprovalRuntime } from './approval/approval-runtime.js';

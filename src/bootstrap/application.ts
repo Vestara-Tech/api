@@ -243,6 +243,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('agents', agents.runtime);
   container.register('agent.registry', agents.agents);
   container.register('agent.runs', agents.runs);
+  container.register('agent.approvals', agents.approvals);
   container.register('tools', agents.tools);
   container.register('tool.runtime', agents.toolRuntime);
   container.register('skills', agents.skills);

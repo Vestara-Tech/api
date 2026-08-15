@@ -41,9 +41,21 @@ import {
   SystemProfileSchema,
   UpdateImageProfileBodySchema,
 } from '../src/image/contracts.js';
+import {
+  AiConsumerSchema,
+  AiGenerateRequestSchema,
+  AiGenerateResultSchema,
+  AiMessageSchema,
+  AiStreamEventSchema,
+  AiToolCallSchema,
+  AiToolDefinitionSchema,
+  AiUsageRecordSchema,
+  AiUsageSchema,
+} from '../src/ai/contracts.js';
 
 const BUILDER_OUTPUT = resolve('vestara-apps', 'api-builder', 'src', 'api', 'contracts.ts');
 const IMAGE_OUTPUT = resolve('vestara-apps', 'os-image-builder', 'src', 'api', 'contracts.ts');
+const AI_OUTPUT = resolve('packages', 'ai-ui', 'src', 'api', 'contracts.ts');
 
 const BUILDER_SCHEMAS: Record<string, TypeBox.TSchema> = {
   ApiField: ApiFieldSchema,
@@ -89,6 +101,18 @@ const IMAGE_SCHEMAS: Record<string, TypeBox.TSchema> = {
   ImageBuildResult: ImageBuildResultSchema,
   PlanRequest: PlanRequestSchema,
   BuildRequest: BuildRequestSchema,
+};
+
+const AI_SCHEMAS: Record<string, TypeBox.TSchema> = {
+  AiConsumer: AiConsumerSchema,
+  AiMessage: AiMessageSchema,
+  AiToolCall: AiToolCallSchema,
+  AiToolDefinition: AiToolDefinitionSchema,
+  AiGenerateRequest: AiGenerateRequestSchema,
+  AiGenerateResult: AiGenerateResultSchema,
+  AiStreamEvent: AiStreamEventSchema,
+  AiUsage: AiUsageSchema,
+  AiUsageRecord: AiUsageRecordSchema,
 };
 
 function typeName(t: TypeBox.TSchema): string {
@@ -159,8 +183,10 @@ async function main(): Promise<void> {
   await writeFile(BUILDER_OUTPUT, emit(BUILDER_SCHEMAS, 'src/builder/contracts.ts'), 'utf8');
   await mkdir(resolve(IMAGE_OUTPUT, '..'), { recursive: true });
   await writeFile(IMAGE_OUTPUT, emit(IMAGE_SCHEMAS, 'src/image/contracts.ts'), 'utf8');
+  await mkdir(resolve(AI_OUTPUT, '..'), { recursive: true });
+  await writeFile(AI_OUTPUT, emit(AI_SCHEMAS, 'src/ai/contracts.ts'), 'utf8');
   // eslint-disable-next-line no-console
-  console.log(`Frontend contracts generated → ${BUILDER_OUTPUT} + ${IMAGE_OUTPUT}`);
+  console.log(`Frontend contracts generated → ${BUILDER_OUTPUT} + ${IMAGE_OUTPUT} + ${AI_OUTPUT}`);
 }
 
 void main();

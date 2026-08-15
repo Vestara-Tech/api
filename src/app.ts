@@ -19,6 +19,7 @@ import { startupRoutes } from './routes/startup.js';
 import { loginRoutes } from './routes/login.js';
 import { imageBuilderRoutes } from './routes/image-builder.js';
 import { aiRoutes } from './routes/ai.js';
+import { aiExecuteRoutes } from './routes/ai-execute.js';
 import { agentRoutes } from './routes/agents.js';
 import { workflowRoutes } from './routes/workflow.js';
 import { fileRoutes } from './routes/file.js';
@@ -72,6 +73,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(loginRoutes);
   await app.register(imageBuilderRoutes);
   await app.register(aiRoutes);
+  await app.register(aiExecuteRoutes);
   await app.register(agentRoutes);
   await app.register(workflowRoutes);
   await app.register(fileRoutes);

@@ -15,6 +15,7 @@ import { generatorToolContributions } from '../tool/contributions/generator-tool
 import { fileToolContributions } from '../file/tools/file-tools.js';
 import { SkillRegistry } from '../skill/registry/skill-registry.js';
 import { SkillResolver } from '../skill/resolver/skill-resolver.js';
+import { ApprovalRuntime } from '../agent/approval/approval-runtime.js';
 import { defineBuiltinSkills } from './skills.js';
 import { createConfigurationSnapshot, type ConfigurationSnapshot } from '../generator/context/configuration-snapshot.js';
 
@@ -35,6 +36,7 @@ export interface AgentPlatform {
   readonly toolRuntime: ToolRuntime;
   readonly skills: SkillRegistry;
   readonly skillResolver: SkillResolver;
+  readonly approvals: ApprovalRuntime;
 }
 
 /**
@@ -74,6 +76,7 @@ export function buildAgentPlatform(options: AgentPlatformOptions): AgentPlatform
   // ── Agent runtime ────────────────────────────────────────
   const runs = new AgentRunStateMachine();
   const runtime = new AgentRuntime({ agents, runs, tools: toolRuntime, skills, ai: options.ai });
+  const approvals = new ApprovalRuntime({ agents: runtime, runs, tools: toolRuntime });
 
-  return { agents, runs, runtime, tools, toolRuntime, skills, skillResolver };
+  return { agents, runs, runtime, tools, toolRuntime, skills, skillResolver, approvals };
 }
