@@ -48,6 +48,7 @@ import { dashboardRoutes } from './routes/dashboard.js';
 import { themeRoutes } from './routes/theme.js';
 import { templateRoutes } from './routes/template.js';
 import { aiPlatformV2Routes } from './routes/ai-v2.js';
+import { marketplaceV2Routes } from './routes/marketplace-v2.js';
 import { registerAuthPlugin } from './auth/plugins/auth-plugin.js';
 
 export interface BuildAppOptions {
@@ -125,6 +126,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(themeRoutes);
   await app.register(templateRoutes);
   await app.register(aiPlatformV2Routes);
+  await app.register(marketplaceV2Routes);
 
   app.log.info({ service: options.config.service, apiVersion: options.config.apiVersion }, 'application.boot');
 

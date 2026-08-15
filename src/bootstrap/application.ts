@@ -63,6 +63,7 @@ import { buildContextPlatform } from './context.js';
 import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
 import { buildMarketplacePlatform } from './marketplace.js';
+import { buildMarketplaceV2Platform } from './marketplace-v2.js';
 import { buildGenerationPlanePlatform } from './generation-plane.js';
 import { buildBuilderPlanePlatform } from './builder-plane.js';
 import { buildDiagnosticsPlatform } from './diagnostics.js';
@@ -99,6 +100,7 @@ import { registerContextCapability } from './context-capability.js';
 import { registerPermissionCapability } from './permission-capability.js';
 import { registerCarCapability } from './car-capability.js';
 import { registerMarketplaceCapability } from './marketplace-capability.js';
+import { registerMarketplaceV2Capability } from './marketplace-v2-capability.js';
 import { registerDiagnosticsCapability } from './diagnostics-capability.js';
 import { registerLogCapability } from './log-capability.js';
 import { registerDatabaseCapability } from './database-capability.js';
@@ -266,6 +268,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Marketplace (MKT-001..) ────────────────────────────────
   const marketplace = buildMarketplacePlatform();
 
+  // ── Marketplace v2 (MKT2-001..) ────────────────────────────
+  const marketplaceV2 = buildMarketplaceV2Platform();
+
   // ── Generation Plane (GEN-X) ───────────────────────────────
   const generationPlane = buildGenerationPlanePlatform({
     permission: {
@@ -341,6 +346,7 @@ export function createApplication(config: AppConfig): Application {
   registerPermissionCapability(capabilities, config);
   registerCarCapability(capabilities, config);
   registerMarketplaceCapability(capabilities, config);
+  registerMarketplaceV2Capability(capabilities, config);
   registerDiagnosticsCapability(capabilities, config);
   registerLogCapability(capabilities, config);
   registerDatabaseCapability(capabilities, config);
@@ -422,6 +428,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('marketplace.registry', marketplace.registry);
   container.register('marketplace.installer', marketplace.installer);
   container.register('marketplace.lifecycle', marketplace.lifecycle);
+  container.register('marketplace.v2', marketplaceV2.service);
   container.register('marketplace.dependencies', marketplace.dependencies);
   container.register('marketplace.compatibility', marketplace.compatibility);
   container.register('marketplace.permissions', marketplace.permissions);

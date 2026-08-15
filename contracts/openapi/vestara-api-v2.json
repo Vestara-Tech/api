@@ -45504,6 +45504,1374 @@
           }
         }
       }
+    },
+    "/api/v2/marketplace-v2/contributions": {
+      "get": {
+        "summary": "List registered package contributions (provides/requires/optional)",
+        "tags": [
+          "marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "packageId",
+                      "version",
+                      "manifest"
+                    ],
+                    "properties": {
+                      "packageId": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "manifest": {
+                        "type": "object",
+                        "required": [
+                          "provides",
+                          "requires",
+                          "optional"
+                        ],
+                        "properties": {
+                          "provides": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "kind",
+                                "id",
+                                "name"
+                              ],
+                              "properties": {
+                                "kind": {
+                                  "type": "string"
+                                },
+                                "id": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "requires": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "module"
+                              ],
+                              "properties": {
+                                "module": {
+                                  "type": "string"
+                                },
+                                "range": {
+                                  "type": "string"
+                                },
+                                "capability": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "optional": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "module"
+                              ],
+                              "properties": {
+                                "module": {
+                                  "type": "string"
+                                },
+                                "range": {
+                                  "type": "string"
+                                },
+                                "capability": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a contribution manifest v2 for a package",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "version",
+                  "manifest"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "manifest": {
+                    "type": "object",
+                    "required": [
+                      "provides",
+                      "requires",
+                      "optional"
+                    ],
+                    "properties": {
+                      "provides": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "kind",
+                            "id",
+                            "name"
+                          ],
+                          "properties": {
+                            "kind": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "version": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "requires": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "module"
+                          ],
+                          "properties": {
+                            "module": {
+                              "type": "string"
+                            },
+                            "range": {
+                              "type": "string"
+                            },
+                            "capability": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "optional": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "module"
+                          ],
+                          "properties": {
+                            "module": {
+                              "type": "string"
+                            },
+                            "range": {
+                              "type": "string"
+                            },
+                            "capability": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "version",
+                    "manifest"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "manifest": {
+                      "type": "object",
+                      "required": [
+                        "provides",
+                        "requires",
+                        "optional"
+                      ],
+                      "properties": {
+                        "provides": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "kind",
+                              "id",
+                              "name"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "type": "string"
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "version": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "requires": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "module"
+                            ],
+                            "properties": {
+                              "module": {
+                                "type": "string"
+                              },
+                              "range": {
+                                "type": "string"
+                              },
+                              "capability": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "optional": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "module"
+                            ],
+                            "properties": {
+                              "module": {
+                                "type": "string"
+                              },
+                              "range": {
+                                "type": "string"
+                              },
+                              "capability": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/provides/{kind}": {
+      "get": {
+        "summary": "List packages providing a contribution kind",
+        "tags": [
+          "marketplace"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "kind",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "packageId",
+                      "id",
+                      "name"
+                    ],
+                    "properties": {
+                      "packageId": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/resolve": {
+      "post": {
+        "summary": "Capability-aware dependency resolution",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "provides",
+                  "requires",
+                  "optional"
+                ],
+                "properties": {
+                  "provides": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "kind",
+                        "id",
+                        "name"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "requires": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "module"
+                      ],
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        },
+                        "range": {
+                          "type": "string"
+                        },
+                        "capability": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "optional": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "module"
+                      ],
+                      "properties": {
+                        "module": {
+                          "type": "string"
+                        },
+                        "range": {
+                          "type": "string"
+                        },
+                        "capability": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "missingRequired",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "missingRequired": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "module",
+                          "required",
+                          "satisfied"
+                        ],
+                        "properties": {
+                          "module": {
+                            "type": "string"
+                          },
+                          "capability": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "satisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/bundles": {
+      "post": {
+        "summary": "Create a package bundle",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "packages",
+                  "recommended",
+                  "optional",
+                  "metadata"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "packages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "packageId",
+                        "required"
+                      ],
+                      "properties": {
+                        "packageId": {
+                          "type": "string"
+                        },
+                        "versionRange": {
+                          "type": "string"
+                        },
+                        "required": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "recommended": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "packageId"
+                      ],
+                      "properties": {
+                        "packageId": {
+                          "type": "string"
+                        },
+                        "versionRange": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "optional": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "packageId"
+                      ],
+                      "properties": {
+                        "packageId": {
+                          "type": "string"
+                        },
+                        "versionRange": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "ai": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "bundleId",
+                    "name",
+                    "packages",
+                    "recommended",
+                    "optional",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "bundleId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "packages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "packageId",
+                          "required"
+                        ],
+                        "properties": {
+                          "packageId": {
+                            "type": "string"
+                          },
+                          "versionRange": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "recommended": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "packageId"
+                        ],
+                        "properties": {
+                          "packageId": {
+                            "type": "string"
+                          },
+                          "versionRange": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "optional": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "packageId"
+                        ],
+                        "properties": {
+                          "packageId": {
+                            "type": "string"
+                          },
+                          "versionRange": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "ai": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List package bundles",
+        "tags": [
+          "marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "bundleId",
+                      "name",
+                      "packages",
+                      "recommended",
+                      "optional",
+                      "metadata"
+                    ],
+                    "properties": {
+                      "bundleId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "packages": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "packageId",
+                            "required"
+                          ],
+                          "properties": {
+                            "packageId": {
+                              "type": "string"
+                            },
+                            "versionRange": {
+                              "type": "string"
+                            },
+                            "required": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "recommended": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "packageId"
+                          ],
+                          "properties": {
+                            "packageId": {
+                              "type": "string"
+                            },
+                            "versionRange": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "optional": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "packageId"
+                          ],
+                          "properties": {
+                            "packageId": {
+                              "type": "string"
+                            },
+                            "versionRange": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "ai": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/distributions": {
+      "post": {
+        "summary": "Create a curated distribution",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "bundles",
+                  "packages",
+                  "channel",
+                  "curatedBy",
+                  "metadata"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "bundles": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "bundleId",
+                        "required"
+                      ],
+                      "properties": {
+                        "bundleId": {
+                          "type": "string"
+                        },
+                        "required": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "packages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "packageId",
+                        "required"
+                      ],
+                      "properties": {
+                        "packageId": {
+                          "type": "string"
+                        },
+                        "required": {
+                          "type": "boolean"
+                        },
+                        "channel": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "curatedBy": {
+                    "type": "string"
+                  },
+                  "ai": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "distributionId",
+                    "name",
+                    "bundles",
+                    "packages",
+                    "channel",
+                    "curatedBy",
+                    "metadata"
+                  ],
+                  "properties": {
+                    "distributionId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "bundles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "bundleId",
+                          "required"
+                        ],
+                        "properties": {
+                          "bundleId": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "packages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "packageId",
+                          "required"
+                        ],
+                        "properties": {
+                          "packageId": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "boolean"
+                          },
+                          "channel": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "curatedBy": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List distributions",
+        "tags": [
+          "marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "distributionId",
+                      "name",
+                      "bundles",
+                      "packages",
+                      "channel",
+                      "curatedBy",
+                      "metadata"
+                    ],
+                    "properties": {
+                      "distributionId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "bundles": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "bundleId",
+                            "required"
+                          ],
+                          "properties": {
+                            "bundleId": {
+                              "type": "string"
+                            },
+                            "required": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "packages": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "packageId",
+                            "required"
+                          ],
+                          "properties": {
+                            "packageId": {
+                              "type": "string"
+                            },
+                            "required": {
+                              "type": "boolean"
+                            },
+                            "channel": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
+                      "curatedBy": {
+                        "type": "string"
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/distributions/{id}/plan": {
+      "get": {
+        "summary": "Install plan for a distribution (required/recommended/optional/AI)",
+        "tags": [
+          "marketplace"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "required",
+                    "recommended",
+                    "optional",
+                    "ai",
+                    "total"
+                  ],
+                  "properties": {
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "recommended": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "optional": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "ai": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/publishers": {
+      "post": {
+        "summary": "Register a publisher with a trust level",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "publisherId",
+                  "name",
+                  "trustLevel",
+                  "verified"
+                ],
+                "properties": {
+                  "publisherId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "trustLevel": {
+                    "type": "string"
+                  },
+                  "verified": {
+                    "type": "boolean"
+                  },
+                  "website": {
+                    "type": "string"
+                  },
+                  "ownerUserId": {
+                    "type": "string"
+                  },
+                  "organizationId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "publisherId",
+                    "name",
+                    "trustLevel",
+                    "verified"
+                  ],
+                  "properties": {
+                    "publisherId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "trustLevel": {
+                      "type": "string"
+                    },
+                    "verified": {
+                      "type": "boolean"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "ownerUserId": {
+                      "type": "string"
+                    },
+                    "organizationId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/publish": {
+      "post": {
+        "summary": "Publish a package (build -> security scan -> evidence -> sign -> publish)",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "version",
+                  "kind",
+                  "publisherId",
+                  "buildId",
+                  "securityScanId",
+                  "compatibilityHash",
+                  "channel"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "kind": {
+                    "type": "string"
+                  },
+                  "publisherId": {
+                    "type": "string"
+                  },
+                  "buildId": {
+                    "type": "string"
+                  },
+                  "securityScanId": {
+                    "type": "string"
+                  },
+                  "compatibilityHash": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "published": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/published": {
+      "get": {
+        "summary": "List published packages",
+        "tags": [
+          "marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "packageId",
+                      "version",
+                      "publisherId",
+                      "trustLevel",
+                      "channel",
+                      "signature",
+                      "publishedAt"
+                    ],
+                    "properties": {
+                      "packageId": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "publisherId": {
+                        "type": "string"
+                      },
+                      "trustLevel": {
+                        "type": "string"
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
+                      "signature": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
