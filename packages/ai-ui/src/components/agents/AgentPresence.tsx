@@ -4,7 +4,7 @@ export interface AgentPresenceProps {
   readonly agentId: string;
   readonly agentName: string;
   readonly status: 'idle' | 'running' | 'waiting' | 'completed' | 'failed';
-  readonly detail?: string;
+  readonly detail: string | undefined;
 }
 
 /** AgentPresence — a compact agent status chip used by Activity Room. */
