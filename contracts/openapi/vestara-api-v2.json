@@ -33175,6 +33175,1927 @@
           }
         }
       }
+    },
+    "/api/v2/os/current": {
+      "get": {
+        "summary": "Current OS profile (captured)",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile",
+                    "lifecycle",
+                    "capturedAt"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "identity",
+                        "distribution",
+                        "kernel",
+                        "packages",
+                        "services",
+                        "users",
+                        "startup",
+                        "login",
+                        "desktop",
+                        "network",
+                        "locale",
+                        "security",
+                        "updates",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "identity": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "distributionId",
+                            "kernelRelease",
+                            "architecture"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "distributionId": {
+                              "type": "string"
+                            },
+                            "kernelRelease": {
+                              "type": "string"
+                            },
+                            "architecture": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "distribution": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "packageManager"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "packageManager": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "kernel": {
+                          "type": "object",
+                          "required": [
+                            "release",
+                            "parameters",
+                            "updatePolicy"
+                          ],
+                          "properties": {
+                            "release": {
+                              "type": "string"
+                            },
+                            "parameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "updatePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "packages": {
+                          "type": "object",
+                          "required": [
+                            "packages",
+                            "repositories"
+                          ],
+                          "properties": {
+                            "packages": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "name",
+                                  "state"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "repositories": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "services": {
+                          "type": "object",
+                          "required": [
+                            "services"
+                          ],
+                          "properties": {
+                            "services": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "users": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "startup": {
+                          "type": "object",
+                          "required": [
+                            "target",
+                            "timeoutSeconds",
+                            "failurePolicy"
+                          ],
+                          "properties": {
+                            "target": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "failurePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "login": {
+                          "type": "object",
+                          "required": [
+                            "provider",
+                            "allowAutoLogin"
+                          ],
+                          "properties": {
+                            "provider": {
+                              "type": "string"
+                            },
+                            "allowAutoLogin": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "desktop": {
+                          "type": "object",
+                          "required": [
+                            "environment",
+                            "theme"
+                          ],
+                          "properties": {
+                            "environment": {
+                              "type": "string"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "network": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "interfaces"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "interfaces": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "locale": {
+                          "type": "object",
+                          "required": [
+                            "language",
+                            "locale",
+                            "timezone"
+                          ],
+                          "properties": {
+                            "language": {
+                              "type": "string"
+                            },
+                            "locale": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "security": {
+                          "type": "object",
+                          "required": [
+                            "lockdown"
+                          ],
+                          "properties": {
+                            "lockdown": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "updates": {
+                          "type": "object",
+                          "required": [
+                            "channel",
+                            "automatic",
+                            "rebootPolicy"
+                          ],
+                          "properties": {
+                            "channel": {
+                              "type": "string"
+                            },
+                            "automatic": {
+                              "type": "boolean"
+                            },
+                            "rebootPolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "lifecycle": {
+                      "type": "object",
+                      "required": [
+                        "state",
+                        "since"
+                      ],
+                      "properties": {
+                        "state": {
+                          "type": "string"
+                        },
+                        "since": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "capturedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/os/desired": {
+      "get": {
+        "summary": "Declared desired OS profile",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "identity",
+                        "distribution",
+                        "kernel",
+                        "packages",
+                        "services",
+                        "users",
+                        "startup",
+                        "login",
+                        "desktop",
+                        "network",
+                        "locale",
+                        "security",
+                        "updates",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "identity": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "distributionId",
+                            "kernelRelease",
+                            "architecture"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "distributionId": {
+                              "type": "string"
+                            },
+                            "kernelRelease": {
+                              "type": "string"
+                            },
+                            "architecture": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "distribution": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "packageManager"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "packageManager": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "kernel": {
+                          "type": "object",
+                          "required": [
+                            "release",
+                            "parameters",
+                            "updatePolicy"
+                          ],
+                          "properties": {
+                            "release": {
+                              "type": "string"
+                            },
+                            "parameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "updatePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "packages": {
+                          "type": "object",
+                          "required": [
+                            "packages",
+                            "repositories"
+                          ],
+                          "properties": {
+                            "packages": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "name",
+                                  "state"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "repositories": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "services": {
+                          "type": "object",
+                          "required": [
+                            "services"
+                          ],
+                          "properties": {
+                            "services": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "users": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "startup": {
+                          "type": "object",
+                          "required": [
+                            "target",
+                            "timeoutSeconds",
+                            "failurePolicy"
+                          ],
+                          "properties": {
+                            "target": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "failurePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "login": {
+                          "type": "object",
+                          "required": [
+                            "provider",
+                            "allowAutoLogin"
+                          ],
+                          "properties": {
+                            "provider": {
+                              "type": "string"
+                            },
+                            "allowAutoLogin": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "desktop": {
+                          "type": "object",
+                          "required": [
+                            "environment",
+                            "theme"
+                          ],
+                          "properties": {
+                            "environment": {
+                              "type": "string"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "network": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "interfaces"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "interfaces": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "locale": {
+                          "type": "object",
+                          "required": [
+                            "language",
+                            "locale",
+                            "timezone"
+                          ],
+                          "properties": {
+                            "language": {
+                              "type": "string"
+                            },
+                            "locale": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "security": {
+                          "type": "object",
+                          "required": [
+                            "lockdown"
+                          ],
+                          "properties": {
+                            "lockdown": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "updates": {
+                          "type": "object",
+                          "required": [
+                            "channel",
+                            "automatic",
+                            "rebootPolicy"
+                          ],
+                          "properties": {
+                            "channel": {
+                              "type": "string"
+                            },
+                            "automatic": {
+                              "type": "boolean"
+                            },
+                            "rebootPolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Declare the desired OS profile (revisioned)",
+        "tags": [
+          "os"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "identity",
+                  "distribution",
+                  "kernel",
+                  "packages",
+                  "services",
+                  "users",
+                  "startup",
+                  "login",
+                  "desktop",
+                  "network",
+                  "locale",
+                  "security",
+                  "updates",
+                  "recovery"
+                ],
+                "properties": {
+                  "identity": {
+                    "type": "object",
+                    "required": [
+                      "hostname",
+                      "distributionId",
+                      "kernelRelease",
+                      "architecture"
+                    ],
+                    "properties": {
+                      "hostname": {
+                        "type": "string"
+                      },
+                      "distributionId": {
+                        "type": "string"
+                      },
+                      "kernelRelease": {
+                        "type": "string"
+                      },
+                      "architecture": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "distribution": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "packageManager"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "packageManager": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "kernel": {
+                    "type": "object",
+                    "required": [
+                      "release",
+                      "parameters",
+                      "updatePolicy"
+                    ],
+                    "properties": {
+                      "release": {
+                        "type": "string"
+                      },
+                      "parameters": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "updatePolicy": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "packages": {
+                    "type": "object",
+                    "required": [
+                      "packages",
+                      "repositories"
+                    ],
+                    "properties": {
+                      "packages": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": [
+                            "name",
+                            "state"
+                          ],
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "state": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "repositories": {
+                        "type": "array",
+                        "items": {}
+                      }
+                    }
+                  },
+                  "services": {
+                    "type": "object",
+                    "required": [
+                      "services"
+                    ],
+                    "properties": {
+                      "services": {
+                        "type": "array",
+                        "items": {}
+                      }
+                    }
+                  },
+                  "users": {
+                    "type": "array",
+                    "items": {}
+                  },
+                  "startup": {
+                    "type": "object",
+                    "required": [
+                      "target",
+                      "timeoutSeconds",
+                      "failurePolicy"
+                    ],
+                    "properties": {
+                      "target": {
+                        "type": "string"
+                      },
+                      "timeoutSeconds": {
+                        "type": "integer"
+                      },
+                      "failurePolicy": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "login": {
+                    "type": "object",
+                    "required": [
+                      "provider",
+                      "allowAutoLogin"
+                    ],
+                    "properties": {
+                      "provider": {
+                        "type": "string"
+                      },
+                      "allowAutoLogin": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "desktop": {
+                    "type": "object",
+                    "required": [
+                      "environment",
+                      "theme"
+                    ],
+                    "properties": {
+                      "environment": {
+                        "type": "string"
+                      },
+                      "theme": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "network": {
+                    "type": "object",
+                    "required": [
+                      "hostname",
+                      "interfaces"
+                    ],
+                    "properties": {
+                      "hostname": {
+                        "type": "string"
+                      },
+                      "interfaces": {
+                        "type": "array",
+                        "items": {}
+                      }
+                    }
+                  },
+                  "locale": {
+                    "type": "object",
+                    "required": [
+                      "language",
+                      "locale",
+                      "timezone"
+                    ],
+                    "properties": {
+                      "language": {
+                        "type": "string"
+                      },
+                      "locale": {
+                        "type": "string"
+                      },
+                      "timezone": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "security": {
+                    "type": "object",
+                    "required": [
+                      "lockdown"
+                    ],
+                    "properties": {
+                      "lockdown": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "updates": {
+                    "type": "object",
+                    "required": [
+                      "channel",
+                      "automatic",
+                      "rebootPolicy"
+                    ],
+                    "properties": {
+                      "channel": {
+                        "type": "string"
+                      },
+                      "automatic": {
+                        "type": "boolean"
+                      },
+                      "rebootPolicy": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "recovery": {
+                    "type": "object",
+                    "required": [
+                      "enabled"
+                    ],
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "profile",
+                    "revision",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "profile": {
+                      "type": "object",
+                      "required": [
+                        "identity",
+                        "distribution",
+                        "kernel",
+                        "packages",
+                        "services",
+                        "users",
+                        "startup",
+                        "login",
+                        "desktop",
+                        "network",
+                        "locale",
+                        "security",
+                        "updates",
+                        "recovery"
+                      ],
+                      "properties": {
+                        "identity": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "distributionId",
+                            "kernelRelease",
+                            "architecture"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "distributionId": {
+                              "type": "string"
+                            },
+                            "kernelRelease": {
+                              "type": "string"
+                            },
+                            "architecture": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "distribution": {
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "packageManager"
+                          ],
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "packageManager": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "kernel": {
+                          "type": "object",
+                          "required": [
+                            "release",
+                            "parameters",
+                            "updatePolicy"
+                          ],
+                          "properties": {
+                            "release": {
+                              "type": "string"
+                            },
+                            "parameters": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "updatePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "packages": {
+                          "type": "object",
+                          "required": [
+                            "packages",
+                            "repositories"
+                          ],
+                          "properties": {
+                            "packages": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "required": [
+                                  "name",
+                                  "state"
+                                ],
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "state": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            },
+                            "repositories": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "services": {
+                          "type": "object",
+                          "required": [
+                            "services"
+                          ],
+                          "properties": {
+                            "services": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "users": {
+                          "type": "array",
+                          "items": {}
+                        },
+                        "startup": {
+                          "type": "object",
+                          "required": [
+                            "target",
+                            "timeoutSeconds",
+                            "failurePolicy"
+                          ],
+                          "properties": {
+                            "target": {
+                              "type": "string"
+                            },
+                            "timeoutSeconds": {
+                              "type": "integer"
+                            },
+                            "failurePolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "login": {
+                          "type": "object",
+                          "required": [
+                            "provider",
+                            "allowAutoLogin"
+                          ],
+                          "properties": {
+                            "provider": {
+                              "type": "string"
+                            },
+                            "allowAutoLogin": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "desktop": {
+                          "type": "object",
+                          "required": [
+                            "environment",
+                            "theme"
+                          ],
+                          "properties": {
+                            "environment": {
+                              "type": "string"
+                            },
+                            "theme": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "network": {
+                          "type": "object",
+                          "required": [
+                            "hostname",
+                            "interfaces"
+                          ],
+                          "properties": {
+                            "hostname": {
+                              "type": "string"
+                            },
+                            "interfaces": {
+                              "type": "array",
+                              "items": {}
+                            }
+                          }
+                        },
+                        "locale": {
+                          "type": "object",
+                          "required": [
+                            "language",
+                            "locale",
+                            "timezone"
+                          ],
+                          "properties": {
+                            "language": {
+                              "type": "string"
+                            },
+                            "locale": {
+                              "type": "string"
+                            },
+                            "timezone": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "security": {
+                          "type": "object",
+                          "required": [
+                            "lockdown"
+                          ],
+                          "properties": {
+                            "lockdown": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "updates": {
+                          "type": "object",
+                          "required": [
+                            "channel",
+                            "automatic",
+                            "rebootPolicy"
+                          ],
+                          "properties": {
+                            "channel": {
+                              "type": "string"
+                            },
+                            "automatic": {
+                              "type": "boolean"
+                            },
+                            "rebootPolicy": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "recovery": {
+                          "type": "object",
+                          "required": [
+                            "enabled"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "revision": {
+                      "type": "integer"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/os/state": {
+      "get": {
+        "summary": "Current + desired OS state model with drift count",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "current",
+                    "desired",
+                    "driftCount"
+                  ],
+                  "properties": {
+                    "current": {
+                      "type": "object",
+                      "required": [
+                        "profile",
+                        "capturedAt"
+                      ],
+                      "properties": {
+                        "profile": {
+                          "type": "object",
+                          "required": [
+                            "identity",
+                            "distribution",
+                            "kernel",
+                            "packages",
+                            "services",
+                            "users",
+                            "startup",
+                            "login",
+                            "desktop",
+                            "network",
+                            "locale",
+                            "security",
+                            "updates",
+                            "recovery"
+                          ],
+                          "properties": {
+                            "identity": {
+                              "type": "object",
+                              "required": [
+                                "hostname",
+                                "distributionId",
+                                "kernelRelease",
+                                "architecture"
+                              ],
+                              "properties": {
+                                "hostname": {
+                                  "type": "string"
+                                },
+                                "distributionId": {
+                                  "type": "string"
+                                },
+                                "kernelRelease": {
+                                  "type": "string"
+                                },
+                                "architecture": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "distribution": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "packageManager"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "packageManager": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "kernel": {
+                              "type": "object",
+                              "required": [
+                                "release",
+                                "parameters",
+                                "updatePolicy"
+                              ],
+                              "properties": {
+                                "release": {
+                                  "type": "string"
+                                },
+                                "parameters": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "updatePolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "packages": {
+                              "type": "object",
+                              "required": [
+                                "packages",
+                                "repositories"
+                              ],
+                              "properties": {
+                                "packages": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "state"
+                                    ],
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "state": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "repositories": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "services": {
+                              "type": "object",
+                              "required": [
+                                "services"
+                              ],
+                              "properties": {
+                                "services": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "users": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "startup": {
+                              "type": "object",
+                              "required": [
+                                "target",
+                                "timeoutSeconds",
+                                "failurePolicy"
+                              ],
+                              "properties": {
+                                "target": {
+                                  "type": "string"
+                                },
+                                "timeoutSeconds": {
+                                  "type": "integer"
+                                },
+                                "failurePolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "login": {
+                              "type": "object",
+                              "required": [
+                                "provider",
+                                "allowAutoLogin"
+                              ],
+                              "properties": {
+                                "provider": {
+                                  "type": "string"
+                                },
+                                "allowAutoLogin": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "desktop": {
+                              "type": "object",
+                              "required": [
+                                "environment",
+                                "theme"
+                              ],
+                              "properties": {
+                                "environment": {
+                                  "type": "string"
+                                },
+                                "theme": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "network": {
+                              "type": "object",
+                              "required": [
+                                "hostname",
+                                "interfaces"
+                              ],
+                              "properties": {
+                                "hostname": {
+                                  "type": "string"
+                                },
+                                "interfaces": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "locale": {
+                              "type": "object",
+                              "required": [
+                                "language",
+                                "locale",
+                                "timezone"
+                              ],
+                              "properties": {
+                                "language": {
+                                  "type": "string"
+                                },
+                                "locale": {
+                                  "type": "string"
+                                },
+                                "timezone": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "security": {
+                              "type": "object",
+                              "required": [
+                                "lockdown"
+                              ],
+                              "properties": {
+                                "lockdown": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "updates": {
+                              "type": "object",
+                              "required": [
+                                "channel",
+                                "automatic",
+                                "rebootPolicy"
+                              ],
+                              "properties": {
+                                "channel": {
+                                  "type": "string"
+                                },
+                                "automatic": {
+                                  "type": "boolean"
+                                },
+                                "rebootPolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "recovery": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "capturedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "desired": {
+                      "type": "object",
+                      "required": [
+                        "profile",
+                        "revision",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "profile": {
+                          "type": "object",
+                          "required": [
+                            "identity",
+                            "distribution",
+                            "kernel",
+                            "packages",
+                            "services",
+                            "users",
+                            "startup",
+                            "login",
+                            "desktop",
+                            "network",
+                            "locale",
+                            "security",
+                            "updates",
+                            "recovery"
+                          ],
+                          "properties": {
+                            "identity": {
+                              "type": "object",
+                              "required": [
+                                "hostname",
+                                "distributionId",
+                                "kernelRelease",
+                                "architecture"
+                              ],
+                              "properties": {
+                                "hostname": {
+                                  "type": "string"
+                                },
+                                "distributionId": {
+                                  "type": "string"
+                                },
+                                "kernelRelease": {
+                                  "type": "string"
+                                },
+                                "architecture": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "distribution": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "packageManager"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "packageManager": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "kernel": {
+                              "type": "object",
+                              "required": [
+                                "release",
+                                "parameters",
+                                "updatePolicy"
+                              ],
+                              "properties": {
+                                "release": {
+                                  "type": "string"
+                                },
+                                "parameters": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "updatePolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "packages": {
+                              "type": "object",
+                              "required": [
+                                "packages",
+                                "repositories"
+                              ],
+                              "properties": {
+                                "packages": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "name",
+                                      "state"
+                                    ],
+                                    "properties": {
+                                      "name": {
+                                        "type": "string"
+                                      },
+                                      "state": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "repositories": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "services": {
+                              "type": "object",
+                              "required": [
+                                "services"
+                              ],
+                              "properties": {
+                                "services": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "users": {
+                              "type": "array",
+                              "items": {}
+                            },
+                            "startup": {
+                              "type": "object",
+                              "required": [
+                                "target",
+                                "timeoutSeconds",
+                                "failurePolicy"
+                              ],
+                              "properties": {
+                                "target": {
+                                  "type": "string"
+                                },
+                                "timeoutSeconds": {
+                                  "type": "integer"
+                                },
+                                "failurePolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "login": {
+                              "type": "object",
+                              "required": [
+                                "provider",
+                                "allowAutoLogin"
+                              ],
+                              "properties": {
+                                "provider": {
+                                  "type": "string"
+                                },
+                                "allowAutoLogin": {
+                                  "type": "boolean"
+                                }
+                              }
+                            },
+                            "desktop": {
+                              "type": "object",
+                              "required": [
+                                "environment",
+                                "theme"
+                              ],
+                              "properties": {
+                                "environment": {
+                                  "type": "string"
+                                },
+                                "theme": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "network": {
+                              "type": "object",
+                              "required": [
+                                "hostname",
+                                "interfaces"
+                              ],
+                              "properties": {
+                                "hostname": {
+                                  "type": "string"
+                                },
+                                "interfaces": {
+                                  "type": "array",
+                                  "items": {}
+                                }
+                              }
+                            },
+                            "locale": {
+                              "type": "object",
+                              "required": [
+                                "language",
+                                "locale",
+                                "timezone"
+                              ],
+                              "properties": {
+                                "language": {
+                                  "type": "string"
+                                },
+                                "locale": {
+                                  "type": "string"
+                                },
+                                "timezone": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "security": {
+                              "type": "object",
+                              "required": [
+                                "lockdown"
+                              ],
+                              "properties": {
+                                "lockdown": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "updates": {
+                              "type": "object",
+                              "required": [
+                                "channel",
+                                "automatic",
+                                "rebootPolicy"
+                              ],
+                              "properties": {
+                                "channel": {
+                                  "type": "string"
+                                },
+                                "automatic": {
+                                  "type": "boolean"
+                                },
+                                "rebootPolicy": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "recovery": {
+                              "type": "object",
+                              "required": [
+                                "enabled"
+                              ],
+                              "properties": {
+                                "enabled": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "revision": {
+                          "type": "integer"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "driftCount": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/os/diff": {
+      "get": {
+        "summary": "OS diff between current and desired",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "entries",
+                    "driftCount",
+                    "generatedAt"
+                  ],
+                  "properties": {
+                    "entries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "category",
+                          "key"
+                        ],
+                        "properties": {
+                          "category": {
+                            "type": "string"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "from": {},
+                          "to": {}
+                        }
+                      }
+                    },
+                    "driftCount": {
+                      "type": "integer"
+                    },
+                    "generatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/os/plan": {
+      "get": {
+        "summary": "Compile the OS change plan (requires approval before apply)",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "planId",
+                    "changes",
+                    "order",
+                    "totalRisk",
+                    "requiresApproval",
+                    "requiresReboot",
+                    "planHash",
+                    "generatedAt"
+                  ],
+                  "properties": {
+                    "planId": {
+                      "type": "string"
+                    },
+                    "changes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "kind",
+                          "category",
+                          "target",
+                          "risk",
+                          "requiresReboot",
+                          "requiresApproval"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "string"
+                          },
+                          "from": {},
+                          "to": {},
+                          "risk": {
+                            "type": "string"
+                          },
+                          "requiresReboot": {
+                            "type": "boolean"
+                          },
+                          "requiresApproval": {
+                            "type": "boolean"
+                          },
+                          "requiresSystemCapability": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "order": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "totalRisk": {
+                      "type": "string"
+                    },
+                    "requiresApproval": {
+                      "type": "boolean"
+                    },
+                    "requiresReboot": {
+                      "type": "boolean"
+                    },
+                    "planHash": {
+                      "type": "string"
+                    },
+                    "generatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/os/capabilities": {
+      "get": {
+        "summary": "List OS capabilities",
+        "tags": [
+          "os"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "kind",
+                      "risk",
+                      "requiresApproval",
+                      "description"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "kind": {
+                        "type": "string"
+                      },
+                      "risk": {
+                        "type": "string"
+                      },
+                      "requiresApproval": {
+                        "type": "boolean"
+                      },
+                      "description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

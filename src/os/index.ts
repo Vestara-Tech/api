@@ -1,0 +1,13 @@
+export type { OsDistributionId, OsPackageManagerKind, OsIdentity, DistributionProfile, KernelProfile, PackageProfile, ServiceProfile, UserAccountProfile, StartupProfile, LoginProfile, DesktopProfile, NetworkProfile, LocaleProfile, SecurityProfile, UpdateProfile, RecoveryProfile, OsProfile } from './domain/os-profile.js';
+export type { OsLifecycleState, OsLifecycleStateRecord, OsCurrentState, OsDesiredState, OsStateModel, OsDiffCategory, OsChangeKind, OsChangeRisk, OsDiffEntry, OsDiff, OsChange, OsChangePlan, OsChangePlannerPort } from './domain/os-state.js';
+export { createOsStateModel, diffOsProfiles, planOsChanges } from './domain/os-state.js';
+export type { OsOperationKind, OsCapabilityDefinition } from './domain/os-capability.js';
+export { OS_CAPABILITIES, getOsCapability, hasOsCapability, FORBIDDEN_OS_OPERATIONS } from './domain/os-capability.js';
+export type { OsEventType, OsEvent } from './domain/os-events.js';
+export type { DistributionDiscoveryResult, DistributionDiscoveryPort } from './discovery/distribution-discovery.js';
+export { DistributionDiscovery, buildOsIdentity } from './discovery/distribution-discovery.js';
+export type { OsDiscoveryPort } from './discovery/environment-discovery.js';
+export { EnvironmentOsDiscovery, InMemoryOsDesiredStore, makeLifecycleRecord } from './discovery/environment-discovery.js';
+export type { OsDesiredStorePort } from './discovery/environment-discovery.js';
+export type { OsServiceOptions } from './service/os-service.js';
+export { OsService } from './service/os-service.js';

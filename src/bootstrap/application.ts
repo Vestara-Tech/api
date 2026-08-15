@@ -70,6 +70,7 @@ import { buildDatabasePlatform } from './database.js';
 import { buildTestPlatform } from './test.js';
 import { buildBrowserPlatform } from './browser.js';
 import { buildTaskPlatform } from './task.js';
+import { buildOsPlatform } from './os.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
@@ -97,6 +98,7 @@ import { registerDatabaseCapability } from './database-capability.js';
 import { registerTestCapability } from './test-capability.js';
 import { registerBrowserCapability } from './browser-capability.js';
 import { registerTaskCapability } from './task-capability.js';
+import { registerOsCapability } from './os-capability.js';
 import { registerMilestoneCapability } from './milestone-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
@@ -280,6 +282,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Task Module (TASK-001..) ──────────────────────────────
   const task = buildTaskPlatform();
 
+  // ── OS Module (OS-001..) ──────────────────────────────────
+  const os = buildOsPlatform();
+
   // ── Milestone Module (MS-001..) ───────────────────────────
   const milestone = buildMilestonePlatform({ tasks: task.service });
 
@@ -311,6 +316,7 @@ export function createApplication(config: AppConfig): Application {
   registerTestCapability(capabilities, config);
   registerBrowserCapability(capabilities, config);
   registerTaskCapability(capabilities, config);
+  registerOsCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
 
   container.register('commands', commands);
@@ -393,6 +399,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('browser.evidence', browser.evidence);
   container.register('task.service', task.service);
   container.register('task.store', task.store);
+  container.register('os', os.service);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
   container.register('component.registry', component.registry);
