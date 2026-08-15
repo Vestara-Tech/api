@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: Vestara API v2
+  version: 2.0.0-alpha.1
+  description: |
+    Vestara API v2 — Platform Gateway and Control Plane.
+    Standalone service; exposes commands, queries, and events over HTTP.
+    The event gateway (WebSocket/SSE) is introduced in a later milestone.
+servers:
+  - url: http://127.0.0.1:4310
+    description: Local development
+paths:
+  /health/live:
+    get:
+      summary: Liveness probe
+      operationId: healthLive
+      responses:
+        '200':
+          description: Process is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service]
+                properties:
+                  status: { type: string, enum: [live] }
+                  service: { type: string }
+  /health/ready:
+    get:
+      summary: Readiness probe
+      operationId: healthReady
+      responses:
+        '200':
+          description: Service is ready to accept traffic
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service]
+                properties:
+                  status: { type: string, enum: [ready] }
+                  service: { type: string }
+        '503':
+          description: Service is starting or shutting down
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VestaraError'
+  /api/v2:
+    get:
+      summary: Service identity
+      operationId: apiRoot
+      responses:
+        '200':
+          description: Service identity and API version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceIdentity'
+  /api/v2/system:
+    get:
+      summary: Platform system status
+      operationId: systemStatus
+      responses:
+        '200':
+          description: Runtime status, uptime, and enabled capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemStatus'
+components:
+  schemas:
+    ServiceIdentity:
+      type: object
+      required: [service, apiVersion, name]
+      properties:
+        service: { type: string }
+        apiVersion: { type: string }
+        name: { type: string }
+    SystemStatus:
+      type: object
+      required: [service, apiVersion, uptimeMs, startedAt, capabilities]
+      properties:
+        service: { type: string }
+        apiVersion: { type: string }
+        uptimeMs: { type: integer, format: int64 }
+        startedAt: { type: string, format: date-time }
+        capabilities:
+          type: array
+          items: { type: string }
+    VestaraError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, requestId, correlationId, retryable]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            requestId: { type: string }
+            correlationId: { type: string }
+            retryable: { type: boolean }
+            details:
+              type: object
+              additionalProperties: true

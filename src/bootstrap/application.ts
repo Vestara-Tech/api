@@ -1,0 +1,72 @@
+import type { CapabilityRegistry } from '../capabilities/registry.js';
+import { CapabilityRegistry as CapabilityRegistryImpl } from '../capabilities/registry.js';
+import type { AppConfig } from '../config/schema.js';
+import { CommandBus } from '../core/commands.js';
+import { EventBus } from '../core/events.js';
+import { OperationStore } from '../core/operations.js';
+import { QueryBus } from '../core/queries.js';
+import type { Logger } from '../infrastructure/logger.js';
+import { JsonLogger } from '../infrastructure/logger.js';
+import { registerSystemCapability } from './capabilities.js';
+import { Container } from './container.js';
+import { ShutdownCoordinator } from './shutdown.js';
+
+export interface Application {
+  readonly config: AppConfig;
+  readonly container: Container;
+  readonly commands: CommandBus;
+  readonly queries: QueryBus;
+  readonly events: EventBus;
+  readonly operations: OperationStore;
+  readonly capabilities: CapabilityRegistry;
+  readonly logger: Logger;
+  readonly shutdown: ShutdownCoordinator;
+  systemStatus(): Record<string, unknown>;
+  close(): Promise<void>;
+}
+
+export function createApplication(config: AppConfig): Application {
+  const logger = new JsonLogger(config.logLevel);
+  const container = new Container();
+  const commands = new CommandBus();
+  const queries = new QueryBus();
+  const events = new EventBus();
+  const operations = new OperationStore();
+  const capabilities = new CapabilityRegistryImpl();
+  const shutdown = new ShutdownCoordinator();
+
+  registerSystemCapability(capabilities, config);
+
+  container.register('logger', logger);
+  container.register('commands', commands);
+  container.register('queries', queries);
+  container.register('events', events);
+  container.register('operations', operations);
+  container.register('capabilities', capabilities);
+
+  const startedAt = Date.now();
+
+  const application: Application = {
+    config,
+    container,
+    commands,
+    queries,
+    events,
+    operations,
+    capabilities,
+    logger,
+    shutdown,
+    systemStatus() {
+      return {
+        uptimeMs: Date.now() - startedAt,
+        startedAt: new Date(startedAt).toISOString(),
+        capabilities: capabilities.listEnabled().map((c) => c.namespace),
+      };
+    },
+    async close() {
+      await shutdown.shutdown('application-close');
+    },
+  };
+
+  return application;
+}

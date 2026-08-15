@@ -1,0 +1,27 @@
+{
+  "name": "@vestara/api",
+  "version": "2.0.0-alpha.1",
+  "description": "Vestara API v2 — Platform Gateway and Control Plane (standalone)",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "types": "dist/main.d.ts",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "node --watch dist/main.js",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -b --noEmit",
+    "test": "node --test --test-reporter=spec dist/tests/**/*.test.js",
+    "test:unit": "node --test dist/tests/unit/**/*.test.js",
+    "test:integration": "node --test dist/tests/integration/**/*.test.js",
+    "test:contract": "node --test dist/tests/contract/**/*.test.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "5.9.3"
+  }
+}
