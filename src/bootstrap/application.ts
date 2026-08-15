@@ -30,6 +30,7 @@ import type { LoginBroker } from '../login/service/login-broker.js';
 import type { ImageBuildService } from '../image/service/image-build-service.js';
 import type { AiService } from '../ai/runtime/ai-runtime.js';
 import type { AgentPlatform } from './agent-platform.js';
+import type { WorkflowPlatform } from './workflow.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -40,6 +41,7 @@ import { buildLoginPlatform } from './login.js';
 import { buildImageBuilderService } from './image-builder.js';
 import { buildAiService } from './ai.js';
 import { buildAgentPlatform } from './agent-platform.js';
+import { buildWorkflowPlatform } from './workflow.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -52,6 +54,7 @@ import { registerLoginCapability } from './login-capability.js';
 import { registerImageCapability } from './image-capability.js';
 import { registerAiCapability } from './ai-capability.js';
 import { registerAgentCapability } from './agent-capability.js';
+import { registerWorkflowCapability } from './workflow-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -87,6 +90,7 @@ export interface Application {
   readonly imageBuilder: ImageBuildService;
   readonly ai: AiService;
   readonly agents: AgentPlatform;
+  readonly workflow: WorkflowPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -161,6 +165,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Agent Platform (AGENT + TOOL + SKILL) ─────────────────
   const agents = buildAgentPlatform({ ai, builder, generatorRegistry, generation: generatorService });
 
+  // ── Workflow Module (WF-001..015) ─────────────────────────
+  const workflow = buildWorkflowPlatform({ agents: agents.runtime, tools: agents.toolRuntime });
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -173,6 +180,7 @@ export function createApplication(config: AppConfig): Application {
   registerImageCapability(capabilities, config);
   registerAiCapability(capabilities, config);
   registerAgentCapability(capabilities, config);
+  registerWorkflowCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -208,6 +216,9 @@ export function createApplication(config: AppConfig): Application {
   container.register('tools', agents.tools);
   container.register('tool.runtime', agents.toolRuntime);
   container.register('skills', agents.skills);
+  container.register('workflow', workflow.service);
+  container.register('workflow.registry', workflow.registry);
+  container.register('workflow.runtime', workflow.runtime);
 
   const startedAt = Date.now();
 
@@ -235,6 +246,7 @@ export function createApplication(config: AppConfig): Application {
     imageBuilder,
     ai,
     agents,
+    workflow,
     shutdown,
     systemStatus(): SystemStatus {
       return {

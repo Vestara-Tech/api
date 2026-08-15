@@ -498,9 +498,48 @@ AGENT/TOOL/SKILL foundation complete · ADR-0014
 AGENT-007 tool-call loop: AI tool calls -> authorized ToolRuntime -> results fed back
 AGENT-013 generator tools: list/plan/run/preview + governed apply (Generate != Write)
 AGENT-024 control API: /api/v2/agents, /api/v2/agent-runs(+/events|/cancel|/resume),
-  /api/v2/tools, /api/v2/skills · OpenAPI contracts (92 total paths)
+  /api/v2/tools, /api/v2/skills · OpenAPI contracts (102 total paths)
 AGENT-015..018 config/system/image/auth tools next
 AGENT-026+ Agent/Tool/Skill Builder UIs next
+```
+
+### Workflow Module (WF-001..015)
+
+The orchestration layer — it decides WHAT executes and WHEN, and never becomes
+a giant autonomous agent:
+
+```text
+Workflow = decides WHAT executes and WHEN
+Agent    = decides HOW to accomplish an objective
+Skill    = teaches an agent HOW
+Tool     = performs an operation
+AI       = intelligence
+Runtime  = executes the workload
+```
+
+- **WF-001/002** `WorkflowDefinition` (inputs, variables, triggers, steps) +
+  step kinds: agent, tool, service, approval, condition, parallel, subworkflow,
+  verification, delay
+- **WF-003** `WorkflowGraph` — DAG validation, cycle detection, topological
+  order, ready-step scheduling
+- **WF-004/005** run state machine (pending → queued → running → waiting →
+  completed | failed | cancelled | suspended) + durable `WorkflowRuntime`
+  dispatcher with resumable run state
+- **WF-006/007** agent + tool integration (agent steps reference an Agent
+  Definition; tool steps execute through the governed ToolRuntime)
+- **WF-008..013** conditions/variables (safe expression evaluator), approval
+  gates (human/system/policy → waiting), failure policy, parallel fan-out/
+  fan-in, subworkflows, verification/evidence as completion conditions
+- **WF-014** run events (`workflow.started/completed/failed/suspended`, `step.*`)
+- **WF-015** control API: `/api/v2/workflows` (+publish, +runs),
+  `/api/v2/workflow-runs` (+events/cancel/resume/retry) — 102 OpenAPI paths
+  total, registered as capability `workflows`
+
+```text
+WF-001..015 foundation complete · 17 tests · ADR-0015
+WF-016 AI workflow generator next
+WF-017 Workflow Builder UI next
+WF-020 Activity Room integration next
 ```
 
 Agents, workflows, generators, database, Marketplace, and diagnostics are
