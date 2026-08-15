@@ -14,3 +14,4 @@ export { ToolPolicy } from './policy/tool-policy.js';
 export type { ToolRuntimeOptions } from './runtime/tool-runtime.js';
 export { ToolRuntime, type ToolRuntime as ToolRuntimeContract, toolEvidenceHash } from './runtime/tool-runtime.js';
 export { apiBuilderToolContributions } from './contributions/api-builder-tools.js';
+export { generatorToolContributions } from './contributions/generator-tools.js';

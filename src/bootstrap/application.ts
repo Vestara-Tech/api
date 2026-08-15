@@ -159,7 +159,7 @@ export function createApplication(config: AppConfig): Application {
   const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
 
   // ── Agent Platform (AGENT + TOOL + SKILL) ─────────────────
-  const agents = buildAgentPlatform({ ai, builder });
+  const agents = buildAgentPlatform({ ai, builder, generatorRegistry, generation: generatorService });
 
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);

@@ -1,5 +1,7 @@
 import type { AiService } from '../ai/runtime/ai-runtime.js';
 import type { ApiDefinitionService } from '../builder/service/api-definition-service.js';
+import type { GeneratorRegistry } from '../generator/registry/generator-registry.js';
+import type { GenerationService } from '../generator/service/generation-service.js';
 import { AgentRegistry } from '../agent/registry/agent-registry.js';
 import { BUILTIN_AGENTS } from '../agent/registry/builtin-agents.js';
 import { AgentRunStateMachine } from '../agent/runtime/run-state-machine.js';
@@ -8,13 +10,18 @@ import { ToolRegistry } from '../tool/registry/tool-registry.js';
 import { ToolPolicy } from '../tool/policy/tool-policy.js';
 import { ToolRuntime } from '../tool/runtime/tool-runtime.js';
 import { apiBuilderToolContributions } from '../tool/contributions/api-builder-tools.js';
+import { generatorToolContributions } from '../tool/contributions/generator-tools.js';
 import { SkillRegistry } from '../skill/registry/skill-registry.js';
 import { SkillResolver } from '../skill/resolver/skill-resolver.js';
 import { defineBuiltinSkills } from './skills.js';
+import { createConfigurationSnapshot, type ConfigurationSnapshot } from '../generator/context/configuration-snapshot.js';
 
 export interface AgentPlatformOptions {
   readonly ai: AiService;
   readonly builder: ApiDefinitionService;
+  readonly generatorRegistry: GeneratorRegistry;
+  readonly generation: GenerationService;
+  readonly snapshot?: ConfigurationSnapshot;
 }
 
 export interface AgentPlatform {
@@ -36,6 +43,10 @@ export function buildAgentPlatform(options: AgentPlatformOptions): AgentPlatform
   // ── Tools ────────────────────────────────────────────────
   const tools = new ToolRegistry();
   for (const contribution of apiBuilderToolContributions(options.builder)) {
+    tools.registerContribution(contribution);
+  }
+  const snapshot = options.snapshot ?? createConfigurationSnapshot([]);
+  for (const contribution of generatorToolContributions(options.generatorRegistry, options.generation, snapshot)) {
     tools.registerContribution(contribution);
   }
   const policy = new ToolPolicy({ autoApproveRisks: ['read', 'write'] });
