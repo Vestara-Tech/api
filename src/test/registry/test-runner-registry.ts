@@ -1,26 +1,30 @@
 import { conflict, notFound } from '../../core/errors.js';
-import type { TestKind, TestRunner, TestRunnerContribution } from '../contracts.js';
+import type { TestRunner } from '../runner/runner.js';
+import type { TestType } from '../contracts.js';
 
-/**
- * TEST-006 — TestRunnerRegistry. Modules request capabilities; testing
- * libraries are adapters, never architectural concepts.
- */
+/** TEST-007 — Runner registry. Testing libraries are adapters, never concepts. */
 export class TestRunnerRegistry {
-  private readonly contributions = new Map<string, TestRunnerContribution>();
+  private readonly runners = new Map<string, TestRunner>();
 
-  register(contribution: TestRunnerContribution): void {
-    if (this.contributions.has(contribution.id)) throw conflict(`Test runner "${contribution.id}" already registered`);
-    this.contributions.set(contribution.id, contribution);
+  register(runner: TestRunner): void {
+    if (this.runners.has(runner.id)) throw conflict(`Test runner "${runner.id}" already registered`);
+    this.runners.set(runner.id, runner);
   }
 
-  resolveFor(kind: TestKind): TestRunner {
-    for (const contribution of this.list()) {
-      if (contribution.supportedKinds.includes(kind)) return contribution.createRunner();
+  resolveFor(type: TestType): TestRunner {
+    for (const runner of this.list()) {
+      if (runner.capabilities.some((c) => c === type)) return runner;
     }
-    throw notFound(`No test runner supports kind "${kind}"`);
+    throw notFound(`No test runner supports type "${type}"`);
   }
 
-  list(): readonly TestRunnerContribution[] {
-    return [...this.contributions.values()].sort((a, b) => a.id.localeCompare(b.id));
+  get(id: string): TestRunner {
+    const runner = this.runners.get(id);
+    if (!runner) throw notFound(`Test runner "${id}" not found`);
+    return runner;
+  }
+
+  list(): readonly TestRunner[] {
+    return [...this.runners.values()].sort((a, b) => a.id.localeCompare(b.id));
   }
 }

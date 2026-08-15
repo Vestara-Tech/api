@@ -16,36 +16,41 @@ afterEach(async () => {
   await app.close();
 });
 
-describe('test control API (TEST-024)', () => {
+describe('expanded test control API (TEST-031)', () => {
   it('exposes the tests capability and runners', async () => {
     const res = await app.inject({ method: 'GET', url: '/api/v2/system' });
     expect(res.json().capabilities).toContain('tests');
 
-    const runners = await app.inject({ method: 'GET', url: '/api/v2/tests/runners' });
+    const runners = await app.inject({ method: 'GET', url: '/api/v2/test/runners' });
     const ids = runners.json().map((r: { id: string }) => r.id);
     expect(ids).toContain('vitest');
     expect(ids).toContain('http');
   });
 
-  it('creates and runs a suite', async () => {
-    const create = await app.inject({
+  it('creates suite/profile and runs under the profile', async () => {
+    await app.inject({
       method: 'POST',
-      url: '/api/v2/tests/suites',
-      payload: {
-        id: 's1', name: 'Smoke',
-        tests: [
-          { id: 'unit1', name: 'unit1', kind: 'unit', target: 'module', runner: 'vitest', configuration: { outcome: 'pass' }, requirements: [], tags: [] },
-          { id: 'api1', name: 'api1', kind: 'api', target: 'api', runner: 'http', configuration: { method: 'GET', path: '/health', expectedStatus: 200 }, requirements: [], tags: [] },
-        ],
-      },
+      url: '/api/v2/test/suites',
+      payload: { id: 's1', name: 'Smoke', tests: [{ id: 'u1', name: 'u1', type: 'unit', target: 'module', runnerId: 'vitest', requirements: [], parameters: { outcome: 'pass' }, tags: [] }] },
     });
-    expect(create.statusCode).toBe(201);
+    await app.inject({ method: 'POST', url: '/api/v2/test/profiles', payload: { id: 'quick', name: 'Quick', types: ['unit'], tags: [] } });
 
-    const run = await app.inject({ method: 'POST', url: '/api/v2/tests/suites/s1/run' });
+    const run = await app.inject({ method: 'POST', url: '/api/v2/test/runs', payload: { suiteId: 's1', profileId: 'quick' } });
     expect(run.statusCode).toBe(200);
-    const result = run.json();
-    expect(result.evidenceHash).toMatch(/^[a-f0-9]{64}$/);
-    expect(result.total).toBe(2);
-    expect(['completed', 'failed']).toContain(result.status);
+    expect(run.json().summary.total).toBe(1);
+    expect(run.json().evidenceId).toBeTruthy();
+  });
+
+  it('runs flaky analysis and impact analysis', async () => {
+    const flaky = await app.inject({ method: 'GET', url: '/api/v2/test/flaky?testId=u1' });
+    expect(flaky.statusCode).toBe(200);
+
+    const impact = await app.inject({
+      method: 'POST',
+      url: '/api/v2/test/impact',
+      payload: { changedArtifacts: ['src/auth/service.ts'], capabilityOf: { 'src/auth/service.ts': ['auth.login'] }, testsOf: { 'auth.login': ['t1'] } },
+    });
+    expect(impact.statusCode).toBe(200);
+    expect(impact.json().affectedCapabilities).toContain('auth.login');
   });
 });

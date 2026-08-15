@@ -25507,9 +25507,9 @@
         }
       }
     },
-    "/api/v2/tests/runners": {
+    "/api/v2/test/runners": {
       "get": {
-        "summary": "List test runners",
+        "summary": "List test runners and their capabilities",
         "tags": [
           "tests"
         ],
@@ -25524,13 +25524,13 @@
                     "type": "object",
                     "required": [
                       "id",
-                      "supportedKinds"
+                      "capabilities"
                     ],
                     "properties": {
                       "id": {
                         "type": "string"
                       },
-                      "supportedKinds": {
+                      "capabilities": {
                         "type": "array",
                         "items": {
                           "type": "string"
@@ -25545,7 +25545,7 @@
         }
       }
     },
-    "/api/v2/tests/suites": {
+    "/api/v2/test/suites": {
       "get": {
         "summary": "List test suites",
         "tags": [
@@ -25579,11 +25579,11 @@
                           "required": [
                             "id",
                             "name",
-                            "kind",
+                            "type",
                             "target",
-                            "runner",
-                            "configuration",
+                            "runnerId",
                             "requirements",
+                            "parameters",
                             "tags"
                           ],
                           "properties": {
@@ -25593,24 +25593,40 @@
                             "name": {
                               "type": "string"
                             },
-                            "kind": {
+                            "type": {
                               "type": "string"
                             },
                             "target": {
                               "type": "string"
                             },
-                            "runner": {
+                            "runnerId": {
                               "type": "string"
-                            },
-                            "configuration": {
-                              "type": "object",
-                              "additionalProperties": {}
                             },
                             "requirements": {
                               "type": "array",
                               "items": {
-                                "type": "string"
+                                "type": "object",
+                                "required": [
+                                  "id",
+                                  "description",
+                                  "required"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "required": {
+                                    "type": "boolean"
+                                  }
+                                }
                               }
+                            },
+                            "parameters": {
+                              "type": "object",
+                              "additionalProperties": {}
                             },
                             "tags": {
                               "type": "array",
@@ -25659,11 +25675,11 @@
                       "required": [
                         "id",
                         "name",
-                        "kind",
+                        "type",
                         "target",
-                        "runner",
-                        "configuration",
+                        "runnerId",
                         "requirements",
+                        "parameters",
                         "tags"
                       ],
                       "properties": {
@@ -25673,24 +25689,40 @@
                         "name": {
                           "type": "string"
                         },
-                        "kind": {
+                        "type": {
                           "type": "string"
                         },
                         "target": {
                           "type": "string"
                         },
-                        "runner": {
+                        "runnerId": {
                           "type": "string"
-                        },
-                        "configuration": {
-                          "type": "object",
-                          "additionalProperties": {}
                         },
                         "requirements": {
                           "type": "array",
                           "items": {
-                            "type": "string"
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "description",
+                              "required"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "required": {
+                                "type": "boolean"
+                              }
+                            }
                           }
+                        },
+                        "parameters": {
+                          "type": "object",
+                          "additionalProperties": {}
                         },
                         "tags": {
                           "type": "array",
@@ -25732,11 +25764,11 @@
                         "required": [
                           "id",
                           "name",
-                          "kind",
+                          "type",
                           "target",
-                          "runner",
-                          "configuration",
+                          "runnerId",
                           "requirements",
+                          "parameters",
                           "tags"
                         ],
                         "properties": {
@@ -25746,24 +25778,40 @@
                           "name": {
                             "type": "string"
                           },
-                          "kind": {
+                          "type": {
                             "type": "string"
                           },
                           "target": {
                             "type": "string"
                           },
-                          "runner": {
+                          "runnerId": {
                             "type": "string"
-                          },
-                          "configuration": {
-                            "type": "object",
-                            "additionalProperties": {}
                           },
                           "requirements": {
                             "type": "array",
                             "items": {
-                              "type": "string"
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "description",
+                                "required"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
                             }
+                          },
+                          "parameters": {
+                            "type": "object",
+                            "additionalProperties": {}
                           },
                           "tags": {
                             "type": "array",
@@ -25782,9 +25830,431 @@
         }
       }
     },
-    "/api/v2/tests/suites/{id}/run": {
+    "/api/v2/test/plans": {
+      "get": {
+        "summary": "List test plans",
+        "tags": [
+          "tests"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "objective",
+                      "target",
+                      "suiteIds",
+                      "profileId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "objective": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "suiteIds": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "profileId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
-        "summary": "Run a test suite (adapter per test kind)",
+        "summary": "Create a test plan",
+        "tags": [
+          "tests"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "objective",
+                  "target",
+                  "suiteIds",
+                  "profileId"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "objective": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "suiteIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "objective",
+                    "target",
+                    "suiteIds",
+                    "profileId"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "objective": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "suiteIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "profileId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/test/profiles": {
+      "get": {
+        "summary": "List test profiles",
+        "tags": [
+          "tests"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "types",
+                      "tags"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "types": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "tags": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a test profile",
+        "tags": [
+          "tests"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "types",
+                  "tags"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "types",
+                    "tags"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "types": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/test/runs": {
+      "post": {
+        "summary": "Run a suite under a profile",
+        "tags": [
+          "tests"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "suiteId",
+                  "profileId"
+                ],
+                "properties": {
+                  "suiteId": {
+                    "type": "string"
+                  },
+                  "profileId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "target",
+                    "status",
+                    "summary"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "target": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "summary": {
+                      "type": "object",
+                      "required": [
+                        "total",
+                        "passed",
+                        "failed",
+                        "skipped"
+                      ],
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "passed": {
+                          "type": "integer"
+                        },
+                        "failed": {
+                          "type": "integer"
+                        },
+                        "skipped": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "evidenceId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List test runs",
+        "tags": [
+          "tests"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "target",
+                      "status",
+                      "summary"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "summary": {
+                        "type": "object",
+                        "required": [
+                          "total",
+                          "passed",
+                          "failed",
+                          "skipped"
+                        ],
+                        "properties": {
+                          "total": {
+                            "type": "integer"
+                          },
+                          "passed": {
+                            "type": "integer"
+                          },
+                          "failed": {
+                            "type": "integer"
+                          },
+                          "skipped": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "evidenceId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/test/flaky": {
+      "get": {
+        "summary": "Flaky-test analysis",
         "tags": [
           "tests"
         ],
@@ -25793,8 +26263,8 @@
             "schema": {
               "type": "string"
             },
-            "in": "path",
-            "name": "id",
+            "in": "query",
+            "name": "testId",
             "required": true
           }
         ],
@@ -25806,27 +26276,19 @@
                 "schema": {
                   "type": "object",
                   "required": [
-                    "id",
-                    "suiteId",
-                    "status",
-                    "total",
+                    "testId",
+                    "runs",
                     "passed",
                     "failed",
-                    "skipped",
-                    "evidenceHash",
-                    "runner"
+                    "flakiness",
+                    "confidence",
+                    "classification"
                   ],
                   "properties": {
-                    "id": {
+                    "testId": {
                       "type": "string"
                     },
-                    "suiteId": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "total": {
+                    "runs": {
                       "type": "integer"
                     },
                     "passed": {
@@ -25835,14 +26297,104 @@
                     "failed": {
                       "type": "integer"
                     },
-                    "skipped": {
+                    "flakiness": {
                       "type": "integer"
                     },
-                    "evidenceHash": {
+                    "confidence": {
                       "type": "string"
                     },
-                    "runner": {
+                    "classification": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/test/impact": {
+      "post": {
+        "summary": "Impact analysis: changed artifacts -> affected tests",
+        "tags": [
+          "tests"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "changedArtifacts",
+                  "capabilityOf",
+                  "testsOf"
+                ],
+                "properties": {
+                  "changedArtifacts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "capabilityOf": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "testsOf": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "changedArtifacts",
+                    "affectedCapabilities",
+                    "affectedTests",
+                    "recommendedTestCount"
+                  ],
+                  "properties": {
+                    "changedArtifacts": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "affectedCapabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "affectedTests": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "recommendedTestCount": {
+                      "type": "integer"
                     }
                   }
                 }

@@ -1,19 +1,42 @@
 export type {
-  TestKind,
-  TestTargetKind,
-  TestRetryPolicy,
+  TestType,
+  TestTargetType,
+  TestRequirement,
+  ArtifactRequirement,
+  EvidenceRequirement,
   TestDefinition,
   TestSuite,
-  TestRunStatus,
-  AssertionResult,
+  TestProfile,
+  TestPlan,
+  TestDiscoveryResult,
+  NormalizedTestCaseResult,
+  TestExecution,
   TestRun,
-  TestRunnerContext,
-  TestRunner,
-  TestRunnerContribution,
+  CoverageFile,
+  CoverageReport,
+  TestHistoryEntry,
+  FlakinessResult,
+  RegressionComparison,
+  Baseline,
+  RegressionResult,
+  ImpactAnalysis,
+  TestEvidenceBundle,
 } from './contracts.js';
+export type {
+  TestRunnerCapability,
+  TestDiscoveryContext,
+  TestExecutionRequest,
+  TestExecutionPlan,
+  TestExecutionResult,
+  TestRunner,
+} from './runner/runner.js';
 export { TestRunnerRegistry } from './registry/test-runner-registry.js';
-export { buildTestRun, hashResults } from './runtime/run-builder.js';
 export { VitestAdapter } from './adapters/vitest.js';
 export { HttpTestAdapter } from './adapters/http.js';
+export { buildTestRun, hashResults, buildEvidenceBundle } from './runtime/run-builder.js';
+export { CoverageEngine } from './analysis/coverage.js';
+export { FlakinessAnalyzer } from './analysis/flakiness.js';
+export { BaselineEngine } from './analysis/baseline.js';
+export { ImpactAnalyzer } from './analysis/impact.js';
 export type { TestServiceOptions } from './service/test-service.js';
 export { TestService } from './service/test-service.js';
