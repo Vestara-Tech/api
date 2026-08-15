@@ -5,7 +5,12 @@ import { CommandBus } from '../core/commands.js';
 import { EventBus } from '../core/events.js';
 import { OperationStore } from '../core/operations.js';
 import { QueryBus } from '../core/queries.js';
+import { ApiDefinitionService } from '../builder/service/api-definition-service.js';
+import { ContractCompiler } from '../builder/compiler/index.js';
+import { DefinitionValidator } from '../builder/domain/validator.js';
+import { InMemoryDraftStore } from '../builder/store/in-memory.js';
 import { registerSystemCapability } from './capabilities.js';
+import { registerBuilderCapability } from './builder-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -25,6 +30,7 @@ export interface Application {
   readonly events: EventBus;
   readonly operations: OperationStore;
   readonly capabilities: CapabilityRegistry;
+  readonly builder: ApiDefinitionService;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -39,13 +45,23 @@ export function createApplication(config: AppConfig): Application {
   const capabilities = new CapabilityRegistryImpl();
   const shutdown = new ShutdownCoordinator();
 
+  const builder = new ApiDefinitionService({
+    store: new InMemoryDraftStore(),
+    compiler: new ContractCompiler(),
+    validator: new DefinitionValidator(),
+    operations,
+    events,
+  });
+
   registerSystemCapability(capabilities, config);
+  registerBuilderCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
   container.register('events', events);
   container.register('operations', operations);
   container.register('capabilities', capabilities);
+  container.register('builder', builder);
 
   const startedAt = Date.now();
 
@@ -57,6 +73,7 @@ export function createApplication(config: AppConfig): Application {
     events,
     operations,
     capabilities,
+    builder,
     shutdown,
     systemStatus(): SystemStatus {
       return {

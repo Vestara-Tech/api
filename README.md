@@ -47,8 +47,33 @@ on the Workspace UI and compiles, tests, and runs on its own.
   CI drift check (`pnpm openapi:check`)
 - Unit + integration + contract tests (Vitest, Fastify `inject()`)
 
+**API2-002 — API Definition Runtime (complete).** The durable domain model the
+Builder UI and future Generator/Agent modules will drive:
+
+- `ApiDefinition` aggregate — resources (fields / relations / indexes),
+  endpoints (method / path / parameters / request / responses / policies /
+  capabilityBinding), policies, operations, events, revision, metadata
+- Lifecycle state machine: `draft → validating → ready → publishing →
+  published`, with invalid→draft, superseded, and rollback
+- `DefinitionValidator` — deterministic structural validation
+- `ContractCompiler` — deterministic contract hash (same definition + same
+  compiler version → same hash), TypeBox schemas, OpenAPI 3.1, route
+  definitions; the hash is stored with each published revision (evidence /
+  provenance friendly)
+- `ApiDefinitionService` — create / get / list / update / remove / validate /
+  preview / publish / rollback / revisions; publish records a revision hash and
+  drives a `api.publish` operation through the OperationStore; lifecycle events
+  (`builder.definition.*`) publish to the EventBus
+- `DraftStore` port + `InMemoryDraftStore` (persistence is swappable)
+- **AI port contracts (types only)** — `ApiBuilderAiPort`,
+  `AiBuilderProposal`, `ApiDefinitionPatch`. AI is an optional capability: it
+  produces revision-scoped typed patches; it never activates routes or
+  publishes. Capabilities `builder.ai.*` are declared but inactive until an
+  adapter is installed.
+- Builder capability registered (`builder` appears in `/api/v2/system`)
+
 Agents, workflows, generators, database, Marketplace, and diagnostics are
-**not** part of API2-001 — they become API2-002+ capabilities once the
+**not** part of API2-001/002 — they become API2-003+ capabilities once the
 control-plane foundation is verified. PostgreSQL/Redis/NATS/Prisma and external
 runtimes stay behind ports; the API boots and passes tests without them.
 
