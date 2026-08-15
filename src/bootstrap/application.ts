@@ -39,6 +39,7 @@ import type { MarketplacePlatform } from './marketplace.js';
 import type { GenerationPlanePlatform } from './generation-plane.js';
 import type { BuilderPlanePlatform } from './builder-plane.js';
 import type { DiagnosticsPlatform } from './diagnostics.js';
+import type { LogPlatform } from './log.js';
 import { buildConfigurationService } from './configuration.js';
 import { buildGeneratorPlatform } from './generator.js';
 import { buildOnboardingService } from './onboarding.js';
@@ -58,6 +59,7 @@ import { buildMarketplacePlatform } from './marketplace.js';
 import { buildGenerationPlanePlatform } from './generation-plane.js';
 import { buildBuilderPlanePlatform } from './builder-plane.js';
 import { buildDiagnosticsPlatform } from './diagnostics.js';
+import { buildLogPlatform } from './log.js';
 import { registerSystemCapability } from './capabilities.js';
 import { registerBuilderCapability } from './builder-capability.js';
 import { registerAuthCapability } from './auth-capability.js';
@@ -77,6 +79,7 @@ import { registerPermissionCapability } from './permission-capability.js';
 import { registerCarCapability } from './car-capability.js';
 import { registerMarketplaceCapability } from './marketplace-capability.js';
 import { registerDiagnosticsCapability } from './diagnostics-capability.js';
+import { registerLogCapability } from './log-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -121,6 +124,7 @@ export interface Application {
   readonly generationPlane: GenerationPlanePlatform;
   readonly builderPlane: BuilderPlanePlatform;
   readonly diagnostics: DiagnosticsPlatform;
+  readonly log: LogPlatform;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -233,6 +237,9 @@ export function createApplication(config: AppConfig): Application {
   // ── Diagnostics (DIAG-001..) ──────────────────────────────
   const diagnostics = buildDiagnosticsPlatform({ image: imageBuilder });
 
+  // ── Log Module (LOG-001..) ────────────────────────────────
+  const log = buildLogPlatform();
+
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
   registerAuthCapability(capabilities, config);
@@ -252,6 +259,7 @@ export function createApplication(config: AppConfig): Application {
   registerCarCapability(capabilities, config);
   registerMarketplaceCapability(capabilities, config);
   registerDiagnosticsCapability(capabilities, config);
+  registerLogCapability(capabilities, config);
 
   container.register('commands', commands);
   container.register('queries', queries);
@@ -315,6 +323,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('builder.plane.lifecycle', builderPlane.lifecycle);
   container.register('diagnostics.registry', diagnostics.registry);
   container.register('diagnostics.executor', diagnostics.executor);
+  container.register('log.service', log.service);
+  container.register('log.store', log.store);
 
   const startedAt = Date.now();
 
@@ -351,6 +361,7 @@ export function createApplication(config: AppConfig): Application {
     generationPlane,
     builderPlane,
     diagnostics,
+    log,
     shutdown,
     systemStatus(): SystemStatus {
       return {
