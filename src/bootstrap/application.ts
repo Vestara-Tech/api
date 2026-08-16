@@ -270,7 +270,7 @@ export function createApplication(config: AppConfig): Application {
   const marketplace = buildMarketplacePlatform();
 
   // ── Marketplace v2 (MKT2-001..) ────────────────────────────
-  const marketplaceV2 = buildMarketplaceV2Platform();
+  const marketplaceV2 = buildMarketplaceV2Platform(undefined, marketplace.registry);
 
   // ── Generation Plane (GEN-X) ───────────────────────────────
   const generationPlane = buildGenerationPlanePlatform({

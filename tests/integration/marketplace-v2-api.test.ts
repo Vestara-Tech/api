@@ -131,3 +131,58 @@ describe('Marketplace v2 platform contribution wiring (MKT2-006..010)', () => {
     expect(componentIds).toContain('button');
   });
 });
+
+describe('Marketplace v2 version/update/impact API (MKT2-018..020)', () => {
+  it('publishes, lists, promotes and evaluates a version', async () => {
+    const publish = await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/versions',
+      payload: { packageId: 'dev-agent', version: '1.5.0', channel: 'beta' },
+    });
+    expect(publish.statusCode).toBe(201);
+
+    const promote = await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/versions/promote',
+      payload: { packageId: 'dev-agent', version: '1.5.0', to: 'stable' },
+    });
+    expect(promote.json().channel).toBe('stable');
+
+    const list = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/versions/dev-agent' });
+    expect((list.json() as readonly { version: string }[]).some((v) => v.version === '1.5.0')).toBe(true);
+
+    const evaluate = await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/updates/evaluate',
+      payload: { packageId: 'dev-agent', currentVersion: '1.4.0', latestVersion: '1.5.0', channel: 'stable' },
+    });
+    expect(evaluate.json().updateAvailable).toBe(true);
+    expect(evaluate.json().action).toBe('prompt');
+  });
+
+  it('sets an update policy and evaluates accordingly', async () => {
+    await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/updates/policy',
+      payload: { packageId: 'dev-agent', policy: 'auto', channel: 'stable', blockMajor: true },
+    });
+    const evaluate = await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/updates/evaluate',
+      payload: { packageId: 'dev-agent', currentVersion: '1.4.0', latestVersion: '2.0.0', channel: 'stable' },
+    });
+    expect(evaluate.json().action).toBe('hold');
+  });
+
+  it('analyzes update impact with reverse dependencies', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/v2/marketplace-v2/impact',
+      payload: { packageId: 'vestara.platform.ai.providers', currentVersion: '1.0.0', toVersion: '2.0.0', channel: 'stable' },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().packageId).toBe('vestara.platform.ai.providers');
+    expect(res.json().toVersion).toBe('2.0.0');
+    expect(typeof res.json().breaking).toBe('boolean');
+  });
+});

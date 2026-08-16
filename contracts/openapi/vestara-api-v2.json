@@ -46872,6 +46872,471 @@
           }
         }
       }
+    },
+    "/api/v2/marketplace-v2/versions/{packageId}": {
+      "get": {
+        "summary": "List versions of a package across channels",
+        "tags": [
+          "marketplace"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "packageId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "packageId",
+                      "version",
+                      "channel",
+                      "publishedAt"
+                    ],
+                    "properties": {
+                      "packageId": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "channel": {
+                        "type": "string"
+                      },
+                      "publishedAt": {
+                        "type": "string"
+                      },
+                      "changelog": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/versions": {
+      "post": {
+        "summary": "Publish a package version to a channel",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "version",
+                  "channel"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "changelog": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "version",
+                    "channel",
+                    "publishedAt"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    },
+                    "changelog": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/versions/promote": {
+      "post": {
+        "summary": "Promote a version between channels (e.g. beta -> stable)",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "version",
+                  "to"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "version": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "changelog": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "version",
+                    "channel",
+                    "publishedAt"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "publishedAt": {
+                      "type": "string"
+                    },
+                    "changelog": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/updates/policy": {
+      "post": {
+        "summary": "Set an update policy for a package",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "policy",
+                  "channel"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "policy": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  },
+                  "blockMajor": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "policy",
+                    "channel"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "policy": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "blockMajor": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/updates/evaluate": {
+      "post": {
+        "summary": "Evaluate whether a package should update under its policy",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "currentVersion",
+                  "latestVersion",
+                  "channel"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "currentVersion": {
+                    "type": "string"
+                  },
+                  "latestVersion": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "currentVersion",
+                    "latestVersion",
+                    "channel",
+                    "updateAvailable",
+                    "breaking",
+                    "policy",
+                    "action",
+                    "reason"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "currentVersion": {
+                      "type": "string"
+                    },
+                    "latestVersion": {
+                      "type": "string"
+                    },
+                    "channel": {
+                      "type": "string"
+                    },
+                    "updateAvailable": {
+                      "type": "boolean"
+                    },
+                    "breaking": {
+                      "type": "boolean"
+                    },
+                    "policy": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/marketplace-v2/impact": {
+      "post": {
+        "summary": "Analyze the impact of updating a package (reverse dependencies + capability changes)",
+        "tags": [
+          "marketplace"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "packageId",
+                  "currentVersion",
+                  "toVersion",
+                  "channel"
+                ],
+                "properties": {
+                  "packageId": {
+                    "type": "string"
+                  },
+                  "currentVersion": {
+                    "type": "string"
+                  },
+                  "toVersion": {
+                    "type": "string"
+                  },
+                  "channel": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "packageId",
+                    "fromVersion",
+                    "toVersion",
+                    "breaking",
+                    "reverseDependencies",
+                    "capabilitiesAdded",
+                    "capabilitiesRemoved"
+                  ],
+                  "properties": {
+                    "packageId": {
+                      "type": "string"
+                    },
+                    "fromVersion": {
+                      "type": "string"
+                    },
+                    "toVersion": {
+                      "type": "string"
+                    },
+                    "breaking": {
+                      "type": "boolean"
+                    },
+                    "reverseDependencies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "dependent",
+                          "versionRange",
+                          "stillSatisfied"
+                        ],
+                        "properties": {
+                          "dependent": {
+                            "type": "string"
+                          },
+                          "versionRange": {
+                            "type": "string"
+                          },
+                          "stillSatisfied": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "capabilitiesAdded": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "capabilitiesRemoved": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

@@ -237,4 +237,126 @@ export const marketplaceV2Routes: FastifyPluginAsyncTypebox = async (app) => {
     },
     async (_request, reply) => reply.send(marketplace.publisher.listPublished() as never),
   );
+
+  // ── MKT2-018 version/channel management ────────────────────
+  app.get(
+    '/api/v2/marketplace-v2/versions/:packageId',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'List versions of a package across channels',
+        params: Type.Object({ packageId: Type.String() }),
+        response: { 200: Type.Array(Type.Object({ packageId: Type.String(), version: Type.String(), channel: Type.String(), publishedAt: Type.String(), changelog: Type.Optional(Type.String()) })) },
+      },
+    },
+    async (request, reply) => reply.send(marketplace.versions.listVersions(request.params.packageId) as never),
+  );
+
+  app.post(
+    '/api/v2/marketplace-v2/versions',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Publish a package version to a channel',
+        body: Type.Object({ packageId: Type.String(), version: Type.String(), channel: Type.String(), changelog: Type.Optional(Type.String()) }),
+        response: { 201: Type.Object({ packageId: Type.String(), version: Type.String(), channel: Type.String(), publishedAt: Type.String(), changelog: Type.Optional(Type.String()) }) },
+      },
+    },
+    async (request, reply) => {
+      const entry = marketplace.versions.publish(request.body as never);
+      return reply.status(201).send(entry as never);
+    },
+  );
+
+  app.post(
+    '/api/v2/marketplace-v2/versions/promote',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Promote a version between channels (e.g. beta -> stable)',
+        body: Type.Object({ packageId: Type.String(), version: Type.String(), to: Type.String(), changelog: Type.Optional(Type.String()) }),
+        response: { 200: Type.Object({ packageId: Type.String(), version: Type.String(), channel: Type.String(), publishedAt: Type.String(), changelog: Type.Optional(Type.String()) }) },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body as { packageId: string; version: string; to: 'stable' | 'beta' | 'development' | 'canary'; changelog?: string };
+      const entry = marketplace.versions.promote(body.packageId, body.version, body.to, body.changelog);
+      return reply.send(entry as never);
+    },
+  );
+
+  // ── MKT2-019 update policies ───────────────────────────────
+  app.post(
+    '/api/v2/marketplace-v2/updates/policy',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Set an update policy for a package',
+        body: Type.Object({ packageId: Type.String(), policy: Type.String(), channel: Type.String(), blockMajor: Type.Optional(Type.Boolean()) }),
+        response: { 200: Type.Object({ packageId: Type.String(), policy: Type.String(), channel: Type.String(), blockMajor: Type.Optional(Type.Boolean()) }) },
+      },
+    },
+    async (request, reply) => {
+      marketplace.updates.set(request.body as never);
+      return reply.send(request.body as never);
+    },
+  );
+
+  app.post(
+    '/api/v2/marketplace-v2/updates/evaluate',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Evaluate whether a package should update under its policy',
+        body: Type.Object({ packageId: Type.String(), currentVersion: Type.String(), latestVersion: Type.String(), channel: Type.String() }),
+        response: {
+          200: Type.Object({
+            packageId: Type.String(),
+            currentVersion: Type.String(),
+            latestVersion: Type.String(),
+            channel: Type.String(),
+            updateAvailable: Type.Boolean(),
+            breaking: Type.Boolean(),
+            policy: Type.String(),
+            action: Type.String(),
+            reason: Type.String(),
+          }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body as { packageId: string; currentVersion: string; latestVersion: string; channel: 'stable' | 'beta' | 'development' | 'canary' };
+      const policy = marketplace.updates.policyFor(body.packageId) ?? { packageId: body.packageId, policy: 'manual' as const, channel: body.channel };
+      const evaluation = marketplace.updates.evaluate(body.currentVersion, body.latestVersion, body.channel, policy);
+      return reply.send(evaluation as never);
+    },
+  );
+
+  // ── MKT2-020 dependency impact analysis ────────────────────
+  app.post(
+    '/api/v2/marketplace-v2/impact',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'Analyze the impact of updating a package (reverse dependencies + capability changes)',
+        body: Type.Object({ packageId: Type.String(), currentVersion: Type.String(), toVersion: Type.String(), channel: Type.String() }),
+        response: {
+          200: Type.Object({
+            packageId: Type.String(),
+            fromVersion: Type.String(),
+            toVersion: Type.String(),
+            breaking: Type.Boolean(),
+            reverseDependencies: Type.Array(Type.Object({ dependent: Type.String(), versionRange: Type.String(), stillSatisfied: Type.Boolean() })),
+            capabilitiesAdded: Type.Array(Type.String()),
+            capabilitiesRemoved: Type.Array(Type.String()),
+          }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const body = request.body as { packageId: string; currentVersion: string; toVersion: string; channel: 'stable' | 'beta' | 'development' | 'canary' };
+      const impact = marketplace.impact.analyze(body.currentVersion, { packageId: body.packageId, version: body.toVersion, channel: body.channel, publishedAt: new Date().toISOString() });
+      return reply.send(impact as never);
+    },
+  );
 };
