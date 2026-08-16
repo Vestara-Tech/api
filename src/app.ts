@@ -6,6 +6,7 @@ import type { Application } from './bootstrap/application.js';
 import { registerRequestContextPlugin } from './plugins/request-context.js';
 import { registerErrorHandler } from './plugins/error-handler.js';
 import { registerTelemetry } from './plugins/telemetry.js';
+import { registerCors } from './plugins/cors.js';
 import { registerOpenApi } from './plugins/openapi.js';
 import { healthRoutes } from './routes/health.js';
 import { systemRoutes } from './routes/system.js';
@@ -78,6 +79,7 @@ export async function buildApp(options: BuildAppOptions) {
   registerRequestContextPlugin(app);
   registerErrorHandler(app);
   registerTelemetry(app);
+  await registerCors(app);
 
   registerAuthPlugin(app, {
     authentication: options.application.authentication,

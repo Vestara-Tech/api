@@ -1,7 +1,7 @@
 {
   "name": "@vestara/api",
   "version": "2.0.0-alpha.1",
-  "description": "Vestara API v2 \u2014 Platform Gateway and Control Plane (standalone)",
+  "description": "Vestara API v2 — Platform Gateway and Control Plane (standalone)",
   "private": true,
   "type": "module",
   "main": "dist/main.js",
@@ -24,6 +24,7 @@
     "contracts:frontend:check": "tsx scripts/check-frontend-contracts.ts"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
     "@fastify/swagger": "^9.8.1",
     "@fastify/type-provider-typebox": "^6.1.0",
     "@opentelemetry/api": "^1.9.1",
