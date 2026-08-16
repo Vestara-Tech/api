@@ -1,8 +1,8 @@
-# ADR-0047 — Marketplace v2: Universal Capability Distribution (MKT2-001..017)
+# ADR-0047 — Marketplace v2: Universal Capability Distribution (MKT2-001..020)
 
 - Status: accepted
 - Date: 2026-08-15
-- Applies to: MKT2-001 — MKT2-017
+- Applies to: MKT2-001 — MKT2-020
 
 ## Context
 
@@ -60,18 +60,46 @@ critical/high findings; `buildPackageEvidence` produces a verifiable bundle.
 publishes through the governed flow (publisher -> build -> security scan ->
 evidence -> sign -> publish), refusing unknown publishers.
 
+### 7. Live platform contribution wiring (MKT2-006..010)
+
+`registerPlatformContributions` registers the actual platform modules as
+distributable contributions at bootstrap: configuration contributions,
+AI providers/profiles/evaluators, builders, generators, UI
+components/themes/templates, OS + image profiles. Every module is
+independently installable/updatable through the governed package system.
+
+### 8. Version/channel management (MKT2-018)
+
+`PackageVersionService` publishes versions to channels (stable/beta/
+development/canary), promotes versions between channels, and resolves the
+latest version of a channel for installs. Local registry remains
+authoritative; offline installs keep working.
+
+### 9. Update policies (MKT2-019)
+
+`UpdatePolicyEngine` decides per package+channel: auto applies compatible
+releases, prompt asks, manual requires explicit action, hold never
+auto-advances. Major bumps are gated under auto/prompt via `blockMajor`.
+
+### 10. Dependency impact analysis (MKT2-020)
+
+`DependencyImpactAnalyzer` finds every installed package depending on the
+target, verifies their version ranges still hold, and diffs capability
+requires so the update decision is evidence-driven (`breaking` flag).
+
 ## Consequences
 
-- Marketplace v2 foundation complete: extended taxonomy, contribution
-  manifest v2, capability resolver, bundles, distributions, trust/signing/
-  security/evidence, publisher model.
+- Marketplace v2 complete: extended taxonomy, contribution manifest v2,
+  capability resolver, bundles/distributions with install plans,
+  trust/signing/security/evidence, publisher model, live platform
+  contribution wiring, version/channel management, update policies,
+  dependency impact analysis.
 - New control API: `/api/v2/marketplace-v2/contributions`, `/provides/:kind`,
   `/resolve`, `/bundles`, `/distributions` (+ plan), `/publishers`,
-  `/publish`, `/published`. `marketplace-v2` capability registered.
-  OpenAPI regenerated and in sync.
-- 14 new tests (10 unit + 4 integration). 766 total.
-- MKT2-006..010 (configuration/AI/builder/generator/UI/OS contributions
-  wiring), MKT2-018..020 (version/channel management, update policies,
-  dependency impact analysis), and MKTUI (Discover, Package details,
-  Installation review, Installed control center, Package Builder, Publisher
-  Console) follow.
+  `/publish`, `/published`, `/versions`, `/versions/promote`,
+  `/updates/policy`, `/updates/evaluate`, `/impact`. `marketplace-v2`
+  capability registered. OpenAPI regenerated and in sync.
+- 26 new tests. 788 total.
+- MKTUI (Discover, Package details, Installation review, Installed control
+  center, Package Builder, Publisher Console) and the Onboarding v2
+  Provisioning & Composition engine (ONB-010..) follow.
