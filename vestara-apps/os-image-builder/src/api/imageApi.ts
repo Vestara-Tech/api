@@ -22,7 +22,7 @@ export class ApiError extends Error {
 }
 
 function clientOrNew(): ApiClient {
-  return imageClient ?? new ApiClient({ apiBase: 'http://localhost:4310' });
+  return imageClient ?? new ApiClient({ apiBase: 'http://127.0.0.1:4310' });
 }
 
 /**

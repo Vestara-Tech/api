@@ -20,7 +20,7 @@ export function imageBuilderDiagnostics(image: ImageBuildService): DiagnosticCon
     version: '1.0.0',
     checks,
     run: async (context) => {
-      const expectedApi = String(context.env.VESTARA_API_URL ?? 'http://localhost:4310');
+      const expectedApi = String(context.env.VESTARA_API_URL ?? 'http://127.0.0.1:4310');
       let profiles: readonly { id: string }[] = [];
       let profileError: string | undefined;
       try {

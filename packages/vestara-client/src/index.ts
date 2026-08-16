@@ -3,8 +3,8 @@ export type { ApiErrorCode, ApiConnectionState, ApiConnectionStatus, ApiHealthRe
 export { createImageApi } from './image';
 export type { ImageApi, ImageProfile, ImageBuildPlan, ImageBuildState } from './image';
 
-/** Default API base matching the backend DEFAULT_PORT (4310). */
-export const DEFAULT_API_BASE = 'http://localhost:4310';
+/** Default API base matching the backend DEFAULT_HOST/DEFAULT_PORT (127.0.0.1:4310). */
+export const DEFAULT_API_BASE = 'http://127.0.0.1:4310';
 
 export function resolveApiBase(): string {
   if (typeof process !== 'undefined' && process.env?.VESTARA_API_URL) {

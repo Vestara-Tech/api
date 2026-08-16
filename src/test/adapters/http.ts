@@ -17,7 +17,7 @@ export class HttpTestAdapter implements TestRunner {
   }
 
   async execute(plan: TestExecutionPlan): Promise<TestExecutionResult> {
-    const base = String(plan.request.environment ?? plan.request.apiBase ?? 'http://localhost:4310');
+    const base = String(plan.request.environment ?? plan.request.apiBase ?? 'http://127.0.0.1:4310');
     const results: TestExecutionResult['results'][number][] = [];
     for (const test of plan.request.suite.tests) {
       const req = test.parameters as { method?: string; path?: string; expectedStatus?: number };
