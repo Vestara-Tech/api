@@ -35,7 +35,7 @@ describe('Marketplace v2 control API (MKT2)', () => {
     expect(provides.json().some((c: { id: string }) => c.id === 'developer-agent')).toBe(true);
 
     const list = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/contributions' });
-    expect(list.json()).toHaveLength(1);
+    expect((list.json() as readonly { packageId: string }[]).some((c) => c.packageId === 'developer-pack')).toBe(true);
   });
 
   it('resolves capabilities against the platform', async () => {
@@ -100,5 +100,34 @@ describe('Marketplace v2 control API (MKT2)', () => {
 
     const published = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/published' });
     expect(published.json()).toHaveLength(1);
+  });
+});
+
+describe('Marketplace v2 platform contribution wiring (MKT2-006..010)', () => {
+  it('registers live platform modules as distributable contributions at bootstrap', async () => {
+    const list = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/contributions' });
+    expect(list.statusCode).toBe(200);
+    const contributions = list.json() as readonly { packageId: string }[];
+    const ids = contributions.map((c) => c.packageId);
+
+    expect(ids).toContain('vestara.platform.ai.providers');
+    expect(ids).toContain('vestara.platform.ai.profiles');
+    expect(ids).toContain('vestara.platform.ai.evaluators');
+    expect(ids).toContain('vestara.platform.builders');
+    expect(ids).toContain('vestara.platform.generators');
+    expect(ids).toContain('vestara.platform.ui.components');
+    expect(ids).toContain('vestara.platform.ui.themes');
+    expect(ids).toContain('vestara.platform.ui.templates');
+    expect(ids).toContain('vestara.platform.image');
+  });
+
+  it('exposes platform-provided AI profiles and components through provides', async () => {
+    const profiles = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/provides/ai-profile' });
+    const profileIds = (profiles.json() as readonly { id: string }[]).map((p) => p.id);
+    expect(profileIds).toContain('vestara.coding');
+
+    const components = await app.inject({ method: 'GET', url: '/api/v2/marketplace-v2/provides/component' });
+    const componentIds = (components.json() as readonly { id: string }[]).map((c) => c.id);
+    expect(componentIds).toContain('button');
   });
 });

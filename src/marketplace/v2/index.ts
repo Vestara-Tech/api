@@ -8,3 +8,5 @@ export type { PublisherStorePort, PublishRequestV2, PublishedPackage, PublishRes
 export { InMemoryPublisherStore, MarketplacePublisherService } from './publishing.js';
 export type { MarketplaceV2Options } from './service.js';
 export { MarketplaceV2 } from './service.js';
+export type { PlatformRegistryReads } from './wiring.js';
+export { registerPlatformContributions } from './wiring.js';

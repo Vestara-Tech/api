@@ -64,6 +64,7 @@ import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
 import { buildMarketplacePlatform } from './marketplace.js';
 import { buildMarketplaceV2Platform } from './marketplace-v2.js';
+import { registerPlatformContributions } from '../marketplace/v2/wiring.js';
 import { buildGenerationPlanePlatform } from './generation-plane.js';
 import { buildBuilderPlanePlatform } from './builder-plane.js';
 import { buildDiagnosticsPlatform } from './diagnostics.js';
@@ -326,6 +327,23 @@ export function createApplication(config: AppConfig): Application {
 
   // ── Template Module (TPL-001..) ───────────────────────────
   const templates = buildTemplatePlatform();
+
+  // ── Marketplace v2 contribution wiring (MKT2-006..010) ────
+  // Register the live platform modules as distributable contributions after
+  // every module exists: config, AI providers/profiles/evaluators, builders,
+  // generators, components/themes/templates, OS + image profiles.
+  registerPlatformContributions(marketplaceV2.service.contributionRegistry, {
+    configurationContributions: configExpanded.contributions.list().map((c) => ({ packageId: c.packageId, namespace: c.namespace })),
+    aiProviders: aiProviders.listProviders().map((p) => ({ id: p.id, name: p.name, enabled: p.enabled })),
+    aiProfiles: aiV2.platform.profiles.list().map((p) => ({ id: p.id, name: p.name })),
+    aiEvaluators: aiV2.evaluations.list().map((e) => ({ id: e.id, name: e.name })),
+    builders: builderPlane.registry.listKinds().map((b) => ({ kind: b.kind, moduleId: b.moduleId, version: b.version })),
+    generators: generatorRegistry.list().map((g) => ({ id: g.id, capabilities: g.capabilities })),
+    components: component.registry.list().map((c) => ({ id: c.id, name: c.name })),
+    themes: themes.service.list().map((t) => ({ id: t.id, name: t.name })),
+    templates: templates.service.list().map((t) => ({ id: t.id, name: t.name, kind: t.kind })),
+    imageProfiles: imageBuilder.listProfiles().map((p) => ({ id: p.id, version: p.version })),
+  });
 
   registerSystemCapability(capabilities, config);
   registerBuilderCapability(capabilities, config);
