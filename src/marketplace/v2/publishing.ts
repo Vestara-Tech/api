@@ -63,6 +63,10 @@ export class MarketplacePublisherService {
     this.publishers.save(publisher);
   }
 
+  listPublishers(): readonly PublisherIdentity[] {
+    return this.publishers.list();
+  }
+
   publish(request: PublishRequestV2, signerKeyId: string): PublishResultV2 {
     const publisher = this.publishers.get(request.publisherId);
     if (!publisher) return { ok: false, reason: `Unknown publisher "${request.publisherId}"` };

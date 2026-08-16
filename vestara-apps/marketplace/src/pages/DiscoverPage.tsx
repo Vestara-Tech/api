@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Alert, Box, Chip, Grid, Stack, TextField, Typography } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router';
+import { Alert, Box, Button, Chip, Grid, Stack, TextField, Typography } from '@mui/material';
 import { marketplaceApi, type PackageView } from '../api/marketplaceApi';
 import { PackageCard } from '../components/package/PackageCard';
+import { useContributions } from '../hooks/useMarketplaceV2';
 
 export function DiscoverPage() {
   const [packages, setPackages] = useState<readonly PackageView[]>([]);
@@ -9,6 +11,7 @@ export function DiscoverPage() {
   const [search, setSearch] = useState('');
   const [kind, setKind] = useState<string | undefined>(undefined);
   const [offline, setOffline] = useState(false);
+  const { data: contributions } = useContributions();
 
   useEffect(() => {
     void marketplaceApi.packages(search || undefined, kind).then(setPackages).catch(() => setOffline(true));
@@ -17,6 +20,11 @@ export function DiscoverPage() {
   useEffect(() => {
     void marketplaceApi.categories().then(setCategories).catch(() => undefined);
   }, []);
+
+  const registered = useMemo(() => {
+    if (!contributions) return 0;
+    return new Set(contributions.map((c) => c.packageId)).size;
+  }, [contributions]);
 
   return (
     <Box sx={{ p: 3, maxWidth: 1100 }}>
@@ -33,6 +41,12 @@ export function DiscoverPage() {
           Offline — showing locally available Vestara packages and cached catalog metadata.
         </Alert>
       ) : null}
+
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 2, flexWrap: 'wrap' }}>
+        <Chip size="small" label={`${registered} packages registered in v2 catalog`} color="secondary" variant="outlined" />
+        <Button size="small" component={Link} to="/marketplace/categories">Browse taxonomy</Button>
+        <Button size="small" component={Link} to="/marketplace/package-builder">Package Builder</Button>
+      </Stack>
 
       <TextField
         size="small"

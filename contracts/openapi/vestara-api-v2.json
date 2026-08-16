@@ -46738,6 +46738,56 @@
             }
           }
         }
+      },
+      "get": {
+        "summary": "List registered publishers",
+        "tags": [
+          "marketplace"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "publisherId",
+                      "name",
+                      "trustLevel",
+                      "verified"
+                    ],
+                    "properties": {
+                      "publisherId": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "trustLevel": {
+                        "type": "string"
+                      },
+                      "verified": {
+                        "type": "boolean"
+                      },
+                      "website": {
+                        "type": "string"
+                      },
+                      "ownerUserId": {
+                        "type": "string"
+                      },
+                      "organizationId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v2/marketplace-v2/publish": {

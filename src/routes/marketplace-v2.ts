@@ -210,6 +210,18 @@ export const marketplaceV2Routes: FastifyPluginAsyncTypebox = async (app) => {
     },
   );
 
+  app.get(
+    '/api/v2/marketplace-v2/publishers',
+    {
+      schema: {
+        tags: ['marketplace'],
+        summary: 'List registered publishers',
+        response: { 200: Type.Array(PublisherSchema) },
+      },
+    },
+    async (_request, reply) => reply.send(marketplace.publisher.listPublishers() as never),
+  );
+
   app.post(
     '/api/v2/marketplace-v2/publish',
     {

@@ -103,3 +103,12 @@ requires so the update decision is evidence-driven (`breaking` flag).
 - MKTUI (Discover, Package details, Installation review, Installed control
   center, Package Builder, Publisher Console) and the Onboarding v2
   Provisioning & Composition engine (ONB-010..) follow.
+- MKTUI delivered: the marketplace UI (`vestara-apps/marketplace`, MKTUI-001..010)
+  now covers Categories (extended taxonomy), Installation Review (distribution
+  plan → staged install), Bundles & Distributions, Updates (channels, policies,
+  evaluations), Package Builder (multi-step contribution authoring with
+  capability resolution) and Publisher Console (trust levels, signed publish,
+  release log), plus a v2-enabled Discover, Package Details (manifest + resolve)
+  and an Installed control center with update-impact analysis. `GET
+  /publishers` added to the control API for the console. UI unit tests updated
+  (9) and the app builds clean. Onboarding v2 (ONB-010..) remains.

@@ -14,10 +14,20 @@ describe('marketplace API client', () => {
     expect(typeof marketplaceApi.uninstall).toBe('function');
   });
 
-  it('builds query strings for search + kind', () => {
-    const withSearch = marketplaceApi.packages('github');
-    const withKind = marketplaceApi.packages(undefined, 'agent');
-    expect(withSearch).toBeInstanceOf(Promise);
-    expect(withKind).toBeInstanceOf(Promise);
+  it('builds query strings for search + kind', async () => {
+    const calls: string[] = [];
+    const original = globalThis.fetch;
+    globalThis.fetch = (async (input: RequestInfo | URL) => {
+      calls.push(String(input));
+      return new Response('[]', { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }) as typeof fetch;
+    try {
+      await marketplaceApi.packages('github');
+      await marketplaceApi.packages(undefined, 'agent');
+      expect(calls).toContain('/api/v2/marketplace/packages?search=github');
+      expect(calls).toContain('/api/v2/marketplace/packages?kind=agent');
+    } finally {
+      globalThis.fetch = original;
+    }
   });
 });

@@ -4,9 +4,14 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 
 const NAV = [
   { to: '/marketplace', label: 'Discover', end: true },
+  { to: '/marketplace/categories', label: 'Categories', end: true },
   { to: '/marketplace/installed', label: 'Installed', end: true },
+  { to: '/marketplace/updates', label: 'Updates', end: true },
+  { to: '/marketplace/bundles', label: 'Bundles', end: true },
   { to: '/marketplace/library', label: 'My Library', end: true },
   { to: '/marketplace/collections', label: 'Collections', end: true },
+  { to: '/marketplace/package-builder', label: 'Package Builder', end: true },
+  { to: '/marketplace/publisher-console', label: 'Publisher Console', end: true },
 ];
 
 export function MarketplaceLayout() {
