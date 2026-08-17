@@ -6,7 +6,7 @@ export function registerOnboardingCapability(registry: CapabilityRegistry, confi
     id: 'vestara.api.onboarding',
     namespace: 'onboarding',
     version: config.apiVersion,
-    permissions: ['onboarding.read', 'onboarding.plan', 'onboarding.approve'],
+    permissions: ['onboarding.read', 'onboarding.plan', 'onboarding.approve', 'onboarding.execute'],
     operations: [
       'onboarding.state.read',
       'onboarding.begin',
@@ -15,6 +15,12 @@ export function registerOnboardingCapability(registry: CapabilityRegistry, confi
       'onboarding.profile.list',
       'onboarding.plan.build',
       'onboarding.plan.approve',
+      'onboarding.execute',
+      'onboarding.execution.status',
+      'onboarding.execution.resume',
+      'onboarding.execution.rollback',
+      'onboarding.verify',
+      'onboarding.ready',
     ],
   });
 }

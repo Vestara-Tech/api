@@ -26,14 +26,14 @@ export interface ApprovedSession {
 
 export class OnboardingService {
   private readonly store: InstallationStore;
-  private readonly context: OnboardingContext;
+  private readonly _context: OnboardingContext;
   private readonly bootstrap: BootstrapSecurity;
   private readonly steps: OnboardingStepRegistry;
   private readonly onboardingVersion: string;
 
   constructor(options: OnboardingServiceOptions) {
     this.store = options.store ?? new InMemoryInstallationStore();
-    this.context = options.context;
+    this._context = options.context;
     this.bootstrap = new BootstrapSecurity();
     this.steps = new OnboardingStepRegistry();
     this.onboardingVersion = options.onboardingVersion ?? '1.0.0';
@@ -45,6 +45,10 @@ export class OnboardingService {
 
   get stepRegistry(): OnboardingStepRegistry {
     return this.steps;
+  }
+
+  get context(): OnboardingContext {
+    return this._context;
   }
 
   // ── Installation state (ONB-001/002) ───────────────────────
@@ -100,8 +104,8 @@ export class OnboardingService {
   async availableSteps(): Promise<OnboardingStepDefinition[]> {
     const out: OnboardingStepDefinition[] = [];
     for (const contributor of this.steps.list()) {
-      if (await contributor.isAvailable(this.context)) {
-        out.push(await contributor.describe(this.context));
+      if (await contributor.isAvailable(this._context)) {
+        out.push(await contributor.describe(this._context));
       }
     }
     return out;
@@ -130,16 +134,16 @@ export class OnboardingService {
     const requirements: OnboardingRequirement[] = [];
 
     for (const contributor of this.steps.list()) {
-      if (!(await contributor.isAvailable(this.context))) continue;
+      if (!(await contributor.isAvailable(this._context))) continue;
       const input = session.answers[contributor.id];
-      const validation = await contributor.validate(input, this.context);
+      const validation = await contributor.validate(input, this._context);
       if (!validation.ok) {
         for (const issue of validation.issues.filter((i) => i.severity === 'error')) {
           requirements.push({ id: `${contributor.id}:${issue.path}`, label: issue.message, satisfied: false });
         }
         continue;
       }
-      const contributed = await contributor.plan(input, this.context);
+      const contributed = await contributor.plan(input, this._context);
       operations.push(...contributed);
     }
 

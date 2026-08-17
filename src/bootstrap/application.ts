@@ -211,13 +211,7 @@ export function createApplication(config: AppConfig): Application {
   // ── Generator (GEN-001..012) ───────────────────────────────
   const { registry: generatorRegistry, service: generatorService } = buildGeneratorPlatform();
 
-  // ── Onboarding (ONB-001..009) ──────────────────────────────
-  const onboarding = buildOnboardingService({
-    capabilities,
-    configuration,
-    generators: generatorRegistry,
-    identities,
-  });
+  // Onboarding is built after all platform modules (see below).
 
   // ── System/Firmware (SYS-001..014) ─────────────────────────
   const system = new SystemServiceImpl({ authorization });
@@ -379,6 +373,20 @@ export function createApplication(config: AppConfig): Application {
   registerThemeCapability(capabilities, config);
   registerTemplateCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
+
+  // ── Onboarding (ONB-001..026) ──────────────────────────────
+  const onboarding = buildOnboardingService({
+    capabilities,
+    configuration,
+    generators: generatorRegistry,
+    identities,
+    marketplace,
+    ai,
+    agents,
+    database,
+    file,
+    diagnostics,
+  });
 
   container.register('commands', commands);
   container.register('queries', queries);

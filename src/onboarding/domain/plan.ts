@@ -5,9 +5,15 @@ export type OnboardingOperationKind =
   | 'config.apply'
   | 'generator.apply'
   | 'package.install'
+  | 'package.installFromMarketplace'
   | 'integration.configure'
   | 'system.configure'
-  | 'capability.enable';
+  | 'capability.enable'
+  | 'ai.configure'
+  | 'agent.configure'
+  | 'database.configure'
+  | 'workspace.configure'
+  | 'diagnostics.configure';
 
 export interface OnboardingOperation {
   readonly id: string;
