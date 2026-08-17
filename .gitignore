@@ -1,8 +1,13 @@
 node_modules/
 dist/
 *.log
+*.tsbuildinfo
+.turbo/
 .env
 .env.*
-.vestara/
+# Generated verification artifacts. .vestara/verification.json (the policy
+# config) IS committed; only generated evidence/cache/telemetry are ignored.
+.vestara/evidence/
+.vestara/cache/
 coverage/
 .tmp/

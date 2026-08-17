@@ -9,19 +9,37 @@
   "engines": {
     "node": ">=22"
   },
+  "packageManager": "pnpm@11.21.0",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "turbo run build",
+    "build:api": "tsc -p tsconfig.build.json",
     "dev": "tsx watch src/main.ts",
     "start": "node dist/main.js",
-    "typecheck": "tsc -p tsconfig.build.json --noEmit",
-    "test": "vitest run",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:api": "vitest run",
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:contract": "vitest run tests/contract",
+    "test:one": "vitest run",
+    "build:affected": "turbo run build --affected",
+    "test:affected": "turbo run test --affected",
+    "verify": "tsx scripts/verification/verify.ts affected",
+    "verify:static": "tsx scripts/verification/verify.ts static",
+    "verify:affected": "tsx scripts/verification/verify.ts affected",
+    "verify:module": "tsx scripts/verification/verify.ts module",
+    "verify:platform": "tsx scripts/verification/verify.ts platform",
+    "verify:telemetry": "tsx scripts/verification/telemetry.ts",
     "openapi:generate": "tsx scripts/generate-openapi.ts",
     "openapi:check": "tsx scripts/check-openapi.ts",
     "contracts:frontend": "tsx scripts/generate-frontend-contracts.ts",
-    "contracts:frontend:check": "tsx scripts/check-frontend-contracts.ts"
+    "contracts:frontend:check": "tsx scripts/check-frontend-contracts.ts",
+    "docs:sync": "tsx scripts/docs/sync.ts",
+    "docs:check": "tsx scripts/docs/check.ts",
+    "docs:commit": "tsx scripts/git/commit-docs.ts",
+    "docs:push": "tsx scripts/git/push-docs.ts",
+    "docs:ship": "tsx scripts/docs/ship.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
@@ -36,6 +54,7 @@
   "devDependencies": {
     "@types/node": "^26.1.1",
     "tsx": "^4.23.12",
+    "turbo": "^2.10.10",
     "typescript": "5.9.3",
     "vitest": "^4.1.10"
   },
