@@ -68,6 +68,10 @@ export class AgentRuntime {
     const running = this.runs.get(run.id);
     void this.runLoop(run, agent, input, context.system).then(
       (result) => {
+        const current = this.runs.get(run.id);
+        if (current.status === 'waiting-for-approval' || current.status === 'suspended') {
+          return;
+        }
         this.runs.transition(run.id, 'completed', {
           result,
           currentStep: agent.execution.maxSteps,
