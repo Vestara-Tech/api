@@ -77,6 +77,7 @@ These commands are part of the current update/verification flow:
 - `pnpm verify:static`
 - `pnpm docs:sync`
 - `pnpm docs:check`
+- `pnpm docs:verify`
 - `pnpm docs:commit`
 - `pnpm docs:push`
 - `pnpm docs:ship`

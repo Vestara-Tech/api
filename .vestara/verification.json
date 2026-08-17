@@ -179,6 +179,11 @@
       "sources": ["src/template/**"],
       "tests": ["tests/unit/template-module.test.ts", "tests/integration/template-api.test.ts"]
     },
+    "worker": {
+      "sources": ["src/worker/**"],
+      "tests": ["tests/unit/worker-store.test.ts", "tests/unit/worker-loop.test.ts", "tests/unit/worker-event-bridge.test.ts", "tests/unit/worker-scheduler.test.ts"],
+      "dependsOn": ["core"]
+    },
     "test": {
       "sources": ["src/test/**"],
       "tests": ["tests/unit/test-expanded.test.ts", "tests/integration/test-api.test.ts"]

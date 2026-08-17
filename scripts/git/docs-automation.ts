@@ -3,7 +3,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 
-import { checkPlatformDocs, syncPlatformDocs, type DocsTarget } from '../docs/platform-summary.js';
+import { syncPlatformDocs, type DocsTarget } from '../docs/platform-summary.js';
 import { DEFAULT_DOC_TARGETS } from '../docs/targets.js';
 
 const REPO_ROOT = resolve(process.cwd());
@@ -321,22 +321,10 @@ function formatFailure(command: string, args: readonly string[], result: Command
 async function runVerificationGate(targets: readonly DocsTarget[]): Promise<DocsVerificationGateResult> {
   const commands: string[] = [];
 
-  const docsCheck = await checkPlatformDocs(targets);
-  commands.push(`pnpm docs:check --targets=${targets.join(',')}`);
-  if (!docsCheck.ok) {
-    throw new Error(`Documentation drift detected: ${docsCheck.drift.join(', ')}`);
-  }
-
-  const openapi = runCommand('pnpm', ['openapi:check']);
-  commands.push('pnpm openapi:check');
-  if (openapi.status !== 0) {
-    throw new Error(formatFailure('pnpm', ['openapi:check'], openapi));
-  }
-
-  const contracts = runCommand('pnpm', ['contracts:frontend:check']);
-  commands.push('pnpm contracts:frontend:check');
-  if (contracts.status !== 0) {
-    throw new Error(formatFailure('pnpm', ['contracts:frontend:check'], contracts));
+  const docsVerify = runCommand('pnpm', ['docs:verify', `--targets=${targets.join(',')}`]);
+  commands.push(`pnpm docs:verify --targets=${targets.join(',')}`);
+  if (docsVerify.status !== 0) {
+    throw new Error(formatFailure('pnpm', ['docs:verify', `--targets=${targets.join(',')}`], docsVerify));
   }
 
   const verify = runCommand('pnpm', ['verify:affected', '--json']);

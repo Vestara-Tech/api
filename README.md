@@ -818,6 +818,7 @@ Key commands:
 - `contracts:frontend:check` → `tsx scripts/check-frontend-contracts.ts`
 - `docs:sync` → `tsx scripts/docs/sync.ts`
 - `docs:check` → `tsx scripts/docs/check.ts`
+- `docs:verify` → `tsx scripts/docs/verify.ts`
 - `docs:commit` → `tsx scripts/git/commit-docs.ts`
 - `docs:push` → `tsx scripts/git/push-docs.ts`
 - `docs:ship` → `tsx scripts/docs/ship.ts`

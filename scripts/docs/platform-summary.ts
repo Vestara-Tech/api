@@ -59,6 +59,7 @@ const SCRIPT_NAMES = [
   'contracts:frontend:check',
   'docs:sync',
   'docs:check',
+  'docs:verify',
   'docs:commit',
   'docs:push',
   'docs:ship',
@@ -128,7 +129,7 @@ async function collectPackageScripts(): Promise<readonly { readonly name: string
 export async function collectPlatformSummary(): Promise<PlatformSummaryData> {
   const config = loadConfig({});
   const application = createApplication(config);
-  const app = await buildApp({ config, application, exposeDocs: false });
+  const app = await buildApp({ config, application, exposeDocs: false, includeReferenceDatabaseAdapter: false });
   await app.ready();
 
   try {

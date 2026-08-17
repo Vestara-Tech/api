@@ -26,10 +26,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Documentation checks
-        run: |
-          pnpm docs:check
-          pnpm openapi:check
-          pnpm contracts:frontend:check
+        run: pnpm docs:verify
 
       # FASTVERIFY owns semantic verification for the API (module impact,
       # contract/risk classification, verification level, evidence).
@@ -87,10 +84,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Documentation checks
-        run: |
-          pnpm docs:check
-          pnpm openapi:check
-          pnpm contracts:frontend:check
+        run: pnpm docs:verify
 
       - name: Build (API + workspace)
         run: |

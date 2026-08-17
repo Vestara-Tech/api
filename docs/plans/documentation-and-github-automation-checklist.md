@@ -54,6 +54,7 @@ Add package scripts:
 
 - `docs:sync`
 - `docs:check`
+- `docs:verify`
 
 Suggested behavior:
 
@@ -229,6 +230,7 @@ Verification:
 
 - `docs:sync`
 - `docs:check`
+- `docs:verify`
 - `docs:commit`
 - `docs:push`
 - `docs:ship`
