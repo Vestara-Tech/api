@@ -47952,6 +47952,86 @@
           }
         }
       }
+    },
+    "/api/v2/capabilities": {
+      "get": {
+        "summary": "List registered capabilities",
+        "tags": [
+          "capabilities"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "namespace",
+                      "version",
+                      "permissions",
+                      "operations",
+                      "enabled"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "namespace": {
+                        "type": "string"
+                      },
+                      "version": {
+                        "type": "string"
+                      },
+                      "permissions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "operations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "enabled": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/capabilities/enabled": {
+      "get": {
+        "summary": "List enabled capability namespaces",
+        "tags": [
+          "capabilities"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

@@ -1,0 +1,111 @@
+name: verification
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Documentation checks
+        run: |
+          pnpm docs:check
+          pnpm openapi:check
+          pnpm contracts:frontend:check
+
+      # FASTVERIFY owns semantic verification for the API (module impact,
+      # contract/risk classification, verification level, evidence).
+      - name: Affected verification (PR)
+        if: github.event_name == 'pull_request'
+        run: pnpm verify:affected
+
+      # Turborepo owns workspace task execution and deterministic task caching.
+      - name: Build affected packages (PR)
+        if: github.event_name == 'pull_request'
+        run: pnpm build:affected
+
+      - name: Test affected packages (PR)
+        if: github.event_name == 'pull_request'
+        run: pnpm test:affected
+
+      # Integration/mains: full verification for the API and the workspace.
+      - name: Platform verification (main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: pnpm verify:platform
+
+      - name: Workspace build (main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: pnpm build
+
+      - name: Workspace tests (main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: pnpm test
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-report
+          path: .vestara/evidence/verification/latest.json
+          if-no-files-found: warn
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Documentation checks
+        run: |
+          pnpm docs:check
+          pnpm openapi:check
+          pnpm contracts:frontend:check
+
+      - name: Build (API + workspace)
+        run: |
+          pnpm build:api
+          pnpm build
+
+      - name: Platform verification + integration/E2E (release)
+        run: |
+          pnpm verify:platform
+          pnpm test:integration
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-report-release
+          path: .vestara/evidence/verification/latest.json
+          if-no-files-found: warn

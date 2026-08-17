@@ -795,3 +795,30 @@ The generated contract is committed and CI-enforced:
 pnpm openapi:generate    # regenerate contracts/openapi/vestara-api-v2.json
 pnpm openapi:check       # fail if the committed contract drifts from the app
 ```
+
+## Generated platform summary
+
+<!-- docs-sync:begin platform-summary -->
+Generated from the current repository state.
+
+- OpenAPI routes: 337
+- Registered capabilities: 34 (34 enabled)
+- Source areas: 43
+- ADRs tracked: 50
+
+- Full summary: [docs/automation/generated/platform-summary.md](./docs/automation/generated/platform-summary.md)
+
+Key commands:
+- `verify` → `tsx scripts/verification/verify.ts affected`
+- `verify:affected` → `tsx scripts/verification/verify.ts affected`
+- `verify:static` → `tsx scripts/verification/verify.ts static`
+- `openapi:generate` → `tsx scripts/generate-openapi.ts`
+- `openapi:check` → `tsx scripts/check-openapi.ts`
+- `contracts:frontend` → `tsx scripts/generate-frontend-contracts.ts`
+- `contracts:frontend:check` → `tsx scripts/check-frontend-contracts.ts`
+- `docs:sync` → `tsx scripts/docs/sync.ts`
+- `docs:check` → `tsx scripts/docs/check.ts`
+- `docs:commit` → `tsx scripts/git/commit-docs.ts`
+- `docs:push` → `tsx scripts/git/push-docs.ts`
+- `docs:ship` → `tsx scripts/docs/ship.ts`
+<!-- docs-sync:end platform-summary -->

@@ -1,0 +1,53 @@
+name: docs-sync
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check generated documentation
+        run: |
+          pnpm docs:check
+          pnpm openapi:check
+          pnpm contracts:frontend:check
+
+      - name: Publish docs summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs-sync-report
+          path: docs/automation/generated/platform-summary.md
+          if-no-files-found: warn
+
+      - name: Publish job summary
+        if: always()
+        run: |
+          {
+            echo "## Docs sync"
+            echo ""
+            echo "- \`pnpm docs:check\`"
+            echo "- \`pnpm openapi:check\`"
+            echo "- \`pnpm contracts:frontend:check\`"
+          } >> "$GITHUB_STEP_SUMMARY"
