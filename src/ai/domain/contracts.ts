@@ -11,6 +11,10 @@ export interface AiProvider {
   readonly priority: number;
   readonly description?: string;
   readonly apiEndpoint?: string;
+  readonly defaultModelId?: string;
+  readonly apiKeyEnvVar?: string;
+  /** Inline API key or OpenCode-style secret reference such as `{env:OPENAI_API_KEY}`. */
+  readonly apiKey?: string;
 }
 
 /** Modalities a model can accept or produce. */

@@ -28,6 +28,7 @@ pnpm verify:affected           # V1 affected verification
 pnpm verify:module -- <name>   # V2 module verification for a mapped module
 pnpm verify:graph              # graph + ownership preflight (no builds/tests)
 pnpm verify:platform           # V3 full suite (static + all tests)
+pnpm verify:profile            # CP3A profiling (cold/warm, writes .vestara/evidence/verification/profiles/<sha>/...)
 pnpm verify:telemetry          # aggregate verification performance telemetry
 pnpm run test:one <files>      # one-shot vitest run of specific files
 

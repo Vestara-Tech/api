@@ -48032,6 +48032,1496 @@
           }
         }
       }
+    },
+    "/api/v2/verification/latest": {
+      "get": {
+        "summary": "Read the latest verification report",
+        "tags": [
+          "verification"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "version",
+                        "level",
+                        "scope",
+                        "changedFiles",
+                        "affectedModules",
+                        "selectedTests",
+                        "executedTests",
+                        "reusedTests",
+                        "skippedTests",
+                        "passed",
+                        "failed",
+                        "cached",
+                        "escalated",
+                        "escalationReasons",
+                        "durationMs",
+                        "graphValid",
+                        "graphIssues",
+                        "result",
+                        "verified",
+                        "evidence"
+                      ],
+                      "properties": {
+                        "version": {
+                          "type": "number",
+                          "enum": [
+                            1
+                          ]
+                        },
+                        "level": {
+                          "type": "string"
+                        },
+                        "scope": {
+                          "type": "string"
+                        },
+                        "changedFiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "affectedModules": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "selectedTests": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "executedTests": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "reusedTests": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "skippedTests": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "passed": {
+                          "type": "number"
+                        },
+                        "failed": {
+                          "type": "number"
+                        },
+                        "cached": {
+                          "type": "number"
+                        },
+                        "escalated": {
+                          "type": "boolean"
+                        },
+                        "escalationReasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "durationMs": {
+                          "type": "number"
+                        },
+                        "graphValid": {
+                          "type": "boolean"
+                        },
+                        "graphIssues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "severity",
+                              "code",
+                              "message"
+                            ],
+                            "properties": {
+                              "severity": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "error"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "warning"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "info"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              },
+                              "module": {
+                                "type": "string"
+                              },
+                              "dependency": {
+                                "type": "string"
+                              },
+                              "alias": {
+                                "type": "string"
+                              },
+                              "path": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "result": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "pass"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fail"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "indeterminate"
+                              ]
+                            }
+                          ]
+                        },
+                        "verified": {
+                          "type": "boolean"
+                        },
+                        "evidence": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "reportPath": {
+                          "type": "string"
+                        },
+                        "fingerprint": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/executions": {
+      "get": {
+        "summary": "List durable Activity Room execution drafts",
+        "tags": [
+          "activity-room"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "status",
+                      "request",
+                      "plan",
+                      "eventCount",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "request": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "goal",
+                          "agentId",
+                          "roomId",
+                          "requestedAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "goal": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "agentName": {
+                            "type": "string"
+                          },
+                          "roomId": {
+                            "type": "string"
+                          },
+                          "principalId": {
+                            "type": "string"
+                          },
+                          "requestedAt": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "plan": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "executionId",
+                          "status",
+                          "request",
+                          "intent",
+                          "capabilities",
+                          "milestones",
+                          "evidence",
+                          "warnings",
+                          "summary",
+                          "generatedAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "request": {
+                            "type": "object",
+                            "required": [
+                              "id",
+                              "goal",
+                              "agentId",
+                              "roomId",
+                              "requestedAt"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "goal": {
+                                "type": "string"
+                              },
+                              "agentId": {
+                                "type": "string"
+                              },
+                              "agentName": {
+                                "type": "string"
+                              },
+                              "roomId": {
+                                "type": "string"
+                              },
+                              "principalId": {
+                                "type": "string"
+                              },
+                              "requestedAt": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "intent": {
+                            "type": "object",
+                            "required": [
+                              "kind",
+                              "target",
+                              "confidence",
+                              "complexity",
+                              "ambiguities",
+                              "requiredCapabilities"
+                            ],
+                            "properties": {
+                              "kind": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "generate"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "build"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "modify"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "fix"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "test"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "verify"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "inspect"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "configure"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "target": {
+                                "type": "string"
+                              },
+                              "confidence": {
+                                "type": "number"
+                              },
+                              "complexity": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "simple"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "standard"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "complex"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "ambiguities": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "required": [
+                                    "code",
+                                    "message"
+                                  ],
+                                  "properties": {
+                                    "code": {
+                                      "type": "string"
+                                    },
+                                    "message": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "requiredCapabilities": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          },
+                          "capabilities": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "namespace",
+                                "version",
+                                "permissions",
+                                "operations"
+                              ],
+                              "properties": {
+                                "namespace": {
+                                  "type": "string"
+                                },
+                                "version": {
+                                  "type": "string"
+                                },
+                                "permissions": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "operations": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "milestones": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "title",
+                                "steps"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "steps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "required": [
+                                      "id",
+                                      "title",
+                                      "role",
+                                      "capability",
+                                      "operation",
+                                      "requiresApproval",
+                                      "evidence"
+                                    ],
+                                    "properties": {
+                                      "id": {
+                                        "type": "string"
+                                      },
+                                      "title": {
+                                        "type": "string"
+                                      },
+                                      "role": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "planner"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "developer"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "reviewer"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "verifier"
+                                            ]
+                                          },
+                                          {
+                                            "type": "string",
+                                            "enum": [
+                                              "observer"
+                                            ]
+                                          }
+                                        ]
+                                      },
+                                      "capability": {
+                                        "type": "string"
+                                      },
+                                      "operation": {
+                                        "type": "string"
+                                      },
+                                      "requiresApproval": {
+                                        "type": "boolean"
+                                      },
+                                      "evidence": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "warnings": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "generatedAt": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "eventCount": {
+                        "type": "integer"
+                      },
+                      "lease": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "executionId",
+                          "holder",
+                          "issuedAt",
+                          "expiresAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "executionId": {
+                            "type": "string"
+                          },
+                          "holder": {
+                            "type": "string"
+                          },
+                          "issuedAt": {
+                            "type": "string"
+                          },
+                          "expiresAt": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "startedAt": {
+                        "type": "string"
+                      },
+                      "completedAt": {
+                        "type": "string"
+                      },
+                      "result": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "pass"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "fail"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "indeterminate"
+                            ]
+                          }
+                        ]
+                      },
+                      "evidence": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/preview": {
+      "post": {
+        "summary": "Preview a governed Activity Room execution plan",
+        "tags": [
+          "activity-room"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "goal"
+                ],
+                "properties": {
+                  "goal": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "principalId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "executionId",
+                    "status",
+                    "request",
+                    "intent",
+                    "capabilities",
+                    "milestones",
+                    "evidence",
+                    "warnings",
+                    "summary",
+                    "generatedAt"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "executionId": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "request": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "goal",
+                        "agentId",
+                        "roomId",
+                        "requestedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "goal": {
+                          "type": "string"
+                        },
+                        "agentId": {
+                          "type": "string"
+                        },
+                        "agentName": {
+                          "type": "string"
+                        },
+                        "roomId": {
+                          "type": "string"
+                        },
+                        "principalId": {
+                          "type": "string"
+                        },
+                        "requestedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "intent": {
+                      "type": "object",
+                      "required": [
+                        "kind",
+                        "target",
+                        "confidence",
+                        "complexity",
+                        "ambiguities",
+                        "requiredCapabilities"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "generate"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "build"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "modify"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fix"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "test"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "verify"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "inspect"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "configure"
+                              ]
+                            }
+                          ]
+                        },
+                        "target": {
+                          "type": "string"
+                        },
+                        "confidence": {
+                          "type": "number"
+                        },
+                        "complexity": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "simple"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "standard"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "complex"
+                              ]
+                            }
+                          ]
+                        },
+                        "ambiguities": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "code",
+                              "message"
+                            ],
+                            "properties": {
+                              "code": {
+                                "type": "string"
+                              },
+                              "message": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "requiredCapabilities": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "namespace",
+                          "version",
+                          "permissions",
+                          "operations"
+                        ],
+                        "properties": {
+                          "namespace": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "permissions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "operations": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "milestones": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "title",
+                          "steps"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "steps": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "id",
+                                "title",
+                                "role",
+                                "capability",
+                                "operation",
+                                "requiresApproval",
+                                "evidence"
+                              ],
+                              "properties": {
+                                "id": {
+                                  "type": "string"
+                                },
+                                "title": {
+                                  "type": "string"
+                                },
+                                "role": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "planner"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "developer"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "reviewer"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "verifier"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "observer"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "capability": {
+                                  "type": "string"
+                                },
+                                "operation": {
+                                  "type": "string"
+                                },
+                                "requiresApproval": {
+                                  "type": "boolean"
+                                },
+                                "evidence": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "warnings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "generatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/snapshot": {
+      "get": {
+        "summary": "Read the current Activity Room execution snapshot",
+        "tags": [
+          "activity-room"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "generatedAt",
+                    "counts",
+                    "agents",
+                    "agentRuns",
+                    "approvals",
+                    "workflowDefinitions",
+                    "workflowRuns",
+                    "verification",
+                    "timeline"
+                  ],
+                  "properties": {
+                    "generatedAt": {
+                      "type": "string"
+                    },
+                    "counts": {
+                      "type": "object",
+                      "required": [
+                        "agents",
+                        "agentRuns",
+                        "activeAgentRuns",
+                        "approvals",
+                        "pendingApprovals",
+                        "workflows",
+                        "workflowRuns",
+                        "activeWorkflowRuns"
+                      ],
+                      "properties": {
+                        "agents": {
+                          "type": "integer"
+                        },
+                        "agentRuns": {
+                          "type": "integer"
+                        },
+                        "activeAgentRuns": {
+                          "type": "integer"
+                        },
+                        "approvals": {
+                          "type": "integer"
+                        },
+                        "pendingApprovals": {
+                          "type": "integer"
+                        },
+                        "workflows": {
+                          "type": "integer"
+                        },
+                        "workflowRuns": {
+                          "type": "integer"
+                        },
+                        "activeWorkflowRuns": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "agents": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "role",
+                          "toolCount",
+                          "skillCount",
+                          "permissions",
+                          "latestRunId",
+                          "latestRunStatus",
+                          "latestRunAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "toolCount": {
+                            "type": "integer"
+                          },
+                          "skillCount": {
+                            "type": "integer"
+                          },
+                          "permissions": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "latestRunId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "latestRunStatus": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "latestRunAt": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "agentRuns": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "agentId",
+                          "status"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "completedAt": {
+                            "type": "string"
+                          },
+                          "result": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "approvals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "runId",
+                          "agentId",
+                          "toolId",
+                          "subject",
+                          "risk",
+                          "status",
+                          "requestedAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "runId": {
+                            "type": "string"
+                          },
+                          "agentId": {
+                            "type": "string"
+                          },
+                          "toolId": {
+                            "type": "string"
+                          },
+                          "subject": {
+                            "type": "string"
+                          },
+                          "risk": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "requestedAt": {
+                            "type": "string"
+                          },
+                          "decidedAt": {
+                            "type": "string"
+                          },
+                          "decidedBy": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "workflowDefinitions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "version",
+                          "status",
+                          "revision"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "revision": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "workflowRuns": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "workflowId",
+                          "status"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "workflowId": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "completedAt": {
+                            "type": "string"
+                          },
+                          "waitingOnStep": {
+                            "type": "string"
+                          },
+                          "error": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "verification": {
+                      "anyOf": [
+                        {
+                          "type": "null"
+                        },
+                        {
+                          "type": "object",
+                          "required": [
+                            "level",
+                            "result",
+                            "scope",
+                            "graphValid",
+                            "selectedTests",
+                            "executedTests",
+                            "cached",
+                            "durationMs",
+                            "evidence"
+                          ],
+                          "properties": {
+                            "level": {
+                              "type": "string"
+                            },
+                            "result": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "pass"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "fail"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "indeterminate"
+                                  ]
+                                }
+                              ]
+                            },
+                            "scope": {
+                              "type": "string"
+                            },
+                            "graphValid": {
+                              "type": "boolean"
+                            },
+                            "selectedTests": {
+                              "type": "number"
+                            },
+                            "executedTests": {
+                              "type": "number"
+                            },
+                            "cached": {
+                              "type": "number"
+                            },
+                            "durationMs": {
+                              "type": "number"
+                            },
+                            "evidence": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "fingerprint": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "timeline": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "kind",
+                          "title",
+                          "detail",
+                          "status",
+                          "at"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "kind": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "agent-run"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "workflow-run"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "approval"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "verification"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "execution"
+                                ]
+                              }
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [

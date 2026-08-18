@@ -57,8 +57,8 @@ export function defineBuiltinSkills(): readonly SkillDefinition[] {
       version: '1.0.0',
       name: 'Verification',
       description: 'Prove correctness via evidence.',
-      instructions: 'Prove correctness via evidence: run the relevant checks, record outputs, and only accept verifiable results. Never think, never review.',
-      requiredCapabilities: ['repo.test'],
+      instructions: 'Use the verification control plane to read the current report, run current verification scopes, record outputs, and only accept verifiable results. Never think, never review.',
+      requiredCapabilities: ['verification.read', 'verification.run'],
       compatibleRoles: ['verifier'],
     },
   ];

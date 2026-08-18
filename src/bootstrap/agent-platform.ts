@@ -18,6 +18,7 @@ import { SkillResolver } from '../skill/resolver/skill-resolver.js';
 import { ApprovalRuntime } from '../agent/approval/approval-runtime.js';
 import { defineBuiltinSkills } from './skills.js';
 import { createConfigurationSnapshot, type ConfigurationSnapshot } from '../generator/context/configuration-snapshot.js';
+import { verificationToolContributions } from '../tool/contributions/verification-tools.js';
 
 export interface AgentPlatformOptions {
   readonly ai: AiService;
@@ -52,6 +53,9 @@ export function buildAgentPlatform(options: AgentPlatformOptions): AgentPlatform
   }
   const snapshot = options.snapshot ?? createConfigurationSnapshot([]);
   for (const contribution of generatorToolContributions(options.generatorRegistry, options.generation, snapshot)) {
+    tools.registerContribution(contribution);
+  }
+  for (const contribution of verificationToolContributions()) {
     tools.registerContribution(contribution);
   }
   if (options.file) {

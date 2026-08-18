@@ -223,6 +223,16 @@ describe('AGENT-004/005 run state machine + runtime', () => {
     expect(platform.runs.eventsFor(run.id).length).toBeGreaterThan(0);
   });
 
+  it('wires the verifier agent to the current verification control plane', () => {
+    const platform = buildAgentPlatform({ ai: stubAi(), builder: stubBuilder() });
+    expect(platform.tools.has('verification.latest')).toBe(true);
+    expect(platform.tools.has('verification.run')).toBe(true);
+
+    const verifier = platform.agents.get('vestara-verifier');
+    expect(verifier.tools.map((tool) => tool.id)).toEqual(expect.arrayContaining(['verification.latest', 'verification.run']));
+    expect(verifier.permissions).toEqual(expect.arrayContaining(['verification.read', 'verification.run']));
+  });
+
   it('honors the run state machine', async () => {
     const runs = new AgentRunStateMachine();
     const run = runs.create('vestara-planner');

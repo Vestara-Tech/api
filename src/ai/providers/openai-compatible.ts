@@ -29,14 +29,18 @@ export class OpenAiCompatibleAdapter implements AiProviderAdapter {
     return model.providerId === this.providerId;
   }
 
+  private headers(requestId: string): Record<string, string> {
+    return {
+      'Content-Type': 'application/json',
+      ...(this.apiKey.length > 0 ? { Authorization: `Bearer ${this.apiKey}` } : {}),
+      'X-Vestara-Request-Id': requestId,
+    };
+  }
+
   async embed(context: AiExecutionContext, request: AiEmbeddingAdapterInput): Promise<AiEmbeddingAdapterResult> {
     const response = await fetch(`${this.apiEndpoint}/embeddings`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-        'X-Vestara-Request-Id': context.requestId,
-      },
+      headers: this.headers(context.requestId),
       body: JSON.stringify({ model: request.modelId, input: request.input }),
     });
 
@@ -78,11 +82,7 @@ export class OpenAiCompatibleAdapter implements AiProviderAdapter {
 
     const response = await fetch(`${this.apiEndpoint}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-        'X-Vestara-Request-Id': context.requestId,
-      },
+      headers: this.headers(context.requestId),
       body: JSON.stringify(body),
     });
 
@@ -131,11 +131,7 @@ export class OpenAiCompatibleAdapter implements AiProviderAdapter {
 
     const response = await fetch(`${this.apiEndpoint}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-        'X-Vestara-Request-Id': context.requestId,
-      },
+      headers: this.headers(context.requestId),
       body: JSON.stringify(body),
     });
 

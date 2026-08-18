@@ -35,11 +35,18 @@
   ],
   "modules": {
     "agent": {
-      "sources": ["src/agent/**"],
-      "tests": ["tests/unit/agent*.test.ts", "tests/integration/ai-agent-api.test.ts"]
+      "sources": [
+        "src/agent/**"
+      ],
+      "tests": [
+        "tests/unit/agent*.test.ts",
+        "tests/integration/ai-agent-api.test.ts"
+      ]
     },
     "ai": {
-      "sources": ["src/ai/**"],
+      "sources": [
+        "src/ai/**"
+      ],
       "tests": [
         "tests/unit/ai*.test.ts",
         "tests/integration/ai-agent-api.test.ts",
@@ -50,16 +57,35 @@
       ]
     },
     "auth": {
-      "sources": ["src/auth/**"],
-      "tests": ["tests/unit/auth*.test.ts", "tests/integration/auth-api.test.ts"],
-      "dependsOn": ["core", "user", "database", "configuration"]
+      "sources": [
+        "src/auth/**"
+      ],
+      "tests": [
+        "tests/unit/auth*.test.ts",
+        "tests/integration/auth-api.test.ts"
+      ],
+      "dependsOn": [
+        "core",
+        "user",
+        "database",
+        "configuration"
+      ]
     },
     "browser": {
-      "sources": ["src/browser/**"],
-      "tests": ["tests/unit/browser-module.test.ts", "tests/integration/browser-api.test.ts"]
+      "sources": [
+        "src/browser/**"
+      ],
+      "tests": [
+        "tests/unit/browser-module.test.ts",
+        "tests/integration/browser-api.test.ts"
+      ]
     },
     "builder": {
-      "sources": ["src/builder/**", "src/builder-plane/**", "src/appbuilder/**"],
+      "sources": [
+        "src/builder/**",
+        "src/builder-plane/**",
+        "src/appbuilder/**"
+      ],
       "tests": [
         "tests/unit/builder*.test.ts",
         "tests/integration/builder-api.test.ts",
@@ -69,52 +95,110 @@
       ]
     },
     "capabilities": {
-      "sources": ["src/capabilities/**"],
-      "tests": ["tests/unit/capabilities.test.ts"]
+      "sources": [
+        "src/capabilities/**"
+      ],
+      "tests": [
+        "tests/unit/capabilities.test.ts"
+      ]
     },
     "car": {
-      "sources": ["src/car/**"],
-      "tests": ["tests/unit/car-module.test.ts"]
+      "sources": [
+        "src/car/**"
+      ],
+      "tests": [
+        "tests/unit/car-module.test.ts"
+      ]
     },
     "component": {
-      "sources": ["src/component/**"],
-      "tests": ["tests/unit/component-module.test.ts", "tests/integration/component-api.test.ts"]
+      "sources": [
+        "src/component/**"
+      ],
+      "tests": [
+        "tests/unit/component-module.test.ts",
+        "tests/integration/component-api.test.ts"
+      ]
     },
     "configuration": {
-      "sources": ["src/config/**", "src/configuration/**"],
-      "tests": ["tests/unit/config*.test.ts", "tests/integration/config-api.test.ts", "tests/integration/config-expanded-api.test.ts"]
+      "sources": [
+        "src/config/**",
+        "src/configuration/**"
+      ],
+      "tests": [
+        "tests/unit/config*.test.ts",
+        "tests/integration/config-api.test.ts",
+        "tests/integration/config-expanded-api.test.ts"
+      ]
     },
     "context": {
-      "sources": ["src/context/**"],
-      "tests": ["tests/unit/context-module.test.ts", "tests/integration/context-api.test.ts"]
+      "sources": [
+        "src/context/**"
+      ],
+      "tests": [
+        "tests/unit/context-module.test.ts",
+        "tests/integration/context-api.test.ts"
+      ]
     },
     "dashboard": {
-      "sources": ["src/dashboard/**"],
-      "tests": ["tests/unit/dashboard*.test.ts", "tests/integration/dashboard-api.test.ts"]
+      "sources": [
+        "src/dashboard/**"
+      ],
+      "tests": [
+        "tests/unit/dashboard*.test.ts",
+        "tests/integration/dashboard-api.test.ts"
+      ]
     },
     "database": {
-      "sources": ["src/database/**"],
-      "tests": ["tests/unit/database-module.test.ts", "tests/integration/database-api.test.ts"],
-      "dependsOn": ["core"]
+      "sources": [
+        "src/database/**"
+      ],
+      "tests": [
+        "tests/unit/database-module.test.ts",
+        "tests/integration/database-api.test.ts"
+      ],
+      "dependsOn": [
+        "core"
+      ]
     },
     "diagnostics": {
-      "sources": ["src/diagnostics/**"],
-      "tests": ["tests/unit/diagnostics-module.test.ts", "tests/integration/diagnostics-api.test.ts"]
+      "sources": [
+        "src/diagnostics/**"
+      ],
+      "tests": [
+        "tests/unit/diagnostics-module.test.ts",
+        "tests/integration/diagnostics-api.test.ts"
+      ]
     },
     "file": {
-      "sources": ["src/file/**"],
-      "tests": ["tests/unit/file-module.test.ts", "tests/integration/file-api.test.ts"]
+      "sources": [
+        "src/file/**"
+      ],
+      "tests": [
+        "tests/unit/file-module.test.ts",
+        "tests/integration/file-api.test.ts"
+      ]
     },
     "generation-plane": {
-      "sources": ["src/generation-plane/**"],
-      "tests": ["tests/unit/generation-plane.test.ts"]
+      "sources": [
+        "src/generation-plane/**"
+      ],
+      "tests": [
+        "tests/unit/generation-plane.test.ts"
+      ]
     },
     "generator": {
-      "sources": ["src/generator/**"],
-      "tests": ["tests/unit/generator*.test.ts", "tests/integration/generator-api.test.ts"]
+      "sources": [
+        "src/generator/**"
+      ],
+      "tests": [
+        "tests/unit/generator*.test.ts",
+        "tests/integration/generator-api.test.ts"
+      ]
     },
     "image": {
-      "sources": ["src/image/**"],
+      "sources": [
+        "src/image/**"
+      ],
       "tests": [
         "tests/unit/image*.test.ts",
         "tests/integration/image-builder-api.test.ts",
@@ -123,15 +207,27 @@
       ]
     },
     "log": {
-      "sources": ["src/log/**"],
-      "tests": ["tests/unit/log-module.test.ts", "tests/integration/log-api.test.ts"]
+      "sources": [
+        "src/log/**"
+      ],
+      "tests": [
+        "tests/unit/log-module.test.ts",
+        "tests/integration/log-api.test.ts"
+      ]
     },
     "login": {
-      "sources": ["src/login/**"],
-      "tests": ["tests/unit/login-core.test.ts", "tests/integration/login-api.test.ts"]
+      "sources": [
+        "src/login/**"
+      ],
+      "tests": [
+        "tests/unit/login-core.test.ts",
+        "tests/integration/login-api.test.ts"
+      ]
     },
     "marketplace": {
-      "sources": ["src/marketplace/**"],
+      "sources": [
+        "src/marketplace/**"
+      ],
       "tests": [
         "tests/unit/marketplace*.test.ts",
         "tests/integration/marketplace-api.test.ts",
@@ -139,30 +235,72 @@
       ]
     },
     "milestone": {
-      "sources": ["src/milestone/**"],
-      "tests": ["tests/unit/milestone-module.test.ts", "tests/integration/milestone-api.test.ts"]
+      "sources": [
+        "src/milestone/**"
+      ],
+      "tests": [
+        "tests/unit/milestone-module.test.ts",
+        "tests/integration/milestone-api.test.ts"
+      ]
     },
     "onboarding": {
-      "sources": ["src/onboarding/**"],
-      "tests": ["tests/unit/onboarding*.test.ts", "tests/integration/onboarding-api.test.ts"],
-      "dependsOn": ["core", "capabilities", "configuration", "generator", "auth", "bootstrap", "ai"]
+      "sources": [
+        "src/onboarding/**"
+      ],
+      "tests": [
+        "tests/unit/onboarding*.test.ts",
+        "tests/integration/onboarding-api.test.ts"
+      ],
+      "dependsOn": [
+        "core",
+        "capabilities",
+        "configuration",
+        "generator",
+        "auth",
+        "bootstrap",
+        "ai"
+      ]
     },
     "os": {
-      "sources": ["src/os/**"],
-      "tests": ["tests/unit/os-module.test.ts", "tests/integration/os-api.test.ts"]
+      "sources": [
+        "src/os/**"
+      ],
+      "tests": [
+        "tests/unit/os-module.test.ts",
+        "tests/integration/os-api.test.ts"
+      ]
     },
     "permission": {
-      "sources": ["src/permission/**"],
-      "tests": ["tests/unit/permission-module.test.ts", "tests/integration/permission-api.test.ts"],
-      "dependsOn": ["core", "user"]
+      "sources": [
+        "src/permission/**"
+      ],
+      "tests": [
+        "tests/unit/permission-module.test.ts",
+        "tests/integration/permission-api.test.ts"
+      ],
+      "dependsOn": [
+        "core",
+        "user"
+      ]
     },
     "startup": {
-      "sources": ["src/startup/**"],
-      "tests": ["tests/unit/startup*.test.ts", "tests/integration/startup-api.test.ts"],
-      "dependsOn": ["configuration", "core", "bootstrap"]
+      "sources": [
+        "src/startup/**"
+      ],
+      "tests": [
+        "tests/unit/startup*.test.ts",
+        "tests/integration/startup-api.test.ts"
+      ],
+      "dependsOn": [
+        "configuration",
+        "core",
+        "bootstrap"
+      ]
     },
     "system": {
-      "sources": ["src/system/**"],
+      "sources": [
+        "src/system/**"
+      ],
       "tests": [
         "tests/unit/system*.test.ts",
         "tests/integration/system-api.test.ts",
@@ -172,68 +310,159 @@
       ]
     },
     "task": {
-      "sources": ["src/task/**"],
-      "tests": ["tests/unit/task-module.test.ts", "tests/integration/task-api.test.ts"]
+      "sources": [
+        "src/task/**"
+      ],
+      "tests": [
+        "tests/unit/task-module.test.ts",
+        "tests/integration/task-api.test.ts"
+      ]
     },
     "template": {
-      "sources": ["src/template/**"],
-      "tests": ["tests/unit/template-module.test.ts", "tests/integration/template-api.test.ts"]
+      "sources": [
+        "src/template/**"
+      ],
+      "tests": [
+        "tests/unit/template-module.test.ts",
+        "tests/integration/template-api.test.ts"
+      ]
     },
     "worker": {
-      "sources": ["src/worker/**"],
-      "tests": ["tests/unit/worker-store.test.ts", "tests/unit/worker-loop.test.ts", "tests/unit/worker-event-bridge.test.ts", "tests/unit/worker-scheduler.test.ts"],
-      "dependsOn": ["core"]
+      "sources": [
+        "src/worker/**"
+      ],
+      "tests": [
+        "tests/unit/worker-store.test.ts",
+        "tests/unit/worker-loop.test.ts",
+        "tests/unit/worker-event-bridge.test.ts",
+        "tests/unit/worker-scheduler.test.ts"
+      ],
+      "dependsOn": [
+        "core"
+      ]
     },
     "test": {
-      "sources": ["src/test/**"],
-      "tests": ["tests/unit/test-expanded.test.ts", "tests/integration/test-api.test.ts"]
+      "sources": [
+        "src/test/**"
+      ],
+      "tests": [
+        "tests/unit/test-expanded.test.ts",
+        "tests/integration/test-api.test.ts"
+      ]
     },
     "theme": {
-      "sources": ["src/theme/**"],
-      "tests": ["tests/unit/theme-module.test.ts", "tests/integration/theme-api.test.ts"]
+      "sources": [
+        "src/theme/**"
+      ],
+      "tests": [
+        "tests/unit/theme-module.test.ts",
+        "tests/integration/theme-api.test.ts"
+      ]
     },
     "vestara-ui": {
-      "sources": ["packages/vestara-ui/src/**"],
-      "tests": ["packages/vestara-ui/tests/**/*.test.tsx"],
-      "dependsOn": ["theme"],
+      "sources": [
+        "packages/vestara-ui/src/**"
+      ],
+      "tests": [
+        "packages/vestara-ui/tests/**/*.test.tsx"
+      ],
+      "dependsOn": [
+        "theme"
+      ],
       "cwd": "packages/vestara-ui"
     },
     "admin-ui": {
-      "sources": ["vestara-apps/admin/src/**"],
-      "tests": ["vestara-apps/admin/tests/**/*.test.ts"],
-      "dependsOn": ["vestara-ui"],
+      "sources": [
+        "vestara-apps/admin/src/**"
+      ],
+      "tests": [
+        "vestara-apps/admin/tests/**/*.test.ts"
+      ],
+      "dependsOn": [
+        "vestara-ui"
+      ],
       "cwd": "vestara-apps/admin"
     },
     "workspace-ui": {
-      "sources": ["vestara-apps/workspace/src/**"],
-      "tests": ["vestara-apps/workspace/tests/**/*.test.ts"],
-      "dependsOn": ["vestara-ui"],
+      "sources": [
+        "vestara-apps/workspace/src/**"
+      ],
+      "tests": [
+        "vestara-apps/workspace/tests/**/*.test.ts"
+      ],
+      "dependsOn": [
+        "vestara-ui"
+      ],
       "cwd": "vestara-apps/workspace"
     },
     "user": {
-      "sources": ["src/user/**"],
-      "tests": ["tests/unit/user-module.test.ts", "tests/integration/user-api.test.ts"],
-      "dependsOn": ["core", "database"]
+      "sources": [
+        "src/user/**"
+      ],
+      "tests": [
+        "tests/unit/user-module.test.ts",
+        "tests/integration/user-api.test.ts"
+      ],
+      "dependsOn": [
+        "core",
+        "database"
+      ]
     },
     "workflow": {
-      "sources": ["src/workflow/**"],
-      "tests": ["tests/unit/workflow-runtime.test.ts", "tests/integration/workflow-api.test.ts"]
+      "sources": [
+        "src/workflow/**"
+      ],
+      "tests": [
+        "tests/unit/workflow-runtime.test.ts",
+        "tests/integration/workflow-api.test.ts"
+      ]
     },
     "routes": {
-      "sources": ["src/routes/**"],
-      "tests": ["tests/integration/**/*.test.ts"],
-      "dependsOn": ["bootstrap"]
+      "sources": [
+        "src/routes/**"
+      ],
+      "tests": [
+        "tests/integration/**/*.test.ts"
+      ],
+      "dependsOn": [
+        "bootstrap"
+      ]
     },
     "contracts": {
-      "sources": ["contracts/**"],
-      "tests": ["tests/contract/**/*.test.ts", "tests/integration/**/*.test.ts"]
+      "sources": [
+        "contracts/**"
+      ],
+      "tests": [
+        "tests/contract/**/*.test.ts",
+        "tests/integration/**/*.test.ts"
+      ]
     },
     "app": {
-      "sources": ["src/app.ts", "src/main.ts"],
-      "tests": ["tests/integration/server.test.ts", "tests/integration/startup-api.test.ts"]
+      "sources": [
+        "src/app.ts",
+        "src/main.ts"
+      ],
+      "tests": [
+        "tests/integration/server.test.ts",
+        "tests/integration/startup-api.test.ts"
+      ]
+    },
+    "verification": {
+      "sources": [
+        "src/verification/**"
+      ],
+      "tests": [
+        "tests/unit/verification*.test.ts",
+        "tests/unit/verification/**/*.test.ts",
+        "tests/integration/verification-api.test.ts"
+      ]
     },
     "bootstrap": {
-      "sources": ["src/bootstrap/**", "src/plugins/**", "src/types/**"],
+      "sources": [
+        "src/bootstrap/**",
+        "src/plugins/**",
+        "src/types/**"
+      ],
       "tests": [
         "tests/unit/boot-assets.test.ts",
         "tests/unit/boot-presentation.test.ts",
@@ -245,29 +474,49 @@
         "tests/integration/cors.test.ts",
         "tests/integration/server.test.ts"
       ],
-      "dependsOn": ["core", "configuration"]
+      "dependsOn": [
+        "core",
+        "configuration"
+      ]
     },
     "core": {
-      "sources": ["src/core/**"],
-      "tests": ["tests/unit/errors.test.ts", "tests/unit/buses.test.ts"]
+      "sources": [
+        "src/core/**"
+      ],
+      "tests": [
+        "tests/unit/errors.test.ts",
+        "tests/unit/buses.test.ts"
+      ]
     },
     "pagebuilder": {
-      "sources": ["src/pagebuilder/**"],
-      "tests": ["tests/unit/builder-platform.test.ts"],
-      "dependsOn": ["core"]
+      "sources": [
+        "src/pagebuilder/**"
+      ],
+      "tests": [
+        "tests/unit/builder-platform.test.ts"
+      ],
+      "dependsOn": [
+        "core"
+      ]
     },
     "skill": {
-      "sources": ["src/skill/**"],
+      "sources": [
+        "src/skill/**"
+      ],
       "tests": [
         "tests/unit/agent-platform.test.ts",
         "tests/unit/agent-tool-loop.test.ts",
         "tests/unit/car-module.test.ts",
         "tests/unit/workflow-runtime.test.ts"
       ],
-      "dependsOn": ["core"]
+      "dependsOn": [
+        "core"
+      ]
     },
     "tool": {
-      "sources": ["src/tool/**"],
+      "sources": [
+        "src/tool/**"
+      ],
       "tests": [
         "tests/unit/agent-generator-tools.test.ts",
         "tests/unit/agent-platform.test.ts",
@@ -277,42 +526,91 @@
         "tests/unit/verification/**/*.test.ts",
         "tests/unit/workflow-runtime.test.ts"
       ],
-      "dependsOn": ["core"]
+      "dependsOn": [
+        "core"
+      ]
     },
     "ai-ui": {
-      "sources": ["packages/ai-ui/src/**"],
-      "tests": ["packages/ai-ui/tests/**/*.test.ts"],
+      "sources": [
+        "packages/ai-ui/src/**"
+      ],
+      "tests": [
+        "packages/ai-ui/tests/**/*.test.ts"
+      ],
       "cwd": "packages/ai-ui"
     },
     "vestara-client": {
-      "sources": ["packages/vestara-client/src/**"],
-      "tests": ["packages/vestara-client/tests/**/*.test.ts"],
+      "sources": [
+        "packages/vestara-client/src/**"
+      ],
+      "tests": [
+        "packages/vestara-client/tests/**/*.test.ts"
+      ],
       "cwd": "packages/vestara-client"
     },
     "agent-builder-ui": {
-      "sources": ["vestara-apps/agent-builder/src/**"],
-      "tests": ["vestara-apps/agent-builder/tests/**/*.test.ts"],
+      "sources": [
+        "vestara-apps/agent-builder/src/**"
+      ],
+      "tests": [
+        "vestara-apps/agent-builder/tests/**/*.test.ts"
+      ],
       "cwd": "vestara-apps/agent-builder"
     },
     "ai-experience-ui": {
-      "sources": ["vestara-apps/ai/src/**"],
-      "tests": ["vestara-apps/ai/tests/**/*.test.ts"],
+      "sources": [
+        "vestara-apps/ai/src/**"
+      ],
+      "tests": [
+        "vestara-apps/ai/tests/**/*.test.ts"
+      ],
       "cwd": "vestara-apps/ai"
     },
     "api-builder-ui": {
-      "sources": ["vestara-apps/api-builder/src/**"],
-      "tests": ["vestara-apps/api-builder/tests/**/*.test.ts"],
+      "sources": [
+        "vestara-apps/api-builder/src/**"
+      ],
+      "tests": [
+        "vestara-apps/api-builder/tests/**/*.test.ts"
+      ],
       "cwd": "vestara-apps/api-builder"
     },
     "marketplace-ui": {
-      "sources": ["vestara-apps/marketplace/src/**"],
-      "tests": ["vestara-apps/marketplace/tests/**/*.test.ts"],
+      "sources": [
+        "vestara-apps/marketplace/src/**"
+      ],
+      "tests": [
+        "vestara-apps/marketplace/tests/**/*.test.ts"
+      ],
       "cwd": "vestara-apps/marketplace"
     },
     "os-image-builder-ui": {
-      "sources": ["vestara-apps/os-image-builder/src/**"],
-      "tests": ["vestara-apps/os-image-builder/tests/**/*.test.ts"],
+      "sources": [
+        "vestara-apps/os-image-builder/src/**"
+      ],
+      "tests": [
+        "vestara-apps/os-image-builder/tests/**/*.test.ts"
+      ],
       "cwd": "vestara-apps/os-image-builder"
+    },
+    "execution": {
+      "sources": [
+        "src/execution/**"
+      ],
+      "tests": [
+        "tests/unit/execution*.test.ts",
+        "tests/unit/execution/**/*.test.ts",
+        "tests/integration/activity-room-api.test.ts"
+      ],
+      "dependsOn": [
+        "agent",
+        "capabilities",
+        "generator",
+        "routes",
+        "task",
+        "verification",
+        "workflow"
+      ]
     }
   }
 }

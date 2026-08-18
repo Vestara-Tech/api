@@ -5,9 +5,11 @@ dist/
 .turbo/
 .env
 .env.*
+!.env.example
 # Generated verification artifacts. .vestara/verification.json (the policy
 # config) IS committed; only generated evidence/cache/telemetry are ignored.
 .vestara/evidence/
 .vestara/cache/
+.vestara/e2e-001/
 coverage/
 .tmp/

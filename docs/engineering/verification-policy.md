@@ -236,7 +236,27 @@ aggregates: runs, tests selected/executed/cached, cache hit rate, escalation
 frequency, passes/failures, and average duration. Track these over time to
 decide whether the impact analysis and cache justify their maintenance cost.
 
-## 12. CI (FASTVERIFY-014)
+## 12. Verification Profiling (CP3A)
+
+`pnpm verify:profile` captures a timing profile for the frozen benchmark set
+without changing verification semantics. It records:
+
+- verification timing split: change detection, graph, impact, fingerprint,
+  evidence lookup, static, Vitest;
+- Turbo run timing and cache behavior;
+- overlap between FASTVERIFY-selected tests and Turbo test coverage;
+- a profile artifact under
+  `.vestara/evidence/verification/profiles/<sha>/<fingerprint>-<cache-state>.json`.
+
+Use `--cache-state cold` for the baseline run and `--cache-state warm` for the
+repeatability run. Cold mode bypasses reusable verification evidence and Turbo
+cache reuse; warm mode preserves them.
+
+The profile uses the frozen benchmark scenarios `B1` through `B4`, with `B1`
+as the default baseline in CP3A. The profiler is observational only: it does
+not change verification scope, evidence rules, or Turbo semantics.
+
+## 13. CI (FASTVERIFY-014)
 
 CI uses the same engine — there is not one policy for agents and another for
 CI (see `.github/workflows/verification.yml`):
@@ -249,7 +269,7 @@ CI (see `.github/workflows/verification.yml`):
 
 CI publishes `latest.json` as an artifact.
 
-## 13. Prohibited and Preferred Commands
+## 14. Prohibited and Preferred Commands
 
 | | Command | Why |
 | --- | --- | --- |
@@ -263,7 +283,7 @@ CI publishes `latest.json` as an artifact.
 | PREFER | `pnpm verify:module -- <name>` | Module scope when escalation requires it. |
 | PREFER | `pnpm verify:platform` | Full suite, only when escalation requires it. |
 
-## 14. Configuration Reference
+## 15. Configuration Reference
 
 `.vestara/verification.json`:
 
@@ -276,7 +296,7 @@ CI publishes `latest.json` as an artifact.
 | `modules` | Explicit module map: sources, tests, dependsOn. |
 | `neverWatch` / `reuseEvidence` / `escalateOnUnknownImpact` | Engine behavior flags. |
 
-## 15. Design Constraints
+## 16. Design Constraints
 
 - Keep the engine repository-local for now. It is the second reference
   implementation of the eventual reusable Vestara verification package; do not

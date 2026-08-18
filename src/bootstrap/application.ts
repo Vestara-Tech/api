@@ -62,6 +62,7 @@ import { buildFilePlatform } from './file.js';
 import { buildContextPlatform } from './context.js';
 import { buildPermissionPlatform } from './permission.js';
 import { buildCarPlatform } from './car.js';
+import { loadOpenCodeConfig } from '../car/domain/opencode-config.js';
 import { buildMarketplacePlatform } from './marketplace.js';
 import { buildMarketplaceV2Platform } from './marketplace-v2.js';
 import { registerPlatformContributions } from '../marketplace/v2/wiring.js';
@@ -81,6 +82,8 @@ import { buildDashboardPlatform } from './dashboard.js';
 import { buildThemePlatform } from './theme.js';
 import { buildTemplatePlatform } from './template.js';
 import { buildMilestonePlatform } from './milestone.js';
+import { ExecutionServiceImpl } from '../execution/service.js';
+import { FileExecutionStore } from '../execution/store.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
 import { registerComponentCapability } from './component-capability.js';
@@ -115,6 +118,7 @@ import { registerDashboardCapability } from './dashboard-capability.js';
 import { registerThemeCapability } from './theme-capability.js';
 import { registerTemplateCapability } from './template-capability.js';
 import { registerMilestoneCapability } from './milestone-capability.js';
+import { registerVerificationCapability } from './verification-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
 
@@ -258,7 +262,8 @@ export function createApplication(config: AppConfig): Application {
   });
 
   // ── Coding Agent Runtime (CAR-001..) ──────────────────────
-  const car = buildCarPlatform({ agents: agents.runtime, tools: agents.toolRuntime, approvals: agents.approvals });
+  const openCode = loadOpenCodeConfig();
+  const car = buildCarPlatform({ agents: agents.runtime, tools: agents.toolRuntime, approvals: agents.approvals, openCode });
 
   // ── Marketplace (MKT-001..) ────────────────────────────────
   const marketplace = buildMarketplacePlatform();
@@ -294,6 +299,15 @@ export function createApplication(config: AppConfig): Application {
 
   // ── Task Module (TASK-001..) ──────────────────────────────
   const task = buildTaskPlatform();
+
+  // ── Activity Room Execution Composition ──────────────────
+  const execution = new ExecutionServiceImpl({
+    capabilities,
+    agents: agents.agents,
+    workflow: workflow.service,
+    tasks: task.service,
+    store: new FileExecutionStore(join(process.cwd(), '.vestara', 'cache', 'activity-room', 'executions.json')),
+  });
 
   // ── OS Module (OS-001..) ──────────────────────────────────
   const os = buildOsPlatform();
@@ -373,6 +387,7 @@ export function createApplication(config: AppConfig): Application {
   registerThemeCapability(capabilities, config);
   registerTemplateCapability(capabilities, config);
   registerMilestoneCapability(capabilities, config);
+  registerVerificationCapability(capabilities, config);
 
   // ── Onboarding (ONB-001..026) ──────────────────────────────
   const onboarding = buildOnboardingService({
@@ -479,6 +494,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('browser.evidence', browser.evidence);
   container.register('task.service', task.service);
   container.register('task.store', task.store);
+  container.register('execution.service', execution);
   container.register('os', os.service);
   container.register('page-builder.service', pageBuilder.service);
   container.register('application-builder.service', applicationBuilder.service);
@@ -554,3 +570,4 @@ export function createApplication(config: AppConfig): Application {
 
   return application;
 }
+import { join } from 'node:path';
