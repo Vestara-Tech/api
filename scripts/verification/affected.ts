@@ -211,6 +211,14 @@ export function findTestFiles(repoRoot: string): string[] {
   return out.sort();
 }
 
+export function findContractFiles(repoRoot: string): string[] {
+  const out: string[] = [];
+  walkFiles(repoRoot, 'contracts', (file) => {
+    if (file.startsWith('contracts/')) out.push(file);
+  });
+  return [...new Set(out)].sort();
+}
+
 export function findSourceFiles(repoRoot: string): string[] {
   const out: string[] = [];
   for (const root of ['src', ...WORKSPACE_ROOTS]) {

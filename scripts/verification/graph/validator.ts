@@ -1,10 +1,10 @@
-import { existsSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join, resolve, relative } from 'node:path';
 
-import { findSourceFiles, findTestFiles } from '../affected.ts';
-import { matchAnyGlob } from '../glob.ts';
 import type { VerificationConfig } from '../affected.ts';
+import { findContractFiles, findSourceFiles, findTestFiles } from '../affected.ts';
 import type { GraphBuildResult, GraphIssue, ModuleId, NormalizedVerificationModule, ValidatedVerificationGraph } from './types.ts';
+import { buildOwnershipIndex, ownershipIssues } from './ownership.ts';
 import { normalizeVerificationGraph } from './normalize.ts';
 import { parseVerificationGraph } from './parser.ts';
 
@@ -93,135 +93,6 @@ function validateCwd(repoRoot: string, module: NormalizedVerificationModule, iss
   }
 }
 
-function collectOwnership(
-  modules: readonly NormalizedVerificationModule[],
-  files: readonly string[],
-): Map<string, ModuleId[]> {
-  const owners = new Map<string, ModuleId[]>();
-  for (const module of modules) {
-    const seen = new Set<string>();
-    for (const file of files) {
-      if (!matchAnyGlob(module.sources as string[], file)) continue;
-      if (seen.has(file)) continue;
-      seen.add(file);
-      const list = owners.get(file) ?? [];
-      list.push(module.id);
-      owners.set(file, list);
-    }
-  }
-  return owners;
-}
-
-function validateOwnership(
-  modules: readonly NormalizedVerificationModule[],
-  sourceFiles: readonly string[],
-  testFiles: readonly string[],
-  issues: GraphIssue[],
-): void {
-  const sourceOwners = collectOwnership(modules, sourceFiles);
-  const testOwners = new Map<string, ModuleId[]>();
-
-  for (const module of modules) {
-    const seen = new Set<string>();
-    for (const file of testFiles) {
-      if (!matchAnyGlob(module.tests as string[], file)) continue;
-      if (seen.has(file)) continue;
-      seen.add(file);
-      const list = testOwners.get(file) ?? [];
-      list.push(module.id);
-      testOwners.set(file, list);
-    }
-  }
-
-  for (const [file, owners] of [...sourceOwners.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-    if (owners.length > 1) {
-      issues.push(
-        issue('error', 'VGRAPH_DUPLICATE_SOURCE_OWNERSHIP', `Source file "${file}" is owned by multiple modules.`, {
-          path: file,
-          module: owners.map(String).sort().join(', '),
-        }),
-      );
-    }
-  }
-
-  for (const [file, owners] of [...testOwners.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-    if (owners.length > 1) {
-      issues.push(
-        issue('warning', 'VGRAPH_DUPLICATE_TEST_OWNERSHIP', `Test file "${file}" is owned by multiple modules.`, {
-          path: file,
-          module: owners.map(String).sort().join(', '),
-        }),
-      );
-    }
-  }
-
-  for (const module of modules) {
-    const matchedSources = sourceFiles.filter((file) => matchAnyGlob(module.sources as string[], file));
-    const matchedTests = testFiles.filter((file) => matchAnyGlob(module.tests as string[], file));
-
-    if (matchedSources.length === 0) {
-      issues.push(
-        issue('warning', 'VGRAPH_SOURCE_COVERAGE_GAP', `Module "${module.rawId}" currently matches no source files.`, {
-          module: module.rawId,
-        }),
-      );
-    }
-
-    if (matchedSources.length > 0 && matchedTests.length === 0) {
-      issues.push(
-        issue('error', 'VGRAPH_MISSING_TEST_COVERAGE', `Module "${module.rawId}" has source coverage but no matching tests.`, {
-          module: module.rawId,
-        }),
-      );
-    } else if (matchedSources.length === 0 && matchedTests.length > 0) {
-      issues.push(
-        issue('warning', 'VGRAPH_ORPHAN_TEST_MODULE', `Module "${module.rawId}" only owns tests and no source files.`, {
-          module: module.rawId,
-        }),
-      );
-    }
-  }
-}
-
-function validateWorkspaceCoverage(
-  repoRoot: string,
-  modules: readonly NormalizedVerificationModule[],
-  sourceFiles: readonly string[],
-  issues: GraphIssue[],
-): void {
-  const roots = ['packages', 'vestara-apps'];
-  const workspaceRoots: string[] = [];
-
-  for (const root of roots) {
-    const rootDir = join(repoRoot, root);
-    if (!existsSync(rootDir) || !statSync(rootDir).isDirectory()) continue;
-    for (const entry of readdirSync(rootDir)) {
-      const full = join(rootDir, entry);
-      if (!statSync(full).isDirectory()) continue;
-      const packageJson = join(full, 'package.json');
-      if (existsSync(packageJson)) workspaceRoots.push(relative(repoRoot, full).replace(/\\/g, '/'));
-    }
-  }
-
-  const sourceCoverage = new Map<string, boolean>();
-  for (const workspaceRoot of workspaceRoots.sort()) {
-    const hasCoverage = modules.some((module) =>
-      sourceFiles.some((file) => file.startsWith(`${workspaceRoot}/`) && matchAnyGlob(module.sources as string[], file)),
-    );
-    sourceCoverage.set(workspaceRoot, hasCoverage);
-  }
-
-  for (const [workspaceRoot, covered] of [...sourceCoverage.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-    if (!covered) {
-      issues.push(
-        issue('warning', 'VGRAPH_WORKSPACE_ROOT_UNMAPPED', `Workspace root "${workspaceRoot}" is not covered by any verification module.`, {
-          path: workspaceRoot,
-        }),
-      );
-    }
-  }
-}
-
 function validateDependencyCycles(graph: ValidatedVerificationGraph, issues: GraphIssue[]): void {
   const visiting = new Set<ModuleId>();
   const visited = new Set<ModuleId>();
@@ -252,7 +123,9 @@ function validateDependencyCycles(graph: ValidatedVerificationGraph, issues: Gra
 
 export function validateVerificationGraph(repoRoot: string, graph: ValidatedVerificationGraph): GraphBuildResult {
   const sourceFiles = findSourceFiles(repoRoot);
+  const contractFiles = findContractFiles(repoRoot);
   const testFiles = findTestFiles(repoRoot);
+  const ownership = buildOwnershipIndex(repoRoot, graph, { sourceFiles, contractFiles, testFiles });
   const issues: GraphIssue[] = [];
 
   for (const module of [...graph.modules.values()].sort((left, right) => left.rawId.localeCompare(right.rawId))) {
@@ -261,8 +134,7 @@ export function validateVerificationGraph(repoRoot: string, graph: ValidatedVeri
     validateCwd(repoRoot, module, issues);
   }
 
-  validateOwnership([...graph.modules.values()], sourceFiles, testFiles, issues);
-  validateWorkspaceCoverage(repoRoot, [...graph.modules.values()], sourceFiles, issues);
+  issues.push(...ownershipIssues(ownership, 'validator'));
   validateDependencyCycles(graph, issues);
 
   const normalized = sortIssues(issues);
