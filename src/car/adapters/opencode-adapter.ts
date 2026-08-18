@@ -39,11 +39,18 @@ type RequestResult<T> =
   | {
       readonly data: T;
       readonly error?: unknown;
-      readonly request: Request;
-      readonly response: Response;
+      readonly request: unknown;
+      readonly response: unknown;
     }
   | T
   | undefined;
+
+type RawSdkResult<T> = {
+  readonly data?: T | undefined;
+  readonly error?: unknown;
+  readonly request?: unknown;
+  readonly response?: unknown;
+} | T;
 
 /**
  * CAR-011 — OpenCode reference adapter backed by the official OpenCode SDK.
@@ -394,17 +401,17 @@ function normalizeSessionId(sessionId: string): string {
   return sessionId.replace(/^opencode:/, '');
 }
 
-function unwrapRequestResult<T>(result: RequestResult<T>, message: string): T {
+function unwrapRequestResult<T>(result: RawSdkResult<T>, message: string): T {
   if (result && typeof result === 'object' && 'request' in result && 'response' in result) {
     if ('error' in result && result.error !== undefined) {
       throw new Error(describeOpenCodeError(result.error, message));
     }
-    return result.data;
+    return result.data as T;
   }
   if (result === undefined) {
     throw new Error(message);
   }
-  return result;
+  return result as T;
 }
 
 function describeOpenCodeError(error: unknown, fallback = 'OpenCode request failed'): string {

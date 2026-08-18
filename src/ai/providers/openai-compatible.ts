@@ -29,7 +29,7 @@ export class OpenAiCompatibleAdapter implements AiProviderAdapter {
     return model.providerId === this.providerId;
   }
 
-  private headers(requestId: string): HeadersInit {
+  private headers(requestId: string): Record<string, string> {
     return {
       'Content-Type': 'application/json',
       ...(this.apiKey.length > 0 ? { Authorization: `Bearer ${this.apiKey}` } : {}),
