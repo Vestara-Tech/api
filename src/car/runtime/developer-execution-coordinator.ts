@@ -116,7 +116,7 @@ export class DeveloperExecutionCoordinator {
         runId: context.identity.runId,
         objective: context.objective.goal ?? '',
         systemPrompt: context.governance.systemInstructions,
-        workspace: request.repository?.root,
+        ...(request.repository?.root !== undefined ? { workspace: request.repository.root } : {}),
       });
 
       const events: CodingAgentEvent[] = [];
