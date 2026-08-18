@@ -11,3 +11,10 @@ export type { SkillLoaderOptions } from './loader/skill-loader.js';
 export { SkillLoader, skillPackageToDefinition } from './loader/skill-loader.js';
 export type { SkillResolverOptions, ResolvedSkill } from './resolver/skill-resolver.js';
 export { SkillResolver } from './resolver/skill-resolver.js';
+export type {
+  ResolvedExecutionSkill,
+  SkillResolutionDiagnostic,
+  SkillResolutionResult,
+  ExecutionSkillResolverOptions,
+} from './resolver/execution-skill-resolver.js';
+export { ExecutionSkillResolver } from './resolver/execution-skill-resolver.js';

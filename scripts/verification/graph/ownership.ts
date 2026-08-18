@@ -2,7 +2,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 import { findContractFiles, findSourceFiles, findTestFiles } from '../affected.ts';
-import { matchAnyGlob } from '../glob.ts';
+import { matchAnyGlob, matchGlob } from '../glob.ts';
 import type { GraphIssue, ModuleId, NormalizedVerificationModule, ValidatedVerificationGraph } from './types.ts';
 
 const WORKSPACE_ROOTS = ['packages', 'vestara-apps'] as const;
@@ -27,6 +27,66 @@ function walkFiles(repoRoot: string, relDir: string, visit: (file: string) => vo
 
 function uniqueSorted(values: readonly string[]): string[] {
   return [...new Set(values)].sort((left, right) => left.localeCompare(right));
+}
+
+function tokenizePath(value: string): string[] {
+  return value
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+interface PatternSpecificity {
+  readonly literalSegments: number;
+  readonly literalCharacters: number;
+  readonly wildcardCharacters: number;
+  readonly depth: number;
+  readonly length: number;
+}
+
+function patternSpecificity(pattern: string): PatternSpecificity {
+  const segments = pattern.split('/').filter(Boolean);
+  const wildcardCharacters = [...pattern].filter((char) => char === '*' || char === '?').length;
+  const literalCharacters = [...pattern].filter((char) => char !== '*' && char !== '?').length;
+  const literalSegments = segments.filter((segment) => !/[*?]/.test(segment)).length;
+  return {
+    literalSegments,
+    literalCharacters,
+    wildcardCharacters,
+    depth: segments.length,
+    length: pattern.length,
+  };
+}
+
+function comparePatternSpecificity(left: PatternSpecificity, right: PatternSpecificity): number {
+  return (
+    left.literalSegments - right.literalSegments ||
+    left.literalCharacters - right.literalCharacters ||
+    right.wildcardCharacters - left.wildcardCharacters ||
+    left.depth - right.depth ||
+    left.length - right.length
+  );
+}
+
+function moduleAffinity(file: string, moduleId: ModuleId): number {
+  const token = String(moduleId).toLowerCase();
+  return tokenizePath(file).filter((part) => part === token).length;
+}
+
+interface OwnerCandidate {
+  readonly moduleId: ModuleId;
+  readonly specificity: PatternSpecificity;
+  readonly affinity: number;
+  readonly moduleOrder: number;
+}
+
+function compareOwnerCandidates(left: OwnerCandidate, right: OwnerCandidate): number {
+  return (
+    comparePatternSpecificity(left.specificity, right.specificity) ||
+    left.affinity - right.affinity ||
+    String(left.moduleId).length - String(right.moduleId).length ||
+    right.moduleOrder - left.moduleOrder
+  );
 }
 
 function issue(severity: GraphIssue['severity'], code: string, message: string, extra: Omit<GraphIssue, 'severity' | 'code' | 'message'> = {}): GraphIssue {
@@ -91,6 +151,53 @@ function collectOwners(
       list.push(id);
       owners.set(file, list);
     }
+  }
+
+  return owners;
+}
+
+function collectPrimaryOwners(
+  graph: ValidatedVerificationGraph,
+  files: readonly string[],
+  selector: (module: NormalizedVerificationModule) => readonly string[],
+): Map<string, ModuleId[]> {
+  const owners = new Map<string, ModuleId[]>();
+  const orderedModules = [...graph.modules.entries()].sort(([left], [right]) => left.localeCompare(right));
+  const moduleOrder = new Map<ModuleId, number>();
+  orderedModules.forEach(([id], index) => moduleOrder.set(id, index));
+
+  for (const file of [...files].sort((left, right) => left.localeCompare(right))) {
+    let best: OwnerCandidate | null = null;
+
+    for (const [id, module] of orderedModules) {
+      let bestPattern: string | null = null;
+      let bestSpecificity: PatternSpecificity | null = null;
+
+      for (const pattern of selector(module)) {
+        if (!matchGlob(pattern as string, file)) continue;
+        const specificity = patternSpecificity(pattern as string);
+        if (
+          bestSpecificity === null ||
+          comparePatternSpecificity(specificity, bestSpecificity) > 0 ||
+          (comparePatternSpecificity(specificity, bestSpecificity) === 0 && pattern.localeCompare(bestPattern ?? '') < 0)
+        ) {
+          bestPattern = pattern as string;
+          bestSpecificity = specificity;
+        }
+      }
+
+      if (bestSpecificity === null) continue;
+
+      const candidate: OwnerCandidate = {
+        moduleId: id,
+        specificity: bestSpecificity,
+        affinity: moduleAffinity(file, id),
+        moduleOrder: moduleOrder.get(id) ?? 0,
+      };
+      if (best === null || compareOwnerCandidates(candidate, best) > 0) best = candidate;
+    }
+
+    if (best !== null) owners.set(file, [best.moduleId]);
   }
 
   return owners;
@@ -223,7 +330,7 @@ export function buildOwnershipIndex(
   const sourceOwners = collectOwners(graph, sourceFiles, (module) => module.sources);
   const contractOwners = collectOwners(graph, contractFiles, (module) => module.sources);
   const productionOwners = collectOwners(graph, productionFiles, (module) => module.sources);
-  const testOwners = collectOwners(graph, testFiles, (module) => module.tests);
+  const testOwners = collectPrimaryOwners(graph, testFiles, (module) => module.tests);
   const moduleSourceFiles = collectModuleFiles(graph, sourceFiles, (module) => module.sources);
   const moduleContractFiles = collectModuleFiles(graph, contractFiles, (module) => module.sources);
   const moduleTestFiles = collectModuleFiles(graph, testFiles, (module) => module.tests);

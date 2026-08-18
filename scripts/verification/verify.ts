@@ -1,5 +1,7 @@
 import { spawnSync } from 'node:child_process';
+import { performance } from 'node:perf_hooks';
 import { join, relative } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   detectPackageManager,
@@ -52,6 +54,31 @@ interface RunResult {
   passed: boolean;
 }
 
+export interface VerificationRunOptions {
+  scope?: Scope;
+  moduleName?: string;
+  noCache?: boolean;
+}
+
+export interface VerificationTimings {
+  totalMs: number;
+  changeDetectionMs: number;
+  graphMs: number;
+  impactMs: number;
+  fingerprintMs: number;
+  evidenceLookupMs: number;
+  staticMs: number;
+  vitestMs: number;
+  turboMs: number;
+}
+
+export interface VerificationExecution {
+  report: VerificationReport;
+  reportPath: string;
+  fingerprint: string | null;
+  timings: VerificationTimings;
+}
+
 function levelForScope(scope: 'static' | 'affected' | 'module' | 'platform'): ImpactLevel {
   if (scope === 'static') return 'V0';
   if (scope === 'module') return 'V2';
@@ -86,17 +113,28 @@ Flags: --json      machine-readable report
 function resolveScope(raw: string | undefined, defaultScope: Scope): Scope {
   if (!raw) return defaultScope;
   const aliases: Record<string, Scope> = { V0: 'static', V1: 'affected', V2: 'module', V3: 'platform' };
-  return aliases[raw.toUpperCase()] ?? (raw as Scope);
+  const lowered = raw.toLowerCase();
+  if (lowered === 'static' || lowered === 'affected' || lowered === 'module' || lowered === 'platform') {
+    return lowered;
+  }
+  const alias = aliases[raw.toUpperCase()];
+  if (alias) return alias;
+  throw new Error(`Unknown verification scope "${raw}". Use static, affected, module, platform, or V0-V3.`);
 }
 
 function runStep(name: string, command: string[], cwd = REPO_ROOT, timeoutMs = 1_800_000): StepResult {
-  const start = Date.now();
-  const result = spawnSync(command[0]!, command.slice(1), { cwd, encoding: 'utf8', timeout: timeoutMs });
+  const start = performance.now();
+  const result = spawnSync(command[0]!, command.slice(1), {
+    cwd,
+    encoding: 'utf8',
+    timeout: timeoutMs,
+    maxBuffer: 50 * 1024 * 1024,
+  });
   return {
     name,
     command: command.join(' '),
     passed: result.status === 0,
-    durationMs: Date.now() - start,
+    durationMs: performance.now() - start,
     output: `${result.stdout ?? ''}${result.stderr ?? ''}`,
   };
 }
@@ -146,6 +184,274 @@ function vitestStep(pm: 'pnpm' | 'npm', files: string[], passWithNoTests: boolea
 
 function formatSeconds(ms: number): string {
   return `${(ms / 1000).toFixed(1)}s`;
+}
+
+export function runVerification(options: VerificationRunOptions = {}): VerificationExecution {
+  const config = loadConfig(REPO_ROOT);
+  const pm = detectPackageManager(REPO_ROOT);
+  const scope = options.scope ?? config.defaultLevel;
+  const moduleName = options.moduleName;
+  const noCache = options.noCache ?? false;
+  const totalStart = performance.now();
+
+  const changeStart = performance.now();
+  const changed = gitChangedFiles(REPO_ROOT);
+  const classification = classifyFiles(changed, config);
+  const changeDetectionMs = performance.now() - changeStart;
+
+  const graphStart = performance.now();
+  const allSourceFiles = findSourceFiles(REPO_ROOT);
+  const allTestFiles = findTestFiles(REPO_ROOT);
+  const dependencyFiles = findDependencyFiles(REPO_ROOT, config);
+  const graphResult = buildVerificationGraph(REPO_ROOT, config);
+  const graphMs = performance.now() - graphStart;
+  const baseLevel = levelForScope(scope);
+
+  if (!graphResult.valid || graphResult.graph === null) {
+    const totalMs = performance.now() - totalStart;
+    const report: VerificationReport = {
+      version: 1,
+      level: baseLevel,
+      scope,
+      changedFiles: changed,
+      affectedModules: [],
+      selectedTests: [],
+      executedTests: [],
+      reusedTests: [],
+      skippedTests: [],
+      passed: 0,
+      failed: 0,
+      cached: 0,
+      escalated: false,
+      escalationReasons: [],
+      durationMs: Math.round(totalMs),
+      graphValid: false,
+      graphIssues: graphResult.issues,
+      result: 'indeterminate',
+      verified: false,
+      evidence: null,
+    };
+
+    const reportPath = writeReport(report);
+    appendTelemetry({
+      ts: new Date().toISOString(),
+      level: report.level,
+      scope,
+      changed: changed.length,
+      selected: 0,
+      executed: 0,
+      cached: 0,
+      escalated: false,
+      durationMs: report.durationMs,
+      result: 'indeterminate',
+    });
+
+    return {
+      report,
+      reportPath,
+      fingerprint: null,
+      timings: {
+        totalMs,
+        changeDetectionMs,
+        graphMs,
+        impactMs: 0,
+        fingerprintMs: 0,
+        evidenceLookupMs: 0,
+        staticMs: 0,
+        vitestMs: 0,
+        turboMs: 0,
+      },
+    };
+  }
+
+  const graph = graphResult.graph!;
+
+  let level: ImpactLevel = baseLevel;
+  let sourceFiles: string[] = [];
+  let selectedTests: string[] = [];
+  let affectedModules: string[] = [];
+  let escalationReasons: string[] = [];
+  let escalated = false;
+  let moduleCwd = REPO_ROOT;
+
+  const impactStart = performance.now();
+  if (scope === 'static') {
+    level = 'V0';
+  } else if (scope === 'affected') {
+    const impact = computeImpact(changed, classification, graph, allTestFiles);
+    level = impact.level;
+    affectedModules = [...impact.directlyAffectedModules, ...impact.transitivelyAffectedModules];
+    escalationReasons = impact.reasons;
+    escalated = impact.level !== 'V1';
+    sourceFiles = impact.changedFiles;
+    selectedTests = impact.selectedTests;
+    if (impact.level === 'V3') {
+      selectedTests = allTestFiles;
+    }
+  } else if (scope === 'module') {
+    level = 'V2';
+    if (moduleName) {
+      const resolvedModule = resolveModuleId(graph, moduleName);
+      if (resolvedModule) {
+        const module = graph.modules.get(resolvedModule);
+        if (module) {
+          affectedModules = [String(resolvedModule)];
+          selectedTests = moduleTests(graph, moduleName, allTestFiles);
+          sourceFiles = allSourceFiles.filter((file) => matchAnyGlob(module.sources as string[], file));
+          moduleCwd = module.cwd ? join(REPO_ROOT, module.cwd) : REPO_ROOT;
+        } else {
+          selectedTests = [moduleName];
+          sourceFiles = changed;
+        }
+      } else {
+        selectedTests = [moduleName];
+        sourceFiles = changed;
+      }
+    } else {
+      selectedTests = allTestFiles;
+      sourceFiles = allSourceFiles;
+    }
+  } else {
+    level = 'V3';
+    sourceFiles = allSourceFiles;
+    selectedTests = allTestFiles;
+  }
+  const impactMs = performance.now() - impactStart;
+
+  const fingerprintStart = performance.now();
+  const fingerprint = computeFingerprint({
+    level,
+    scope,
+    sourceFiles,
+    testFiles: selectedTests,
+    dependencyFiles,
+  });
+  const fingerprintMs = performance.now() - fingerprintStart;
+
+  const evidenceLookupStart = performance.now();
+  const cachedEvidence: Evidence | null =
+    !noCache && config.reuseEvidence ? loadEvidence(fingerprint) : null;
+  const canReuse = cachedEvidence !== null && cachedEvidence.result === 'pass' && cachedEvidence.tests.length > 0;
+  const evidenceLookupMs = performance.now() - evidenceLookupStart;
+
+  let runResult: RunResult;
+  let staticMs = 0;
+  let vitestMs = 0;
+  if (canReuse) {
+    runResult = {
+      steps: [],
+      executedTests: [],
+      reusedTests: cachedEvidence.tests,
+      cached: cachedEvidence.tests.length,
+      testSummary: null,
+      passed: true,
+    };
+  } else {
+    const steps: StepResult[] = [];
+    const staticCheck = staticStep(pm, moduleCwd);
+    staticMs = staticCheck.durationMs;
+    steps.push(staticCheck);
+
+    const hasTests = selectedTests.length > 0 || scope === 'platform';
+    let executedTests: string[] = [];
+
+    if (staticCheck.passed && hasTests) {
+      const zeroTests = allTestFiles.length === 0;
+      const files = scope === 'platform' || (scope === 'affected' && level === 'V3') ? [] : selectedTests;
+      const testStep = vitestStep(pm, files, zeroTests, moduleCwd);
+      vitestMs = testStep.durationMs;
+      steps.push(testStep);
+      executedTests = files.length > 0 ? files : allTestFiles;
+    }
+
+    const testSummary = parseVitestSummary(steps.map((s) => s.output).join('\n'));
+    runResult = {
+      steps,
+      executedTests,
+      reusedTests: [],
+      cached: 0,
+      testSummary,
+      passed: steps.every((s) => s.passed),
+    };
+  }
+
+  const executed = runResult.executedTests.length;
+  const summary = runResult.testSummary;
+  const passedCount = summary?.testsPassed ?? 0;
+  const failedCount = (summary?.testsFailed ?? 0) + (summary?.testsErrored ?? 0);
+
+  const verified = executed > 0 || runResult.cached > 0;
+  const result: 'pass' | 'fail' = runResult.passed ? 'pass' : 'fail';
+  const totalMs = performance.now() - totalStart;
+
+  const report: VerificationReport = {
+    version: 1,
+    level,
+    scope,
+    changedFiles: changed,
+    affectedModules,
+    selectedTests,
+    executedTests: runResult.executedTests,
+    reusedTests: runResult.reusedTests,
+    skippedTests: [],
+    passed: passedCount,
+    failed: failedCount,
+    cached: runResult.cached,
+    escalated,
+    escalationReasons,
+    durationMs: Math.round(totalMs),
+    graphValid: true,
+    graphIssues: graphResult.issues,
+    result,
+    verified,
+    evidence: verified ? fingerprint : null,
+  };
+
+  if (verified && result === 'pass') {
+    saveEvidence({
+      fingerprint,
+      level,
+      scope,
+      modules: affectedModules,
+      tests: selectedTests,
+      result,
+      durationMs: report.durationMs,
+      createdAt: new Date().toISOString(),
+      toolchain: currentToolchain(),
+    });
+  }
+
+  const reportPath = writeReport(report);
+
+  appendTelemetry({
+    ts: new Date().toISOString(),
+    level,
+    scope,
+    changed: changed.length,
+    selected: selectedTests.length,
+    executed,
+    cached: runResult.cached,
+    escalated,
+    durationMs: report.durationMs,
+    result,
+  });
+
+  return {
+    report,
+    reportPath,
+    fingerprint: verified ? fingerprint : null,
+    timings: {
+      totalMs,
+      changeDetectionMs,
+      graphMs,
+      impactMs,
+      fingerprintMs,
+      evidenceLookupMs,
+      staticMs,
+      vitestMs,
+      turboMs: 0,
+    },
+  };
 }
 
 function printReport(report: VerificationReport): void {
@@ -229,238 +535,32 @@ function main(): void {
   const jsonFlag = process.argv.includes('--json');
   const noCache = process.argv.includes('--no-cache');
   const positional = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
-
   const config = loadConfig(REPO_ROOT);
-  const pm = detectPackageManager(REPO_ROOT);
-  const scope = resolveScope(positional[0], config.defaultLevel);
-  const moduleName = positional[1];
-  const start = Date.now();
-  const changed = gitChangedFiles(REPO_ROOT);
-  const classification = classifyFiles(changed, config);
-  const allSourceFiles = findSourceFiles(REPO_ROOT);
-  const allTestFiles = findTestFiles(REPO_ROOT);
-  const dependencyFiles = findDependencyFiles(REPO_ROOT, config);
-  const graphResult = buildVerificationGraph(REPO_ROOT, config);
-  const baseLevel = levelForScope(scope);
-
-  if (!graphResult.valid || graphResult.graph === null) {
-    const report: VerificationReport = {
-      version: 1,
-      level: baseLevel,
-      scope,
-      changedFiles: changed,
-      affectedModules: [],
-      selectedTests: [],
-      executedTests: [],
-      reusedTests: [],
-      skippedTests: [],
-      passed: 0,
-      failed: 0,
-      cached: 0,
-      escalated: false,
-      escalationReasons: [],
-      durationMs: Date.now() - start,
-      graphValid: false,
-      graphIssues: graphResult.issues,
-      result: 'indeterminate',
-      verified: false,
-      evidence: null,
-    };
-
-    const reportPath = writeReport(report);
-    appendTelemetry({
-      ts: new Date().toISOString(),
-      level: report.level,
-      scope,
-      changed: changed.length,
-      selected: 0,
-      executed: 0,
-      cached: 0,
-      escalated: false,
-      durationMs: report.durationMs,
-      result: 'indeterminate',
-    });
-
-    if (jsonFlag) {
-      console.log(JSON.stringify({ ...report, reportPath, fingerprint: null }, null, 2));
-    } else {
-      printReport(report);
-      console.log(`Report: ${reportPath}`);
-    }
-
+  let scope: Scope;
+  try {
+    scope = resolveScope(positional[0], config.defaultLevel);
+  } catch (error) {
+    console.error((error as Error).message);
     process.exit(1);
   }
-
-  const graph = graphResult.graph!;
-
-  let level: ImpactLevel = baseLevel;
-  let sourceFiles: string[] = [];
-  let selectedTests: string[] = [];
-  let affectedModules: string[] = [];
-  let escalationReasons: string[] = [];
-  let escalated = false;
-  let moduleCwd = REPO_ROOT;
-
-  if (scope === 'static') {
-    level = 'V0';
-  } else if (scope === 'affected') {
-    const impact = computeImpact(changed, classification, graph, allTestFiles);
-    level = impact.level;
-    affectedModules = [...impact.directlyAffectedModules, ...impact.transitivelyAffectedModules];
-    escalationReasons = impact.reasons;
-    escalated = impact.level !== 'V1';
-    sourceFiles = impact.changedFiles;
-    selectedTests = impact.selectedTests;
-    if (impact.level === 'V3') {
-      selectedTests = allTestFiles;
-    }
-  } else if (scope === 'module') {
-    level = 'V2';
-    if (moduleName) {
-      const resolvedModule = resolveModuleId(graph, moduleName);
-      if (resolvedModule) {
-        const module = graph.modules.get(resolvedModule);
-        if (module) {
-          affectedModules = [String(resolvedModule)];
-          selectedTests = moduleTests(graph, moduleName, allTestFiles);
-          sourceFiles = allSourceFiles.filter((file) => matchAnyGlob(module.sources as string[], file));
-          moduleCwd = module.cwd ? join(REPO_ROOT, module.cwd) : REPO_ROOT;
-        } else {
-          selectedTests = [moduleName];
-          sourceFiles = changed;
-        }
-      } else {
-        selectedTests = [moduleName];
-        sourceFiles = changed;
-      }
-    } else {
-      selectedTests = allTestFiles;
-      sourceFiles = allSourceFiles;
-    }
-  } else {
-    level = 'V3';
-    sourceFiles = allSourceFiles;
-    selectedTests = allTestFiles;
+  const moduleName = positional[1];
+  if (moduleName !== undefined && scope !== 'module') {
+    console.error(`Module verification requires the "module" scope. Use "pnpm verify module ${moduleName}" or "pnpm verify:module -- ${moduleName}".`);
+    process.exit(1);
   }
-
-  const fingerprint = computeFingerprint({
-    level,
-    scope,
-    sourceFiles,
-    testFiles: selectedTests,
-    dependencyFiles,
-  });
-
-  const cachedEvidence: Evidence | null =
-    !noCache && config.reuseEvidence ? loadEvidence(fingerprint) : null;
-  const canReuse = cachedEvidence !== null && cachedEvidence.result === 'pass' && cachedEvidence.tests.length > 0;
-
-  let runResult: RunResult;
-  if (canReuse) {
-    runResult = {
-      steps: [],
-      executedTests: [],
-      reusedTests: cachedEvidence.tests,
-      cached: cachedEvidence.tests.length,
-      testSummary: null,
-      passed: true,
-    };
-  } else {
-    const steps: StepResult[] = [];
-    const staticCheck = staticStep(pm, moduleCwd);
-    steps.push(staticCheck);
-
-    const hasTests = selectedTests.length > 0 || scope === 'platform';
-    let executedTests: string[] = [];
-
-    if (staticCheck.passed && hasTests) {
-      const zeroTests = allTestFiles.length === 0;
-      const files = scope === 'platform' || (scope === 'affected' && level === 'V3') ? [] : selectedTests;
-      const testStep = vitestStep(pm, files, zeroTests, moduleCwd);
-      steps.push(testStep);
-      executedTests = files.length > 0 ? files : allTestFiles;
-    }
-
-    const testSummary = parseVitestSummary(steps.map((s) => s.output).join('\n'));
-    runResult = {
-      steps,
-      executedTests,
-      reusedTests: [],
-      cached: 0,
-      testSummary,
-      passed: steps.every((s) => s.passed),
-    };
-  }
-
-  const executed = runResult.executedTests.length;
-  const summary = runResult.testSummary;
-  const passedCount = summary?.testsPassed ?? 0;
-  const failedCount = (summary?.testsFailed ?? 0) + (summary?.testsErrored ?? 0);
-
-  const verified = executed > 0 || runResult.cached > 0;
-  const result: 'pass' | 'fail' = runResult.passed ? 'pass' : 'fail';
-
-  const report: VerificationReport = {
-    version: 1,
-    level,
-    scope,
-    changedFiles: changed,
-    affectedModules,
-    selectedTests,
-    executedTests: runResult.executedTests,
-    reusedTests: runResult.reusedTests,
-    skippedTests: [],
-    passed: passedCount,
-    failed: failedCount,
-    cached: runResult.cached,
-    escalated,
-    escalationReasons,
-    durationMs: Date.now() - start,
-    graphValid: true,
-    graphIssues: graphResult.issues,
-    result,
-    verified,
-    evidence: verified ? fingerprint : null,
-  };
-
-  if (verified && result === 'pass') {
-    saveEvidence({
-      fingerprint,
-      level,
-      scope,
-      modules: affectedModules,
-      tests: selectedTests,
-      result,
-      durationMs: report.durationMs,
-      createdAt: new Date().toISOString(),
-      toolchain: currentToolchain(),
-    });
-  }
-
-  const reportPath = writeReport(report);
-
-  appendTelemetry({
-    ts: new Date().toISOString(),
-    level,
-    scope,
-    changed: changed.length,
-    selected: selectedTests.length,
-    executed,
-    cached: runResult.cached,
-    escalated,
-    durationMs: report.durationMs,
-    result,
-  });
+  const execution = runVerification({ scope, moduleName, noCache });
 
   if (jsonFlag) {
-    console.log(JSON.stringify({ ...report, reportPath, fingerprint }, null, 2));
+    console.log(JSON.stringify({ ...execution.report, reportPath: execution.reportPath, fingerprint: execution.fingerprint }, null, 2));
   } else {
-    printReport(report);
-    console.log(`Report: ${reportPath}`);
-    if (fingerprint) console.log(`Fingerprint: ${fingerprint}`);
+    printReport(execution.report);
+    console.log(`Report: ${execution.reportPath}`);
+    if (execution.fingerprint) console.log(`Fingerprint: ${execution.fingerprint}`);
   }
 
-  process.exit(report.result === 'pass' ? 0 : 1);
+  process.exit(execution.report.result === 'pass' ? 0 : 1);
 }
 
-main();
+if (fileURLToPath(import.meta.url) === process.argv[1]) {
+  main();
+}

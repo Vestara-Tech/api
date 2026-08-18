@@ -1,16 +1,21 @@
-import { useState, type KeyboardEvent } from 'react';
+import { useEffect, useState, type KeyboardEvent } from 'react';
 import { Box, Button, Stack, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 
 export interface ComposerProps {
   readonly disabled?: boolean;
   readonly placeholder?: string;
+  readonly initialValue?: string;
   readonly onSend: (text: string) => void;
 }
 
 /** Composer — the shared message input used by AI Chat and Test Agent. */
-export function Composer({ disabled, placeholder = 'Message…', onSend }: ComposerProps) {
-  const [value, setValue] = useState('');
+export function Composer({ disabled, placeholder = 'Message…', initialValue = '', onSend }: ComposerProps) {
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const submit = (): void => {
     const text = value.trim();

@@ -76,12 +76,12 @@ export const BUILTIN_AGENTS: readonly AgentDefinition[] = [
     role: 'verifier',
     model: { mode: 'auto', requirements: { reasoning: true, structuredOutput: true }, optimizeFor: 'quality' },
     instructions: {
-      system: 'You are the Vestara verifier. Prove correctness via evidence; never think, never review.',
-      guardrails: ['Only accept verifiable evidence.'],
+      system: 'You are the Vestara verifier. Use the verification control plane to inspect current evidence and run current verification scopes. Prove correctness via evidence; never think, never review.',
+      guardrails: ['Only accept verifiable evidence.', 'Use verification.latest before claiming the current state and verification.run when you need fresh evidence.'],
     },
-    tools: [{ id: 'api.definition.preview' }],
+    tools: [{ id: 'verification.latest' }, { id: 'verification.run' }],
     skills: [{ id: 'vestara-verification' }],
-    permissions: ['builder.definition.read'],
+    permissions: ['builder.definition.read', 'verification.read', 'verification.run'],
     execution: { ...DEFAULT_EXECUTION, allowDelegation: false },
   },
   {
