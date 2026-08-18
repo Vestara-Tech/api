@@ -118,6 +118,11 @@ Run the smallest verification scope capable of invalidating the current
 change. Do not repeatedly run the full repository test suite after individual
 implementation tasks.
 
+### Verification Control Plane Invariant
+
+Agents do not determine sufficient verification. The Verification Control
+Plane determines the required verification scope and evidence for a change.
+
 ### Verification Levels
 
 - V0 — static: `tsc -p tsconfig.json` (typechecks src, tests, and scripts)

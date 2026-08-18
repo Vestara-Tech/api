@@ -36,7 +36,7 @@ export interface VerificationReportPayload {
   readonly escalated: boolean;
   readonly escalationReasons: readonly string[];
   readonly durationMs: number;
-  readonly result: 'pass' | 'fail';
+  readonly result: 'pass' | 'fail' | 'indeterminate';
   readonly verified: boolean;
   readonly evidence: string | null;
   readonly reportPath: string;
@@ -46,7 +46,7 @@ export interface VerificationReportPayload {
 export interface VerificationSummary {
   readonly level: string;
   readonly scope: string;
-  readonly result: 'pass' | 'fail';
+  readonly result: 'pass' | 'fail' | 'indeterminate';
   readonly cached: number;
   readonly executed: number;
   readonly durationMs: number;

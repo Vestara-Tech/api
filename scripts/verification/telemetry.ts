@@ -17,6 +17,7 @@ interface Aggregate {
   averageDurationMs: number;
   passes: number;
   failures: number;
+  indeterminate: number;
 }
 
 function main(): void {
@@ -39,6 +40,7 @@ function main(): void {
     averageDurationMs: 0,
     passes: 0,
     failures: 0,
+    indeterminate: 0,
   };
 
   let totalExecutedOrCached = 0;
@@ -50,7 +52,8 @@ function main(): void {
     if (entry.escalated) aggregate.escalations += 1;
     aggregate.averageDurationMs += entry.durationMs;
     if (entry.result === 'pass') aggregate.passes += 1;
-    else aggregate.failures += 1;
+    else if (entry.result === 'fail') aggregate.failures += 1;
+    else aggregate.indeterminate += 1;
   }
 
   if (entries.length > 0) aggregate.averageDurationMs /= entries.length;
@@ -72,6 +75,7 @@ function main(): void {
   console.log(`Escalations       ${aggregate.escalations} (${(aggregate.escalationRate * 100).toFixed(1)}%)`);
   console.log(`Passes            ${aggregate.passes}`);
   console.log(`Failures          ${aggregate.failures}`);
+  console.log(`Indeterminate     ${aggregate.indeterminate}`);
   console.log(`Avg duration      ${(aggregate.averageDurationMs / 1000).toFixed(2)}s`);
   console.log('');
 }

@@ -1,13 +1,10 @@
-import { dirname, join, resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import {
-  classifyFiles,
-  findTestFiles,
-  matchTestsForSource,
-  type VerificationConfig,
-} from './affected.ts';
-import { matchAnyGlob } from './glob.ts';
+import type { Classification } from './affected.ts';
+import { findTestFiles, matchTestsForSource } from './affected.ts';
+import { dependencyClosure, findOwningModule, moduleTests } from './graph/index.ts';
+import type { ModuleId, ValidatedVerificationGraph } from './graph/index.ts';
 
 export type ImpactLevel = 'V0' | 'V1' | 'V2' | 'V3';
 
@@ -27,74 +24,74 @@ export interface VerificationImpact {
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 export const REPO_ROOT_DIR = resolve(SCRIPT_DIR, '..', '..');
 
-/**
- * Map a changed source file to a module by explicit glob match. Returns the
- * module name, or null when the explicit map has no entry (convention-based
- * fallback is handled by the caller in computeImpact).
- */
-export function moduleForSource(source: string, config: VerificationConfig): string | null {
-  for (const [name, def] of Object.entries(config.modules)) {
-    if (matchAnyGlob(def.sources, source)) return name;
-  }
-  return null;
-}
-
-/** Resolve a module's test globs to concrete existing test files. */
-export function moduleTests(moduleName: string, config: VerificationConfig, knownTests: string[]): string[] {
-  const def = config.modules[moduleName];
-  if (!def) return [];
-  return knownTests.filter((test) => matchAnyGlob(def.tests, test));
-}
-
 export function allTests(repoRoot: string): string[] {
   return findTestFiles(repoRoot);
 }
 
-export function isContractChange(file: string, config: VerificationConfig): boolean {
-  return matchAnyGlob(config.contractPatterns, file);
+function moduleTestsFor(graph: ValidatedVerificationGraph, moduleName: string, knownTests: string[]): string[] {
+  return moduleTests(graph, moduleName, knownTests);
 }
 
-export function isSharedSource(file: string, config: VerificationConfig): boolean {
-  if (!file.startsWith('src/')) return false;
-  const segments = file.split('/');
-  if (segments.length < 2) return false;
-  const top = segments[1]!;
-  return config.sharedModules.includes(top);
+function collectDirectModules(
+  classification: Classification,
+  graph: ValidatedVerificationGraph,
+  knownTests: readonly string[],
+): { direct: ModuleId[]; unknownSources: string[]; sharedImpact: boolean; conventionTests: string[] } {
+  const direct = new Set<ModuleId>();
+  const unknownSources: string[] = [];
+  const conventionTests = new Set<string>();
+  let sharedImpact = classification.shared.length > 0;
+
+  const consider = [...classification.sources, ...classification.contracts];
+  for (const source of consider) {
+    const module = findOwningModule(graph, source);
+    if (module) {
+      direct.add(module);
+      continue;
+    }
+
+    const convention = matchTestsForSource(source, knownTests);
+    if (convention.length === 0) unknownSources.push(source);
+    else for (const test of convention) conventionTests.add(test);
+  }
+
+  return {
+    direct: [...direct].sort((left, right) => left.localeCompare(right)),
+    unknownSources,
+    sharedImpact,
+    conventionTests: [...conventionTests].sort(),
+  };
 }
 
 /**
  * FASTVERIFY-008: compute the verification impact of a set of changed files.
  *
  * Pipeline:
- *   explicit module map -> transitive dependency closure -> contract/shared
- *   classification -> test selection -> level determination.
+ *   pre-classified change set -> validated graph -> dependency closure ->
+ *   test selection -> level determination.
  *
  * Unknown impact always escalates; it is never silently skipped.
  */
 export function computeImpact(
-  repoRoot: string,
-  changed: string[],
-  config: VerificationConfig,
+  changedFiles: readonly string[],
+  classification: Classification,
+  graph: ValidatedVerificationGraph,
+  knownTests: readonly string[],
 ): VerificationImpact {
-  const classification = classifyFiles(changed, config);
-  const knownTests = findTestFiles(repoRoot);
-
   const impact: VerificationImpact = {
-    changedFiles: changed,
+    changedFiles: [...changedFiles].sort(),
     directlyAffectedModules: [],
     transitivelyAffectedModules: [],
     selectedTests: [],
     level: 'V1',
     reasons: [],
-    contractChanges: [],
+    contractChanges: [...classification.contracts].sort(),
     unknownSources: [],
     uncoveredModules: [],
-    sharedImpact: false,
+    sharedImpact: classification.shared.length > 0,
   };
 
   const selected = new Set<string>(classification.tests);
-  const direct = new Set<string>();
-  const transitive = new Set<string>();
   const reasons = new Set<string>();
   let level: ImpactLevel = 'V1';
 
@@ -113,72 +110,55 @@ export function computeImpact(
   }
 
   // 2. Contract changes (routes, schemas, types, contracts/).
-  for (const file of changed) {
-    if (isContractChange(file, config)) impact.contractChanges.push(file);
-  }
-  if (impact.contractChanges.length > 0) {
-    if (level === 'V1') level = 'V2';
+  if (impact.contractChanges.length > 0 && level === 'V1') {
+    level = 'V2';
+    reasons.add(`contract changes: ${impact.contractChanges.join(', ')}`);
+  } else if (impact.contractChanges.length > 0) {
     reasons.add(`contract changes: ${impact.contractChanges.join(', ')}`);
   }
 
   // 3. Module mapping for changed sources (including contract files, which
   //    map to the "contracts" module).
-  for (const source of [...classification.sources, ...classification.contracts]) {
-    if (isSharedSource(source, config)) {
-      impact.sharedImpact = true;
-      reasons.add(`shared infrastructure source changed: ${source}`);
-      continue;
+  const { direct, unknownSources, sharedImpact, conventionTests } = collectDirectModules(classification, graph, knownTests);
+  impact.directlyAffectedModules = direct;
+  impact.unknownSources = unknownSources;
+  impact.sharedImpact = sharedImpact;
+  for (const test of conventionTests) selected.add(test);
+
+  if (sharedImpact && level !== 'V3') {
+    level = 'V3';
+    if (classification.shared.length > 0) {
+      reasons.add(`shared infrastructure source changed: ${classification.shared.join(', ')}`);
     }
-    const module = moduleForSource(source, config);
-    if (module) {
-      direct.add(module);
-    } else {
-      // Convention fallback already inside moduleForSource; a null here means
-      // no module and no convention coverage.
-      const convention = matchTestsForSource(source, knownTests);
-      if (convention.length === 0) {
-        impact.unknownSources.push(source);
-      } else {
-        for (const test of convention) selected.add(test);
-      }
-    }
+  }
+
+  if (unknownSources.length > 0) {
+    if (level === 'V1') level = 'V2';
+    reasons.add(`unknown impact for changed sources: ${unknownSources.join(', ')}`);
   }
 
   // 4. Transitive dependency closure: modules that depend on a changed module
   //    may be affected by the change.
-  for (const module of direct) {
-    for (const [name, def] of Object.entries(config.modules)) {
-      if (def.dependsOn?.includes(module)) transitive.add(name);
-    }
-  }
+  const transitive = dependencyClosure(graph, direct);
+  impact.transitivelyAffectedModules = transitive;
 
-  // 5. Shared infrastructure impact -> V3 (repository-wide blast radius).
-  if (impact.sharedImpact && level !== 'V3') level = 'V3';
-
-  // 6. Unknown impact -> escalate; never skip silently.
-  if (impact.unknownSources.length > 0) {
-    if (level === 'V1') level = 'V2';
-    reasons.add(`unknown impact for changed sources: ${impact.unknownSources.join(', ')}`);
-  }
-
-  // 7. Select tests: affected modules (direct + transitive) + changed tests.
+  // 5. Select tests: affected modules (direct + transitive) + changed tests.
   const affected = [...direct, ...transitive];
   for (const module of affected) {
-    for (const test of moduleTests(module, config, knownTests)) selected.add(test);
+    for (const test of moduleTestsFor(graph, module, knownTests)) selected.add(test);
   }
-  impact.directlyAffectedModules = [...direct].sort();
-  impact.transitivelyAffectedModules = [...transitive].sort();
 
-  // 8. Uncovered modules: explicitly mapped but with no resolvable tests.
-  impact.uncoveredModules = [...direct].filter((module) => moduleTests(module, config, knownTests).length === 0).sort();
+  // 6. Uncovered modules: explicitly mapped but with no resolvable tests.
+  impact.uncoveredModules = [...direct].filter((module) => moduleTestsFor(graph, module, knownTests).length === 0).sort();
   if (impact.uncoveredModules.length > 0) {
     reasons.add(`modules without test coverage: ${impact.uncoveredModules.join(', ')}`);
     if (level === 'V1') level = 'V2';
   }
 
-  // 9. Docs-only change: no sources, no tests, no triggers -> V0 static.
+  // 7. Docs-only change: no sources, no tests, no triggers -> V0 static.
   if (
     classification.sources.length === 0 &&
+    classification.shared.length === 0 &&
     classification.tests.length === 0 &&
     level === 'V1' &&
     classification.docs.length > 0
@@ -187,13 +167,8 @@ export function computeImpact(
     reasons.add('docs-only change');
   }
 
-  // 10. No tests selected despite changed sources -> escalate.
-  if (
-    classification.sources.length > 0 &&
-    selected.size === 0 &&
-    level === 'V1' &&
-    config.escalateOnUnknownImpact
-  ) {
+  // 8. No tests selected despite changed sources -> escalate.
+  if (classification.sources.length > 0 && selected.size === 0 && level === 'V1') {
     level = 'V2';
     reasons.add('no tests selected for changed sources');
   }

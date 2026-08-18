@@ -80,7 +80,7 @@
       "sources": ["src/component/**"],
       "tests": ["tests/unit/component-module.test.ts", "tests/integration/component-api.test.ts"]
     },
-    "config": {
+    "configuration": {
       "sources": ["src/config/**", "src/configuration/**"],
       "tests": ["tests/unit/config*.test.ts", "tests/integration/config-api.test.ts", "tests/integration/config-expanded-api.test.ts"]
     },
@@ -159,7 +159,7 @@
     "startup": {
       "sources": ["src/startup/**"],
       "tests": ["tests/unit/startup*.test.ts", "tests/integration/startup-api.test.ts"],
-      "dependsOn": ["config", "core", "bootstrap"]
+      "dependsOn": ["configuration", "core", "bootstrap"]
     },
     "system": {
       "sources": ["src/system/**"],

@@ -3,6 +3,7 @@ import { join, relative } from 'node:path';
 
 import {
   detectPackageManager,
+  classifyFiles,
   findDependencyFiles,
   findSourceFiles,
   findTestFiles,
@@ -14,7 +15,6 @@ import {
 import {
   appendTelemetry,
   currentToolchain,
-  evidencePath,
   loadEvidence,
   saveEvidence,
   writeReport,
@@ -22,7 +22,8 @@ import {
   type VerificationReport,
 } from './evidence.ts';
 import { computeFingerprint } from './fingerprint.ts';
-import { computeImpact, moduleTests, type ImpactLevel } from './impact.ts';
+import { computeImpact, type ImpactLevel } from './impact.ts';
+import { buildVerificationGraph, moduleTests, resolveModuleId } from './graph/index.ts';
 import { matchAnyGlob } from './glob.ts';
 
 interface StepResult {
@@ -49,6 +50,25 @@ interface RunResult {
   cached: number;
   testSummary: TestSummary | null;
   passed: boolean;
+}
+
+function levelForScope(scope: 'static' | 'affected' | 'module' | 'platform'): ImpactLevel {
+  if (scope === 'static') return 'V0';
+  if (scope === 'module') return 'V2';
+  if (scope === 'platform') return 'V3';
+  return 'V1';
+}
+
+function formatGraphIssue(issue: VerificationReport['graphIssues'][number]): string {
+  const details = [
+    issue.module ? `module=${issue.module}` : null,
+    issue.dependency ? `dependency=${issue.dependency}` : null,
+    issue.alias ? `alias=${issue.alias}` : null,
+    issue.path ? `path=${issue.path}` : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  return details.length > 0 ? `[${issue.severity.toUpperCase()}] ${issue.code}: ${issue.message} (${details})` : `[${issue.severity.toUpperCase()}] ${issue.code}: ${issue.message}`;
 }
 
 const HELP = `Usage: pnpm verify [scope] [--json] [--no-cache] [module-name]
@@ -133,6 +153,12 @@ function printReport(report: VerificationReport): void {
   console.log(`Level: ${report.level} — ${report.scope}`);
   console.log('');
 
+  if (report.graphIssues.length > 0) {
+    console.log(`Verification Graph: ${report.graphValid ? 'VALID' : 'INVALID'}`);
+    for (const issue of report.graphIssues) console.log(`  ${formatGraphIssue(issue)}`);
+    console.log('');
+  }
+
   if (report.changedFiles.length > 0) {
     console.log('Changed');
     for (const file of report.changedFiles) console.log(`  ${file}`);
@@ -165,12 +191,18 @@ function printReport(report: VerificationReport): void {
 
   if (!report.verified) {
     console.log('');
-    console.log('NO TESTS EXECUTED — static verification only. Do not claim test verification.');
+    if (report.graphValid) {
+      console.log('NO TESTS EXECUTED — static verification only. Do not claim test verification.');
+    } else {
+      console.log('NO TESTS EXECUTED — verification graph is invalid. Do not claim test verification.');
+    }
   }
 
   const summary = report.executedTests.length > 0 || report.cached > 0 ? report : null;
   console.log('');
-  if (summary) {
+  if (report.result === 'indeterminate') {
+    console.log(`Result:   ${report.result.toUpperCase()}`);
+  } else if (summary) {
     console.log(`Result:   ${report.result.toUpperCase()}`);
     console.log(`Executed  ${summary.executedTests.length}`);
     console.log(`Cached    ${report.cached}`);
@@ -202,25 +234,77 @@ function main(): void {
   const pm = detectPackageManager(REPO_ROOT);
   const scope = resolveScope(positional[0], config.defaultLevel);
   const moduleName = positional[1];
-  const moduleDefinition = moduleName ? config.modules[moduleName] : undefined;
-  const moduleCwd = moduleDefinition?.cwd ? join(REPO_ROOT, moduleDefinition.cwd) : REPO_ROOT;
-
   const start = Date.now();
   const changed = gitChangedFiles(REPO_ROOT);
+  const classification = classifyFiles(changed, config);
+  const allSourceFiles = findSourceFiles(REPO_ROOT);
   const allTestFiles = findTestFiles(REPO_ROOT);
   const dependencyFiles = findDependencyFiles(REPO_ROOT, config);
+  const graphResult = buildVerificationGraph(REPO_ROOT, config);
+  const baseLevel = levelForScope(scope);
 
-  let level: ImpactLevel = 'V0';
+  if (!graphResult.valid || graphResult.graph === null) {
+    const report: VerificationReport = {
+      version: 1,
+      level: baseLevel,
+      scope,
+      changedFiles: changed,
+      affectedModules: [],
+      selectedTests: [],
+      executedTests: [],
+      reusedTests: [],
+      skippedTests: [],
+      passed: 0,
+      failed: 0,
+      cached: 0,
+      escalated: false,
+      escalationReasons: [],
+      durationMs: Date.now() - start,
+      graphValid: false,
+      graphIssues: graphResult.issues,
+      result: 'indeterminate',
+      verified: false,
+      evidence: null,
+    };
+
+    const reportPath = writeReport(report);
+    appendTelemetry({
+      ts: new Date().toISOString(),
+      level: report.level,
+      scope,
+      changed: changed.length,
+      selected: 0,
+      executed: 0,
+      cached: 0,
+      escalated: false,
+      durationMs: report.durationMs,
+      result: 'indeterminate',
+    });
+
+    if (jsonFlag) {
+      console.log(JSON.stringify({ ...report, reportPath, fingerprint: null }, null, 2));
+    } else {
+      printReport(report);
+      console.log(`Report: ${reportPath}`);
+    }
+
+    process.exit(1);
+  }
+
+  const graph = graphResult.graph!;
+
+  let level: ImpactLevel = baseLevel;
   let sourceFiles: string[] = [];
   let selectedTests: string[] = [];
   let affectedModules: string[] = [];
   let escalationReasons: string[] = [];
   let escalated = false;
+  let moduleCwd = REPO_ROOT;
 
   if (scope === 'static') {
     level = 'V0';
   } else if (scope === 'affected') {
-    const impact = computeImpact(REPO_ROOT, changed, config);
+    const impact = computeImpact(changed, classification, graph, allTestFiles);
     level = impact.level;
     affectedModules = [...impact.directlyAffectedModules, ...impact.transitivelyAffectedModules];
     escalationReasons = impact.reasons;
@@ -233,21 +317,29 @@ function main(): void {
   } else if (scope === 'module') {
     level = 'V2';
     if (moduleName) {
-      if (config.modules[moduleName]) {
-        affectedModules = [moduleName];
-        selectedTests = moduleTests(moduleName, config, allTestFiles);
-        sourceFiles = findSourceFiles(REPO_ROOT).filter((f) => matchAnyGlob(config.modules[moduleName]!.sources, f));
+      const resolvedModule = resolveModuleId(graph, moduleName);
+      if (resolvedModule) {
+        const module = graph.modules.get(resolvedModule);
+        if (module) {
+          affectedModules = [String(resolvedModule)];
+          selectedTests = moduleTests(graph, moduleName, allTestFiles);
+          sourceFiles = allSourceFiles.filter((file) => matchAnyGlob(module.sources as string[], file));
+          moduleCwd = module.cwd ? join(REPO_ROOT, module.cwd) : REPO_ROOT;
+        } else {
+          selectedTests = [moduleName];
+          sourceFiles = changed;
+        }
       } else {
         selectedTests = [moduleName];
         sourceFiles = changed;
       }
     } else {
       selectedTests = allTestFiles;
-      sourceFiles = findSourceFiles(REPO_ROOT);
+      sourceFiles = allSourceFiles;
     }
   } else {
     level = 'V3';
-    sourceFiles = findSourceFiles(REPO_ROOT);
+    sourceFiles = allSourceFiles;
     selectedTests = allTestFiles;
   }
 
@@ -324,6 +416,8 @@ function main(): void {
     escalated,
     escalationReasons,
     durationMs: Date.now() - start,
+    graphValid: true,
+    graphIssues: graphResult.issues,
     result,
     verified,
     evidence: verified ? fingerprint : null,
