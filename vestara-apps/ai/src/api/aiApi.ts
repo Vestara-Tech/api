@@ -211,6 +211,41 @@ export interface ActivityRoomPreviewRequestShape {
   readonly principalId?: string;
 }
 
+export interface ActivityExecutionSummaryShape {
+  readonly executionId: string;
+  readonly goal: string;
+  readonly complexity: 'simple' | 'standard' | 'complex';
+  readonly status: string;
+  readonly participants: readonly string[];
+  readonly verification: {
+    readonly conclusion: 'pass' | 'fail' | 'indeterminate' | 'pending';
+    readonly handoffEligible: boolean;
+  };
+  readonly changedFileCount: number;
+  readonly startedAt: string;
+  readonly updatedAt: string;
+}
+
+export interface ActivityHistoryPageShape {
+  readonly items: readonly ActivityExecutionSummaryShape[];
+  readonly nextCursor?: string;
+  readonly hasMore: boolean;
+}
+
+export interface ActivityHistoryQueryShape {
+  readonly goal?: string;
+  readonly status?: readonly string[];
+  readonly complexity?: readonly ('simple' | 'standard' | 'complex')[];
+  readonly agentId?: string;
+  readonly workflowId?: string;
+  readonly verification?: readonly ('pass' | 'fail' | 'indeterminate' | 'pending')[];
+  readonly from?: string;
+  readonly to?: string;
+  readonly sort?: 'newest' | 'oldest';
+  readonly cursor?: string;
+  readonly limit?: number;
+}
+
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set('Accept', 'application/json');
@@ -249,6 +284,9 @@ export const aiApi = {
       body: JSON.stringify(body),
     }),
 
+  activityHistoryBrowse: (query: ActivityHistoryQueryShape) =>
+    request<ActivityHistoryPageShape>(`/api/v2/activity-room/history/browse?${buildHistoryQuery(query)}`),
+
   generate: (body: AiGenerateRequest) => request<{ content: string }>('/api/v2/ai/generate', { method: 'POST', body: JSON.stringify(body) }),
 
   stream: (body: AiGenerateRequest, onEvent: (event: AiStreamEvent) => void): Promise<void> =>
@@ -277,3 +315,22 @@ export const aiApi = {
       }
     }),
 };
+
+function buildHistoryQuery(query: ActivityHistoryQueryShape): string {
+  const params = new URLSearchParams();
+  const append = (key: string, value: string | number): void => {
+    params.append(key, String(value));
+  };
+  if (query.goal !== undefined && query.goal.trim()) append('goal', query.goal.trim());
+  if (query.status && query.status.length > 0) query.status.forEach((value) => append('status', value));
+  if (query.complexity && query.complexity.length > 0) query.complexity.forEach((value) => append('complexity', value));
+  if (query.agentId !== undefined) append('agentId', query.agentId);
+  if (query.workflowId !== undefined) append('workflowId', query.workflowId);
+  if (query.verification && query.verification.length > 0) query.verification.forEach((value) => append('verification', value));
+  if (query.from !== undefined) append('from', query.from);
+  if (query.to !== undefined) append('to', query.to);
+  if (query.sort !== undefined) append('sort', query.sort);
+  if (query.cursor !== undefined) append('cursor', query.cursor);
+  if (query.limit !== undefined) append('limit', query.limit);
+  return params.toString();
+}

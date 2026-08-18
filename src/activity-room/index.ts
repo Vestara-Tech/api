@@ -35,6 +35,18 @@ export type { RecordExecutionInput, RecordCoordinatorInput, ActivityHistoryRecor
 export { recoverExecution, recoverEvents } from './history/recovery.js';
 export type { RecoveredExecution } from './history/recovery.js';
 
+// ARX-CP2 ARX-012 — Execution browser.
+export type {
+  ActivityVerificationConclusion,
+  ActivityBrowserSort,
+  ActivityHistoryQuery,
+  ActivityExecutionSummary,
+  ActivityHistoryPage,
+  ActivityHistoryCursor,
+} from './browse/contracts.js';
+export { ActivityBrowserImpl } from './browse/browser.js';
+export type { ActivityBrowser } from './browse/browser.js';
+
 export { normalizeEvent, normalizeEvents, isInternalEvent } from './projection/event-normalizer.js';
 export type { RawExecutionEvent } from './projection/event-normalizer.js';
 

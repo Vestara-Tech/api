@@ -8,6 +8,9 @@ import type { WorkflowService } from '../workflow/service/workflow-service.js';
 import { readLatestVerificationReport } from '../verification/index.js';
 import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/index.js';
 import { recoverExecution } from '../activity-room/index.js';
+import type { ActivityBrowser } from '../activity-room/index.js';
+import type { ActivityExecutionStatus, ActivityExecutionComplexity } from '../activity-room/index.js';
+import type { ActivityVerificationConclusion } from '../activity-room/index.js';
 
 const ExecutionIntentSchema = Type.Object({
   kind: Type.Union([
@@ -138,6 +141,27 @@ const ActivityExecutionProjectionSchema = Type.Object({
   updatedAt: Type.String(),
 });
 
+const ActivityExecutionSummarySchema = Type.Object({
+  executionId: Type.String(),
+  goal: Type.String(),
+  complexity: Type.Union([Type.Literal('simple'), Type.Literal('standard'), Type.Literal('complex')]),
+  status: Type.String(),
+  participants: Type.Array(Type.String()),
+  verification: Type.Object({
+    conclusion: Type.Union([Type.Literal('pass'), Type.Literal('fail'), Type.Literal('indeterminate'), Type.Literal('pending')]),
+    handoffEligible: Type.Boolean(),
+  }),
+  changedFileCount: Type.Integer(),
+  startedAt: Type.String(),
+  updatedAt: Type.String(),
+});
+
+const ActivityHistoryPageSchema = Type.Object({
+  items: Type.Array(ActivityExecutionSummarySchema),
+  nextCursor: Type.Optional(Type.String()),
+  hasMore: Type.Boolean(),
+});
+
 const AgentRunSummarySchema = Type.Object({
   id: Type.String(),
   agentId: Type.String(),
@@ -251,6 +275,7 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const workflow = app.application.workflow.service;
   const history = app.application.container.resolve<ActivityHistoryStore>('activity.history');
   const recorder = app.application.container.resolve<ActivityHistoryRecorder>('activity.recorder');
+  const browser = app.application.container.resolve<ActivityBrowser>('activity.browser');
 
   app.get(
     '/api/v2/activity-room/executions',
@@ -314,6 +339,47 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
     async (request, reply) => {
       const events = history.events(request.params.executionId, request.query.afterSequence);
       return reply.send(events as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/browse',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Browse durable Activity history as bounded, cursor-paginated summaries',
+        querystring: Type.Object({
+          goal: Type.Optional(Type.String()),
+          status: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+          complexity: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+          agentId: Type.Optional(Type.String()),
+          workflowId: Type.Optional(Type.String()),
+          verification: Type.Optional(Type.Union([Type.String(), Type.Array(Type.String())])),
+          from: Type.Optional(Type.String()),
+          to: Type.Optional(Type.String()),
+          sort: Type.Optional(Type.Union([Type.Literal('newest'), Type.Literal('oldest')])),
+          cursor: Type.Optional(Type.String()),
+          limit: Type.Optional(Type.String()),
+        }),
+        response: { 200: ActivityHistoryPageSchema },
+      },
+    },
+    async (request, reply) => {
+      const page = browser.browse({
+        roomId: 'activity-room',
+        ...(request.query.goal !== undefined ? { goal: request.query.goal } : {}),
+        ...(request.query.status !== undefined ? { status: toArray(request.query.status) as ActivityExecutionStatus[] } : {}),
+        ...(request.query.complexity !== undefined ? { complexity: toArray(request.query.complexity) as ActivityExecutionComplexity[] } : {}),
+        ...(request.query.agentId !== undefined ? { agentId: request.query.agentId } : {}),
+        ...(request.query.workflowId !== undefined ? { workflowId: request.query.workflowId } : {}),
+        ...(request.query.verification !== undefined ? { verification: toArray(request.query.verification) as ActivityVerificationConclusion[] } : {}),
+        ...(request.query.from !== undefined ? { from: request.query.from } : {}),
+        ...(request.query.to !== undefined ? { to: request.query.to } : {}),
+        ...(request.query.sort !== undefined ? { sort: request.query.sort } : {}),
+        ...(request.query.cursor !== undefined ? { cursor: request.query.cursor } : {}),
+        ...(request.query.limit !== undefined ? { limit: Number(request.query.limit) } : {}),
+      });
+      return reply.send(page as never);
     },
   );
 
@@ -527,6 +593,10 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
     },
   );
 };
+
+function toArray(value: string | string[]): string[] {
+  return Array.isArray(value) ? [...value] : [value];
+}
 
 function toExecutionView(execution: {
   readonly id: string;

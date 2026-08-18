@@ -627,6 +627,7 @@
       "tests": [
         "tests/unit/arx-cp1-projection.test.ts",
         "tests/unit/arx-cp2-011-history.test.ts",
+        "tests/unit/arx-cp2-012-browse.test.ts",
         "tests/integration/activity-room-api.test.ts"
       ],
       "dependsOn": [

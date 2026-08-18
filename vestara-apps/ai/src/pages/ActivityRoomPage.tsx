@@ -6,6 +6,7 @@ import { agentEventToParts } from '@vestara/ai-ui';
 import { aiApi, type ActivityRoomExecutionPlanShape, type ActivityRoomExecutionRecordShape, type ActivityRoomSnapshotShape, type VerificationReportShape } from '../api/aiApi';
 import {
   ExecutionApprovalCard,
+  ExecutionBrowser,
   ExecutionEvidencePanel,
   ExecutionInspector,
   ExecutionPlanPreview,
@@ -215,7 +216,7 @@ export function ActivityRoomPage() {
   );
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1280 }}>
+    <Box sx={{ p: 3 }}>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 0.5, alignItems: { sm: 'center' }, justifyContent: 'space-between' }}>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
@@ -275,6 +276,7 @@ export function ActivityRoomPage() {
       </Stack>
 
       <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2} sx={{ mb: 2, alignItems: 'flex-start' }}>
+        <ExecutionBrowser />
         <Stack spacing={2} sx={{ flex: 1, minWidth: 0 }}>
           <ExecutionInspector
             snapshot={snapshot}

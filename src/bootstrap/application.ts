@@ -86,6 +86,8 @@ import { ExecutionServiceImpl } from '../execution/service.js';
 import { FileExecutionStore } from '../execution/store.js';
 import { FileActivityHistoryStore, ActivityHistoryRecorderImpl } from '../activity-room/history/index.js';
 import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/history/index.js';
+import { ActivityBrowserImpl } from '../activity-room/browse/browser.js';
+import type { ActivityBrowser } from '../activity-room/browse/browser.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
 import { registerComponentCapability } from './component-capability.js';
@@ -174,6 +176,7 @@ export interface Application {
   readonly milestone: MilestonePlatform;
   readonly activityHistory: ActivityHistoryStore;
   readonly activityRecorder: ActivityHistoryRecorder;
+  readonly activityBrowser: ActivityBrowser;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -318,6 +321,7 @@ export function createApplication(config: AppConfig): Application {
     join(process.cwd(), '.vestara', 'cache', 'activity-room', 'history.json'),
   );
   const activityRecorder = new ActivityHistoryRecorderImpl(activityHistory);
+  const activityBrowser = new ActivityBrowserImpl(activityHistory);
 
   // ── OS Module (OS-001..) ──────────────────────────────────
   const os = buildOsPlatform();
@@ -507,6 +511,7 @@ export function createApplication(config: AppConfig): Application {
   container.register('execution.service', execution);
   container.register('activity.history', activityHistory);
   container.register('activity.recorder', activityRecorder);
+  container.register('activity.browser', activityBrowser);
   container.register('os', os.service);
   container.register('page-builder.service', pageBuilder.service);
   container.register('application-builder.service', applicationBuilder.service);
@@ -566,6 +571,7 @@ export function createApplication(config: AppConfig): Application {
     milestone,
     activityHistory,
     activityRecorder,
+    activityBrowser,
     shutdown,
     systemStatus(): SystemStatus {
       return {

@@ -1,5 +1,6 @@
 export * from './ExecutionApprovalCard';
 export * from './ActivityRoomContextCard';
+export * from './ExecutionBrowser';
 export * from './ExecutionEvidencePanel';
 export * from './ExecutionInspector';
 export * from './ExecutionPlanPreview';

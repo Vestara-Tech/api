@@ -138,4 +138,53 @@ describe('activity room API', () => {
       await reloadedApp.close();
     }
   });
+
+  it('browses bounded, filtered history with an opaque cursor', async () => {
+    await app.inject({
+      method: 'POST',
+      url: '/api/v2/activity-room/preview',
+      payload: { goal: 'Build the Theme Builder', agentId: 'vestara-developer' },
+    });
+    await app.inject({
+      method: 'POST',
+      url: '/api/v2/activity-room/preview',
+      payload: { goal: 'Add a CLI command that shows DEX runtime status', agentId: 'vestara-developer' },
+    });
+
+    const all = await app.inject({
+      method: 'GET',
+      url: `/api/v2/activity-room/history/browse?limit=10&sort=newest`,
+    });
+    expect(all.statusCode).toBe(200);
+    const allBody = all.json() as { items?: readonly { executionId?: string; goal?: string; status?: string; changedFileCount?: number }[]; hasMore?: boolean };
+    expect(allBody.items?.length).toBe(2);
+    expect(allBody.items?.map((item) => item.goal)).toEqual(['Add a CLI command that shows DEX runtime status', 'Build the Theme Builder']);
+
+    const filtered = await app.inject({
+      method: 'GET',
+      url: '/api/v2/activity-room/history/browse?status=planning&goal=Theme%20Builder',
+    });
+    expect(filtered.statusCode).toBe(200);
+    const filteredBody = filtered.json() as { items?: readonly { goal?: string }[]; hasMore?: boolean };
+    expect(filteredBody.items?.map((item) => item.goal)).toEqual(['Build the Theme Builder']);
+
+    const single = await app.inject({
+      method: 'GET',
+      url: '/api/v2/activity-room/history/browse?limit=1&sort=oldest',
+    });
+    expect(single.statusCode).toBe(200);
+    const singleBody = single.json() as { items?: readonly { goal?: string }[]; hasMore?: boolean; nextCursor?: string };
+    expect(singleBody.items?.map((item) => item.goal)).toEqual(['Build the Theme Builder']);
+    expect(singleBody.hasMore).toBe(true);
+    expect(singleBody.nextCursor).toEqual(expect.any(String));
+
+    const next = await app.inject({
+      method: 'GET',
+      url: `/api/v2/activity-room/history/browse?limit=1&sort=oldest&cursor=${encodeURIComponent(singleBody.nextCursor ?? '')}`,
+    });
+    expect(next.statusCode).toBe(200);
+    const nextBody = next.json() as { items?: readonly { goal?: string }[]; hasMore?: boolean };
+    expect(nextBody.items?.map((item) => item.goal)).toEqual(['Add a CLI command that shows DEX runtime status']);
+    expect(nextBody.hasMore).toBe(false);
+  });
 });
