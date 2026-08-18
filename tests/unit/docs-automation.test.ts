@@ -43,10 +43,10 @@ describe('docs git automation', () => {
   });
 
   it('formats the verification summary for commit bodies', () => {
-    const body = buildVerificationBody(['pnpm docs:check', 'pnpm verify:affected --json'], verification);
+    const body = buildVerificationBody(['pnpm docs:verify --targets=summary,readme', 'pnpm verify:affected --json'], verification);
 
     expect(body).toContain('Verification:');
-    expect(body).toContain('pnpm docs:check');
+    expect(body).toContain('pnpm docs:verify --targets=summary,readme');
     expect(body).toContain('Result: PASS');
     expect(body).toContain('Fingerprint: sha256:1234abcd');
     expect(body).toContain('Report: .vestara/evidence/verification/latest.json');
@@ -55,7 +55,7 @@ describe('docs git automation', () => {
   it('formats the final commit body with updated paths and verification evidence', () => {
     const body = buildCommitBody(
       ['README.md', 'docs/automation/generated/platform-summary.md'],
-      ['pnpm docs:check', 'pnpm verify:affected --json'],
+      ['pnpm docs:verify --targets=summary,readme', 'pnpm verify:affected --json'],
       verification,
     );
 

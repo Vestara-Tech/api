@@ -23,6 +23,7 @@ push unverified changes.
 The repository now contains the full documentation automation chain:
 
 - `docs:sync` / `docs:check`
+- `docs:verify`
 - `docs:commit` / `docs:push` / `docs:ship`
 - `docs-sync.yml` CI enforcement
 - generated platform summary + README sync block

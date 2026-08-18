@@ -20,6 +20,7 @@ export interface VerificationConfig {
   version: number;
   defaultLevel: Scope;
   levels: Record<string, string>;
+  aliases: Record<string, string>;
   fullVerificationTriggers: string[];
   neverWatch: boolean;
   reuseEvidence: boolean;
@@ -46,6 +47,7 @@ export const DEFAULT_CONFIG: VerificationConfig = {
     'vitest.config.ts',
     '.vestara/verification.json',
   ],
+  aliases: {},
   neverWatch: true,
   reuseEvidence: true,
   escalateOnUnknownImpact: true,
@@ -157,6 +159,7 @@ function isWorkspaceConfigFile(file: string): boolean {
 
 export interface Classification {
   sources: string[];
+  shared: string[];
   tests: string[];
   triggers: string[];
   tooling: string[];
@@ -168,6 +171,7 @@ export interface Classification {
 export function classifyFiles(files: string[], config: VerificationConfig): Classification {
   const result: Classification = {
     sources: [],
+    shared: [],
     tests: [],
     triggers: [],
     tooling: [],
@@ -179,7 +183,12 @@ export function classifyFiles(files: string[], config: VerificationConfig): Clas
     if (config.fullVerificationTriggers.includes(file)) result.triggers.push(file);
     else if (file.startsWith('scripts/verification/')) result.tooling.push(file);
     else if (file.startsWith('contracts/')) result.contracts.push(file);
-    else if (file.startsWith('src/')) result.sources.push(file);
+    else if (file.startsWith('src/')) {
+      const segments = file.split('/');
+      const top = segments[1];
+      if (top !== undefined && config.sharedModules.includes(top)) result.shared.push(file);
+      else result.sources.push(file);
+    }
     else if (isWorkspaceSourceFile(file)) result.sources.push(file);
     else if (file.startsWith('tests/') || TEST_PATTERN.test(file)) result.tests.push(file);
     else if (isWorkspaceTestFile(file)) result.tests.push(file);
@@ -269,7 +278,7 @@ export function selectAffectedTests(
   changed: string[],
   config: VerificationConfig,
 ): Selection {
-  const { sources, tests, triggers, tooling, other } = classifyFiles(changed, config);
+  const { sources, shared, tests, triggers, tooling, other } = classifyFiles(changed, config);
   const selection: Selection = { tests: [], escalateTo: 'none', reason: null };
 
   if (triggers.length > 0) {
@@ -287,6 +296,12 @@ export function selectAffectedTests(
   if (other.length > 0) {
     selection.escalateTo = 'platform';
     selection.reason = `unclassifiable changed files: ${other.join(', ')}`;
+    return selection;
+  }
+
+  if (shared.length > 0) {
+    selection.escalateTo = 'platform';
+    selection.reason = `shared infrastructure source changed: ${shared.join(', ')}`;
     return selection;
   }
 

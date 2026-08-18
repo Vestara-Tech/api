@@ -9,7 +9,7 @@ Generated from the current repository state.
 | Routes in OpenAPI | 337 |
 | Registered capabilities | 34 |
 | Enabled capabilities | 34 |
-| Source areas | 43 |
+| Source areas | 44 |
 | ADRs | 50 |
 
 ## Package scripts
@@ -25,6 +25,7 @@ Generated from the current repository state.
 | `contracts:frontend:check` | `tsx scripts/check-frontend-contracts.ts` |
 | `docs:sync` | `tsx scripts/docs/sync.ts` |
 | `docs:check` | `tsx scripts/docs/check.ts` |
+| `docs:verify` | `tsx scripts/docs/verify.ts` |
 | `docs:commit` | `tsx scripts/git/commit-docs.ts` |
 | `docs:push` | `tsx scripts/git/push-docs.ts` |
 | `docs:ship` | `tsx scripts/docs/ship.ts` |
@@ -75,6 +76,7 @@ Generated from the current repository state.
 | `src/tool/` | module | 7 |
 | `src/types/` | support | 1 |
 | `src/user/` | module | 7 |
+| `src/worker/` | module | 12 |
 | `src/workflow/` | module | 6 |
 
 ## Capabilities

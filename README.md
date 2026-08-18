@@ -803,7 +803,7 @@ Generated from the current repository state.
 
 - OpenAPI routes: 337
 - Registered capabilities: 34 (34 enabled)
-- Source areas: 43
+- Source areas: 44
 - ADRs tracked: 50
 
 - Full summary: [docs/automation/generated/platform-summary.md](./docs/automation/generated/platform-summary.md)
@@ -818,6 +818,7 @@ Key commands:
 - `contracts:frontend:check` → `tsx scripts/check-frontend-contracts.ts`
 - `docs:sync` → `tsx scripts/docs/sync.ts`
 - `docs:check` → `tsx scripts/docs/check.ts`
+- `docs:verify` → `tsx scripts/docs/verify.ts`
 - `docs:commit` → `tsx scripts/git/commit-docs.ts`
 - `docs:push` → `tsx scripts/git/push-docs.ts`
 - `docs:ship` → `tsx scripts/docs/ship.ts`

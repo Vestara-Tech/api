@@ -31,8 +31,9 @@ Database Module never returns resolved passwords through its control API.
 
 `DatabaseAdapter` (connect/test/introspect/execute/planMigration/applyMigration)
 is the extensibility seam; Marketplace contributes adapters (PostgreSQL,
-MySQL, SQLite, Mongo). The **SQLite reference adapter** (node:sqlite) proves
-the contract deterministically; PostgreSQL follows the same shape next.
+MySQL, SQLite, Mongo). The **SQLite-compatible reference adapter** proves the
+contract deterministically without a native runtime dependency; PostgreSQL
+follows the same shape next.
 
 ### 4. Definition aggregate + diff + migration
 
@@ -50,9 +51,10 @@ review (rows affected, dependencies, rollback) before apply.
 ## Consequences
 
 - DB-001..007 foundation complete: contracts + canonical types, connection
-  model with secret refs, adapter contract + registry, SQLite reference
-  adapter, definition aggregate + store, schema diff, migration planner +
-  risk analysis, control API (`/api/v2/database/*`), capability `database`.
+  model with secret refs, adapter contract + registry, SQLite-compatible
+  reference adapter, definition aggregate + store, schema diff, migration
+  planner + risk analysis, control API (`/api/v2/database/*`), capability
+  `database`.
 - 11 tests (7 unit + 4 integration). 480 total.
 - DB-008..022 (PostgreSQL adapter, introspection, query runtime, Permission/
   Generator/API-Builder/Diagnostics integration, Database Builder UI) follow.

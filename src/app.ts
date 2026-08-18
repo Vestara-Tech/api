@@ -1,6 +1,6 @@
 import type { TypeBoxTypeProvider } from '@fastify/type-provider-typebox';
 import { TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox';
-import Fastify, { type FastifyServerOptions } from 'fastify';
+import Fastify, { LogController, type FastifyServerOptions } from 'fastify';
 import type { AppConfig } from './config/schema.js';
 import type { Application } from './bootstrap/application.js';
 import { registerRequestContextPlugin } from './plugins/request-context.js';
@@ -58,6 +58,7 @@ export interface BuildAppOptions {
   readonly config: AppConfig;
   readonly application: Application;
   readonly exposeDocs?: boolean;
+  readonly includeReferenceDatabaseAdapter?: boolean;
 }
 
 export type VestaraFastifyInstance = ReturnType<typeof buildApp>;
@@ -68,7 +69,7 @@ export async function buildApp(options: BuildAppOptions) {
       level: options.config.logLevel,
       base: { service: options.config.service },
     },
-    disableRequestLogging: true,
+    logController: new LogController({ disableRequestLogging: true }),
   };
 
   const app = Fastify(fastifyOptions)
@@ -87,6 +88,11 @@ export async function buildApp(options: BuildAppOptions) {
     authentication: options.application.authentication,
     identities: options.application.container.resolve('auth.identityStore'),
   });
+
+  if (options.includeReferenceDatabaseAdapter ?? true) {
+    const { SqliteAdapter } = await import('./database/adapters/sqlite.js');
+    options.application.database.adapters.register(new SqliteAdapter());
+  }
 
   await registerOpenApi(app, options.exposeDocs ?? true);
   await app.register(healthRoutes);

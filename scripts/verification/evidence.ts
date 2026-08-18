@@ -3,6 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { REPO_ROOT } from './affected.ts';
+import type { GraphIssue } from './graph/types.ts';
 import { ENGINE_VERSION } from './fingerprint.ts';
 
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
@@ -28,6 +29,8 @@ export interface Evidence {
   toolchain: ToolchainInfo;
 }
 
+export type VerificationResult = 'pass' | 'fail' | 'indeterminate';
+
 export interface VerificationReport {
   version: 1;
   level: string;
@@ -44,7 +47,9 @@ export interface VerificationReport {
   escalated: boolean;
   escalationReasons: string[];
   durationMs: number;
-  result: 'pass' | 'fail';
+  graphValid: boolean;
+  graphIssues: readonly GraphIssue[];
+  result: VerificationResult;
   verified: boolean;
   evidence: string | null;
 }
@@ -59,7 +64,7 @@ export interface TelemetryEntry {
   cached: number;
   escalated: boolean;
   durationMs: number;
-  result: 'pass' | 'fail';
+  result: VerificationResult;
 }
 
 function ensureDir(dir: string): void {

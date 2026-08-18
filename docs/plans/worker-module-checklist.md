@@ -3,6 +3,7 @@
 Grounding:
 
 - [ADR-0051 — Worker module for background jobs and scheduling](../adr/ADR-0051-worker-module-background-jobs-and-scheduling.md)
+- [Worker Module Roadmap](./worker-module-roadmap.md)
 - [Verification policy](../engineering/verification-policy.md)
 
 Status: draft
