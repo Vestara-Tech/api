@@ -40,7 +40,9 @@
       ],
       "tests": [
         "tests/unit/agent*.test.ts",
-        "tests/integration/ai-agent-api.test.ts"
+        "tests/integration/ai-agent-api.test.ts",
+        "tests/unit/dex-cp2-context-selector.test.ts",
+        "tests/unit/dex-cp2-execution-context.test.ts"
       ]
     },
     "ai": {
@@ -107,7 +109,11 @@
         "src/car/**"
       ],
       "tests": [
-        "tests/unit/car-module.test.ts"
+        "tests/unit/car-module.test.ts",
+        "tests/unit/dex-cp0-config.test.ts",
+        "tests/unit/dex-cp3-developer-runtime.test.ts",
+        "tests/unit/dex-cp5-evidence.test.ts",
+        "tests/unit/dex-cp6-coordinator.test.ts"
       ]
     },
     "component": {
@@ -454,7 +460,8 @@
       "tests": [
         "tests/unit/verification*.test.ts",
         "tests/unit/verification/**/*.test.ts",
-        "tests/integration/verification-api.test.ts"
+        "tests/integration/verification-api.test.ts",
+        "tests/unit/dex-cp4-vctrl.test.ts"
       ]
     },
     "bootstrap": {
@@ -507,7 +514,8 @@
         "tests/unit/agent-platform.test.ts",
         "tests/unit/agent-tool-loop.test.ts",
         "tests/unit/car-module.test.ts",
-        "tests/unit/workflow-runtime.test.ts"
+        "tests/unit/workflow-runtime.test.ts",
+        "tests/unit/dex-cp1-skill-resolution.test.ts"
       ],
       "dependsOn": [
         "core"
@@ -610,6 +618,22 @@
         "task",
         "verification",
         "workflow"
+      ]
+    },
+    "activity-room": {
+      "sources": [
+        "src/activity-room/**"
+      ],
+      "tests": [
+        "tests/unit/arx-cp1-projection.test.ts",
+        "tests/integration/activity-room-api.test.ts"
+      ],
+      "dependsOn": [
+        "car",
+        "execution",
+        "verification",
+        "agent",
+        "skill"
       ]
     }
   }
