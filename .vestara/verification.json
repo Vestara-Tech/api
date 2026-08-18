@@ -231,6 +231,88 @@
     "app": {
       "sources": ["src/app.ts", "src/main.ts"],
       "tests": ["tests/integration/server.test.ts", "tests/integration/startup-api.test.ts"]
+    },
+    "bootstrap": {
+      "sources": ["src/bootstrap/**", "src/plugins/**", "src/types/**"],
+      "tests": [
+        "tests/unit/boot-assets.test.ts",
+        "tests/unit/boot-presentation.test.ts",
+        "tests/unit/errors.test.ts",
+        "tests/unit/buses.test.ts",
+        "tests/unit/frontend-contracts.test.ts",
+        "tests/unit/grub-core.test.ts",
+        "tests/unit/grub-service.test.ts",
+        "tests/integration/cors.test.ts",
+        "tests/integration/server.test.ts"
+      ],
+      "dependsOn": ["core", "configuration"]
+    },
+    "core": {
+      "sources": ["src/core/**"],
+      "tests": ["tests/unit/errors.test.ts", "tests/unit/buses.test.ts"]
+    },
+    "pagebuilder": {
+      "sources": ["src/pagebuilder/**"],
+      "tests": ["tests/unit/builder-platform.test.ts"],
+      "dependsOn": ["core"]
+    },
+    "skill": {
+      "sources": ["src/skill/**"],
+      "tests": [
+        "tests/unit/agent-platform.test.ts",
+        "tests/unit/agent-tool-loop.test.ts",
+        "tests/unit/car-module.test.ts",
+        "tests/unit/workflow-runtime.test.ts"
+      ],
+      "dependsOn": ["core"]
+    },
+    "tool": {
+      "sources": ["src/tool/**"],
+      "tests": [
+        "tests/unit/agent-generator-tools.test.ts",
+        "tests/unit/agent-platform.test.ts",
+        "tests/unit/agent-tool-loop.test.ts",
+        "tests/unit/car-module.test.ts",
+        "tests/unit/docs-automation.test.ts",
+        "tests/unit/verification/**/*.test.ts",
+        "tests/unit/workflow-runtime.test.ts"
+      ],
+      "dependsOn": ["core"]
+    },
+    "ai-ui": {
+      "sources": ["packages/ai-ui/src/**"],
+      "tests": ["packages/ai-ui/tests/**/*.test.ts"],
+      "cwd": "packages/ai-ui"
+    },
+    "vestara-client": {
+      "sources": ["packages/vestara-client/src/**"],
+      "tests": ["packages/vestara-client/tests/**/*.test.ts"],
+      "cwd": "packages/vestara-client"
+    },
+    "agent-builder-ui": {
+      "sources": ["vestara-apps/agent-builder/src/**"],
+      "tests": ["vestara-apps/agent-builder/tests/**/*.test.ts"],
+      "cwd": "vestara-apps/agent-builder"
+    },
+    "ai-experience-ui": {
+      "sources": ["vestara-apps/ai/src/**"],
+      "tests": ["vestara-apps/ai/tests/**/*.test.ts"],
+      "cwd": "vestara-apps/ai"
+    },
+    "api-builder-ui": {
+      "sources": ["vestara-apps/api-builder/src/**"],
+      "tests": ["vestara-apps/api-builder/tests/**/*.test.ts"],
+      "cwd": "vestara-apps/api-builder"
+    },
+    "marketplace-ui": {
+      "sources": ["vestara-apps/marketplace/src/**"],
+      "tests": ["vestara-apps/marketplace/tests/**/*.test.ts"],
+      "cwd": "vestara-apps/marketplace"
+    },
+    "os-image-builder-ui": {
+      "sources": ["vestara-apps/os-image-builder/src/**"],
+      "tests": ["vestara-apps/os-image-builder/tests/**/*.test.ts"],
+      "cwd": "vestara-apps/os-image-builder"
     }
   }
 }
