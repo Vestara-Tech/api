@@ -84,6 +84,8 @@ import { buildTemplatePlatform } from './template.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { ExecutionServiceImpl } from '../execution/service.js';
 import { FileExecutionStore } from '../execution/store.js';
+import { FileActivityHistoryStore, ActivityHistoryRecorderImpl } from '../activity-room/history/index.js';
+import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/history/index.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
 import { registerComponentCapability } from './component-capability.js';
@@ -170,6 +172,8 @@ export interface Application {
   readonly browser: BrowserPlatform;
   readonly task: TaskPlatform;
   readonly milestone: MilestonePlatform;
+  readonly activityHistory: ActivityHistoryStore;
+  readonly activityRecorder: ActivityHistoryRecorder;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -308,6 +312,12 @@ export function createApplication(config: AppConfig): Application {
     tasks: task.service,
     store: new FileExecutionStore(join(process.cwd(), '.vestara', 'cache', 'activity-room', 'executions.json')),
   });
+
+  // ── Activity Room Durable History (ARX-011) ─────────────
+  const activityHistory = new FileActivityHistoryStore(
+    join(process.cwd(), '.vestara', 'cache', 'activity-room', 'history.json'),
+  );
+  const activityRecorder = new ActivityHistoryRecorderImpl(activityHistory);
 
   // ── OS Module (OS-001..) ──────────────────────────────────
   const os = buildOsPlatform();
@@ -495,6 +505,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('task.service', task.service);
   container.register('task.store', task.store);
   container.register('execution.service', execution);
+  container.register('activity.history', activityHistory);
+  container.register('activity.recorder', activityRecorder);
   container.register('os', os.service);
   container.register('page-builder.service', pageBuilder.service);
   container.register('application-builder.service', applicationBuilder.service);
@@ -552,6 +564,8 @@ export function createApplication(config: AppConfig): Application {
     browser,
     task,
     milestone,
+    activityHistory,
+    activityRecorder,
     shutdown,
     systemStatus(): SystemStatus {
       return {

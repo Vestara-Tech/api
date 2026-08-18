@@ -6,6 +6,8 @@ import type { ApprovalRuntime } from '../agent/approval/approval-runtime.js';
 import type { ExecutionService } from '../execution/index.js';
 import type { WorkflowService } from '../workflow/service/workflow-service.js';
 import { readLatestVerificationReport } from '../verification/index.js';
+import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/index.js';
+import { recoverExecution } from '../activity-room/index.js';
 
 const ExecutionIntentSchema = Type.Object({
   kind: Type.Union([
@@ -99,6 +101,41 @@ const ExecutionPreviewBodySchema = Type.Object({
   goal: Type.String(),
   agentId: Type.Optional(Type.String()),
   principalId: Type.Optional(Type.String()),
+});
+
+const ActivityExecutionFactSchema = Type.Object({
+  executionId: Type.String(),
+  roomId: Type.String(),
+  goal: Type.String(),
+  agentId: Type.String(),
+  complexity: Type.Union([Type.Literal('simple'), Type.Literal('standard'), Type.Literal('complex')]),
+  status: Type.String(),
+  createdAt: Type.String(),
+  startedAt: Type.Optional(Type.String()),
+  completedAt: Type.Optional(Type.String()),
+  updatedAt: Type.String(),
+  workflowId: Type.Optional(Type.String()),
+  runtimeSessionId: Type.Optional(Type.String()),
+  verificationFingerprint: Type.Optional(Type.String()),
+  evidenceHash: Type.Optional(Type.String()),
+});
+
+const ActivityEventEnvelopeSchema = Type.Object({
+  id: Type.String(),
+  executionId: Type.String(),
+  sequence: Type.Integer(),
+  occurredAt: Type.String(),
+  type: Type.String(),
+  payload: Type.Any(),
+});
+
+const ActivityExecutionProjectionSchema = Type.Object({
+  executionId: Type.String(),
+  goal: Type.String(),
+  status: Type.String(),
+  phase: Type.String(),
+  complexity: Type.String(),
+  updatedAt: Type.String(),
 });
 
 const AgentRunSummarySchema = Type.Object({
@@ -212,6 +249,8 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const approvals = app.application.container.resolve<ApprovalRuntime>('agent.approvals');
   const execution = app.application.container.resolve<ExecutionService>('execution.service');
   const workflow = app.application.workflow.service;
+  const history = app.application.container.resolve<ActivityHistoryStore>('activity.history');
+  const recorder = app.application.container.resolve<ActivityHistoryRecorder>('activity.recorder');
 
   app.get(
     '/api/v2/activity-room/executions',
@@ -223,6 +262,59 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
       },
     },
     async (_request, reply) => reply.send(execution.list('activity-room').map(toExecutionView) as never),
+  );
+
+  app.get(
+    '/api/v2/activity-room/history',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'List durable Activity history facts',
+        response: { 200: Type.Array(ActivityExecutionFactSchema) },
+      },
+    },
+    async (_request, reply) => reply.send(history.listExecutions('activity-room') as never),
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/:executionId',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Recover an execution projection from durable Activity history',
+        params: Type.Object({ executionId: Type.String() }),
+        response: {
+          200: ActivityExecutionProjectionSchema,
+          404: Type.Object({ error: Type.String() }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const recovered = recoverExecution(history, request.params.executionId);
+      if (!recovered) {
+        return reply.code(404).send({ error: 'execution not found in activity history' } as never);
+      }
+      return reply.send(recovered.projection as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/:executionId/events',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Read monotonic Activity events, optionally after a cursor',
+        params: Type.Object({ executionId: Type.String() }),
+        querystring: Type.Object({
+          afterSequence: Type.Optional(Type.Number({ minimum: 0 })),
+        }),
+        response: { 200: Type.Array(ActivityEventEnvelopeSchema) },
+      },
+    },
+    async (request, reply) => {
+      const events = history.events(request.params.executionId, request.query.afterSequence);
+      return reply.send(events as never);
+    },
   );
 
   app.post(
@@ -242,6 +334,12 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
         roomId: 'activity-room',
         ...(request.body.principalId !== undefined ? { principalId: request.body.principalId } : {}),
       });
+
+      const draft = execution.get(preview.executionId);
+      if (draft) {
+        recorder.recordExecution({ execution: draft });
+      }
+
       return reply.send(preview as never);
     },
   );

@@ -92,4 +92,50 @@ describe('activity room API', () => {
       await reloadedApp.close();
     }
   });
+
+  it('records and recovers durable Activity history across restarts', async () => {
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/v2/activity-room/preview',
+      payload: { goal: 'Add a CLI command that shows DEX runtime status', agentId: 'vestara-developer' },
+    });
+    expect(res.statusCode).toBe(200);
+    const body = res.json() as { executionId?: string };
+
+    const historyRes = await app.inject({ method: 'GET', url: '/api/v2/activity-room/history' });
+    expect(historyRes.statusCode).toBe(200);
+    const history = historyRes.json() as readonly { executionId?: string; goal?: string; complexity?: string; status?: string }[];
+    expect(history.some((entry) => entry.executionId === body.executionId)).toBe(true);
+    expect(history.some((entry) => entry.goal === 'Add a CLI command that shows DEX runtime status')).toBe(true);
+    expect(history.some((entry) => entry.complexity === 'standard')).toBe(true);
+
+    const eventsRes = await app.inject({ method: 'GET', url: `/api/v2/activity-room/history/${body.executionId}/events` });
+    expect(eventsRes.statusCode).toBe(200);
+    const events = eventsRes.json() as readonly { sequence?: number; type?: string }[];
+    expect(events.length).toBeGreaterThanOrEqual(1);
+    expect(events[0]?.type).toBe('execution-requested');
+    expect(events[0]?.sequence).toBe(1);
+
+    const projectionRes = await app.inject({ method: 'GET', url: `/api/v2/activity-room/history/${body.executionId}` });
+    expect(projectionRes.statusCode).toBe(200);
+    const projection = projectionRes.json() as { executionId?: string; goal?: string; status?: string };
+    expect(projection.executionId).toBe(body.executionId);
+    expect(projection.goal).toBe('Add a CLI command that shows DEX runtime status');
+
+    // Restart the API — durable history must survive.
+    const config = loadConfig({});
+    const reloadedApp = await buildApp({ config, application: createApplication(config) });
+    await reloadedApp.ready();
+    try {
+      const recoveredEvents = await reloadedApp.inject({ method: 'GET', url: `/api/v2/activity-room/history/${body.executionId}/events` });
+      expect(recoveredEvents.statusCode).toBe(200);
+      const recovered = recoveredEvents.json() as readonly { sequence?: number; type?: string }[];
+      expect(recovered.some((event) => event.type === 'execution-requested')).toBe(true);
+
+      const recoveredProjection = await reloadedApp.inject({ method: 'GET', url: `/api/v2/activity-room/history/${body.executionId}` });
+      expect(recoveredProjection.statusCode).toBe(200);
+    } finally {
+      await reloadedApp.close();
+    }
+  });
 });

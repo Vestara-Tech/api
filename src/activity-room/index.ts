@@ -18,6 +18,23 @@ export type {
   ActivityExecutionProjection,
 } from './projection/contracts.js';
 
+// ARX-CP2 ARX-011 — Durable Activity history.
+export type {
+  ActivityEventType,
+  ActivityEventPayloadMap,
+  ActivityEventPayload,
+  ActivityEventEnvelope,
+  ActivityEvent,
+  ActivityExecutionFact,
+  ActivityEventInput,
+  ActivityHistoryStore,
+} from './history/contracts.js';
+export { InMemoryActivityHistoryStore, FileActivityHistoryStore } from './history/store.js';
+export { ActivityHistoryRecorderImpl } from './history/recorder.js';
+export type { RecordExecutionInput, RecordCoordinatorInput, ActivityHistoryRecorder } from './history/recorder.js';
+export { recoverExecution, recoverEvents } from './history/recovery.js';
+export type { RecoveredExecution } from './history/recovery.js';
+
 export { normalizeEvent, normalizeEvents, isInternalEvent } from './projection/event-normalizer.js';
 export type { RawExecutionEvent } from './projection/event-normalizer.js';
 
