@@ -801,9 +801,9 @@ pnpm openapi:check       # fail if the committed contract drifts from the app
 <!-- docs-sync:begin platform-summary -->
 Generated from the current repository state.
 
-- OpenAPI routes: 337
-- Registered capabilities: 34 (34 enabled)
-- Source areas: 44
+- OpenAPI routes: 341
+- Registered capabilities: 35 (35 enabled)
+- Source areas: 47
 - ADRs tracked: 50
 
 - Full summary: [docs/automation/generated/platform-summary.md](./docs/automation/generated/platform-summary.md)

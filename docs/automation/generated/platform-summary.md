@@ -6,10 +6,10 @@ Generated from the current repository state.
 
 | Metric | Value |
 |---|---|
-| Routes in OpenAPI | 337 |
-| Registered capabilities | 34 |
-| Enabled capabilities | 34 |
-| Source areas | 44 |
+| Routes in OpenAPI | 341 |
+| Registered capabilities | 35 |
+| Enabled capabilities | 35 |
+| Source areas | 47 |
 | ADRs | 50 |
 
 ## Package scripts
@@ -34,16 +34,17 @@ Generated from the current repository state.
 
 | Source area | Category | Files |
 |---|---|---|
-| `src/agent/` | module | 8 |
-| `src/ai/` | module | 26 |
+| `src/activity-room/` | module | 6 |
+| `src/agent/` | module | 12 |
+| `src/ai/` | module | 27 |
 | `src/appbuilder/` | module | 3 |
 | `src/auth/` | module | 18 |
-| `src/bootstrap/` | support | 72 |
+| `src/bootstrap/` | support | 73 |
 | `src/browser/` | module | 9 |
 | `src/builder/` | module | 15 |
 | `src/builder-plane/` | module | 8 |
 | `src/capabilities/` | module | 1 |
-| `src/car/` | module | 8 |
+| `src/car/` | module | 17 |
 | `src/component/` | module | 6 |
 | `src/config/` | support | 3 |
 | `src/configuration/` | module | 16 |
@@ -52,6 +53,7 @@ Generated from the current repository state.
 | `src/dashboard/` | module | 13 |
 | `src/database/` | module | 7 |
 | `src/diagnostics/` | module | 6 |
+| `src/execution/` | module | 7 |
 | `src/file/` | module | 8 |
 | `src/generation-plane/` | module | 5 |
 | `src/generator/` | module | 14 |
@@ -65,17 +67,18 @@ Generated from the current repository state.
 | `src/pagebuilder/` | module | 4 |
 | `src/permission/` | module | 7 |
 | `src/plugins/` | support | 5 |
-| `src/routes/` | support | 44 |
-| `src/skill/` | module | 6 |
+| `src/routes/` | support | 46 |
+| `src/skill/` | module | 7 |
 | `src/startup/` | module | 8 |
 | `src/system/` | module | 30 |
 | `src/task/` | module | 6 |
 | `src/template/` | module | 7 |
 | `src/test/` | module | 12 |
 | `src/theme/` | module | 8 |
-| `src/tool/` | module | 7 |
+| `src/tool/` | module | 8 |
 | `src/types/` | support | 1 |
 | `src/user/` | module | 7 |
+| `src/verification/` | module | 6 |
 | `src/worker/` | module | 12 |
 | `src/workflow/` | module | 6 |
 
@@ -116,6 +119,7 @@ Generated from the current repository state.
 | `tests` | v2 | yes | test.read, test.run, test.evidence | tests.suites.list, tests.suite.create, tests.run, tests.runners.list |
 | `themes` | v2 | yes | theme.read, theme.write, theme.publish | themes.list, theme.get, theme.register, theme.css, theme.mui, theme.os, theme.resolve |
 | `users` | v2 | yes | user.read, user.self.profile, user.self.preferences, user.invite, user.create, user.suspend, user.delete, user.membership | user.read, user.self.profile, user.self.preferences, user.invite, user.create, user.suspend, user.delete, user.membership |
+| `verification` | v2 | yes | verification.read, verification.run | verification.latest, verification.run |
 | `workflows` | v2 | yes | workflow.read, workflow.define, workflow.publish, workflow.run, workflow.observe | workflow.list, workflow.create, workflow.validate, workflow.publish, workflow.run.start, workflow.run.list, workflow.run.cancel, workflow.run.resume, workflow.run.retry |
 
 ## ADR index
