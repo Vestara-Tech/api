@@ -9,7 +9,7 @@ Generated from the current repository state.
 | Routes in OpenAPI | 337 |
 | Registered capabilities | 34 |
 | Enabled capabilities | 34 |
-| Source areas | 43 |
+| Source areas | 44 |
 | ADRs | 50 |
 
 ## Package scripts
@@ -76,6 +76,7 @@ Generated from the current repository state.
 | `src/tool/` | module | 7 |
 | `src/types/` | support | 1 |
 | `src/user/` | module | 7 |
+| `src/worker/` | module | 12 |
 | `src/workflow/` | module | 6 |
 
 ## Capabilities

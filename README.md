@@ -803,7 +803,7 @@ Generated from the current repository state.
 
 - OpenAPI routes: 337
 - Registered capabilities: 34 (34 enabled)
-- Source areas: 43
+- Source areas: 44
 - ADRs tracked: 50
 
 - Full summary: [docs/automation/generated/platform-summary.md](./docs/automation/generated/platform-summary.md)
