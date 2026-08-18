@@ -29,6 +29,7 @@
     "verify:static": "tsx scripts/verification/verify.ts static",
     "verify:affected": "tsx scripts/verification/verify.ts affected",
     "verify:module": "tsx scripts/verification/verify.ts module",
+    "verify:graph": "tsx scripts/verification/graph.ts",
     "verify:platform": "tsx scripts/verification/verify.ts platform",
     "verify:telemetry": "tsx scripts/verification/telemetry.ts",
     "openapi:generate": "tsx scripts/generate-openapi.ts",
