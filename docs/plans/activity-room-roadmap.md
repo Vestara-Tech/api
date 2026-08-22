@@ -287,6 +287,37 @@ Implementation rules:
 - share primitives only when they are clearly reusable
 - keep admin as the operational surface, not the execution conversation surface
 
+ARX-013 — Execution Inspector v2 (observability checkpoint):
+
+> Surface authoritative execution, runtime, verification, evidence, and
+> handoff state from the Activity Room inspector API without duplicating
+> backend policy or deriving governance decisions in the frontend.
+
+Scope:
+
+- typed frontend client for `GET /api/v2/activity-room/history/:executionId/inspector`
+- frontend DTOs matching the backend `InspectorViewSchema` exactly
+- `ExecutionInspector` extended with Overview, Runtime, Verification,
+  Evidence sections
+- graceful rendering for older/incomplete executions (missing data →
+  "Not recorded", NOT "Failed")
+- `handoffEligible` is always rendered from the backend value, never
+  computed in the frontend
+
+Excluded from ARX-013:
+
+- session lifecycle fixes
+- VCTRL changes
+- evidence-schema changes
+- workflow orchestration changes
+- new backend endpoints
+- Admin changes
+- Activity Room visual redesign
+- CP5 work
+
+Refresh behavior: reuse the Activity Room's existing event/polling
+mechanism; do not introduce an independent polling loop.
+
 Exit criteria:
 
 - Activity Room shows execution state end-to-end

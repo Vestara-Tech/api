@@ -5,12 +5,13 @@ import type { AgentRunStateMachine } from '../agent/runtime/run-state-machine.js
 import type { ApprovalRuntime } from '../agent/approval/approval-runtime.js';
 import type { ExecutionService } from '../execution/index.js';
 import type { WorkflowService } from '../workflow/service/workflow-service.js';
-import { readLatestVerificationReport } from '../verification/index.js';
 import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/index.js';
 import { recoverExecution } from '../activity-room/index.js';
 import type { ActivityBrowser } from '../activity-room/index.js';
 import type { ActivityExecutionStatus, ActivityExecutionComplexity } from '../activity-room/index.js';
 import type { ActivityVerificationConclusion } from '../activity-room/index.js';
+import { readInspectorSource, buildInspectorView, resolveEvidenceDetail, resolveVerificationDetail, resolveFileDiff } from '../activity-room/index.js';
+import type { CodingExecutionEvidenceStore } from '../car/evidence/contracts.js';
 
 const ExecutionIntentSchema = Type.Object({
   kind: Type.Union([
@@ -106,6 +107,15 @@ const ExecutionPreviewBodySchema = Type.Object({
   principalId: Type.Optional(Type.String()),
 });
 
+const GovernedActivityRunResultSchema = Type.Object({
+  executionId: Type.String(),
+  complexity: Type.Union([Type.Literal('simple'), Type.Literal('standard'), Type.Literal('complex')]),
+  route: Type.Union([Type.Literal('developer'), Type.Literal('workflow')]),
+  status: Type.String(),
+  workflowId: Type.Optional(Type.String()),
+  workflowRunId: Type.Optional(Type.String()),
+});
+
 const ActivityExecutionFactSchema = Type.Object({
   executionId: Type.String(),
   roomId: Type.String(),
@@ -118,6 +128,7 @@ const ActivityExecutionFactSchema = Type.Object({
   completedAt: Type.Optional(Type.String()),
   updatedAt: Type.String(),
   workflowId: Type.Optional(Type.String()),
+  workflowRunId: Type.Optional(Type.String()),
   runtimeSessionId: Type.Optional(Type.String()),
   verificationFingerprint: Type.Optional(Type.String()),
   evidenceHash: Type.Optional(Type.String()),
@@ -138,6 +149,8 @@ const ActivityExecutionProjectionSchema = Type.Object({
   status: Type.String(),
   phase: Type.String(),
   complexity: Type.String(),
+  workflowId: Type.Optional(Type.String()),
+  workflowRunId: Type.Optional(Type.String()),
   updatedAt: Type.String(),
 });
 
@@ -160,6 +173,137 @@ const ActivityHistoryPageSchema = Type.Object({
   items: Type.Array(ActivityExecutionSummarySchema),
   nextCursor: Type.Optional(Type.String()),
   hasMore: Type.Boolean(),
+});
+
+const InspectorViewSchema = Type.Object({
+  executionId: Type.String(),
+  goal: Type.String(),
+  overview: Type.Object({
+    executionId: Type.String(),
+    goal: Type.String(),
+    status: Type.String(),
+    phase: Type.String(),
+    complexity: Type.String(),
+    participants: Type.Array(Type.Object({ role: Type.String(), agentId: Type.String(), status: Type.String() })),
+    workflowId: Type.Optional(Type.String()),
+    workflowRunId: Type.Optional(Type.String()),
+    startedAt: Type.Optional(Type.String()),
+    updatedAt: Type.String(),
+    completedAt: Type.Optional(Type.String()),
+  }),
+  runtime: Type.Object({
+    runtimeId: Type.Optional(Type.String()),
+    provider: Type.Optional(Type.String()),
+    model: Type.Optional(Type.String()),
+    sessionId: Type.Optional(Type.String()),
+    health: Type.Union([Type.Literal('connected'), Type.Literal('unknown'), Type.Literal('unavailable')]),
+  }),
+  context: Type.Object({
+    categories: Type.Array(Type.String()),
+    skills: Type.Array(Type.Object({ id: Type.String(), version: Type.Optional(Type.String()) })),
+    resourceCount: Type.Integer(),
+    provenance: Type.Array(Type.String()),
+    budget: Type.Optional(Type.Object({ used: Type.Number(), limit: Type.Optional(Type.Number()) })),
+  }),
+  changes: Type.Object({
+    fileCount: Type.Integer(),
+    files: Type.Array(
+      Type.Object({
+        path: Type.String(),
+        status: Type.String(),
+        additions: Type.Optional(Type.Number()),
+        deletions: Type.Optional(Type.Number()),
+      }),
+    ),
+  }),
+  verification: Type.Object({
+    status: Type.String(),
+    conclusion: Type.Optional(Type.String()),
+    freshness: Type.Optional(Type.String()),
+    level: Type.Optional(Type.String()),
+    selectedTests: Type.Integer(),
+    executedTests: Type.Integer(),
+    cached: Type.Integer(),
+    fingerprint: Type.Optional(Type.String()),
+    reasons: Type.Array(Type.String()),
+    handoffEligible: Type.Boolean(),
+  }),
+  evidence: Type.Object({
+    status: Type.String(),
+    hash: Type.Optional(Type.String()),
+    outcome: Type.Optional(Type.String()),
+    recordedAt: Type.Optional(Type.String()),
+  }),
+  timeline: Type.Array(
+    Type.Object({
+      sequence: Type.Integer(),
+      type: Type.String(),
+      title: Type.String(),
+      detail: Type.Optional(Type.String()),
+      at: Type.String(),
+    }),
+  ),
+});
+
+const InspectorEvidenceDetailSchema = Type.Object({
+  schemaVersion: Type.Literal(1),
+  outcome: Type.String(),
+  execution: Type.Object({
+    executionId: Type.String(),
+    agentRunId: Type.String(),
+    objective: Type.Optional(Type.String()),
+  }),
+  agent: Type.Object({ id: Type.String(), role: Type.String() }),
+  runtime: Type.Object({
+    id: Type.String(),
+    version: Type.Optional(Type.String()),
+    sessionId: Type.Optional(Type.String()),
+  }),
+  model: Type.Optional(
+    Type.Object({ providerId: Type.Optional(Type.String()), modelId: Type.Optional(Type.String()) }),
+  ),
+  repository: Type.Object({
+    baselineSha: Type.Optional(Type.String()),
+    headSha: Type.Optional(Type.String()),
+    changedFiles: Type.Optional(Type.Array(Type.String())),
+  }),
+  skills: Type.Array(Type.Object({ id: Type.String(), version: Type.Optional(Type.String()) })),
+  tools: Type.Array(Type.Object({ id: Type.String(), granted: Type.Boolean(), used: Type.Boolean() })),
+  verification: Type.Object({
+    purpose: Type.String(),
+    conclusion: Type.Union([Type.Literal('pass'), Type.Literal('fail'), Type.Literal('indeterminate')]),
+    freshness: Type.Union([Type.Literal('current'), Type.Literal('stale')]),
+    fingerprint: Type.Optional(Type.String()),
+  }),
+  timing: Type.Object({ startedAt: Type.String(), completedAt: Type.String() }),
+  evidenceHash: Type.String(),
+});
+
+const InspectorVerificationDetailSchema = Type.Object({
+  fingerprint: Type.String(),
+  level: Type.String(),
+  scope: Type.String(),
+  result: Type.Union([Type.Literal('pass'), Type.Literal('fail'), Type.Literal('indeterminate')]),
+  selectedTests: Type.Array(Type.String()),
+  executedTests: Type.Array(Type.String()),
+  cached: Type.Integer(),
+  failed: Type.Integer(),
+  durationMs: Type.Number(),
+  graphValid: Type.Boolean(),
+  evidence: Type.Union([Type.String(), Type.Null()]),
+});
+
+const InspectorFileDiffSchema = Type.Object({
+  path: Type.String(),
+  status: Type.String(),
+  additions: Type.Integer(),
+  deletions: Type.Integer(),
+  hunks: Type.Array(
+    Type.Object({
+      header: Type.String(),
+      lines: Type.Array(Type.Object({ type: Type.Union([Type.Literal('add'), Type.Literal('delete'), Type.Literal('context')]), text: Type.String() })),
+    }),
+  ),
 });
 
 const AgentRunSummarySchema = Type.Object({
@@ -276,6 +420,7 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
   const history = app.application.container.resolve<ActivityHistoryStore>('activity.history');
   const recorder = app.application.container.resolve<ActivityHistoryRecorder>('activity.recorder');
   const browser = app.application.container.resolve<ActivityBrowser>('activity.browser');
+  const evidence = app.application.container.resolve<CodingExecutionEvidenceStore>('activity.evidence');
 
   app.get(
     '/api/v2/activity-room/executions',
@@ -330,14 +475,19 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
         tags: ['activity-room'],
         summary: 'Read monotonic Activity events, optionally after a cursor',
         params: Type.Object({ executionId: Type.String() }),
+        // HTTP query parameters arrive as strings. The transport schema
+        // matches the wire representation; parseAfterSequence normalizes at
+        // the boundary so the history/store contract stays numeric.
         querystring: Type.Object({
-          afterSequence: Type.Optional(Type.Number({ minimum: 0 })),
+          afterSequence: Type.Optional(Type.String({ pattern: '^\\d+$' })),
         }),
+        additionalProperties: false,
         response: { 200: Type.Array(ActivityEventEnvelopeSchema) },
       },
     },
     async (request, reply) => {
-      const events = history.events(request.params.executionId, request.query.afterSequence);
+      const afterSequence = parseAfterSequence(request.query.afterSequence);
+      const events = history.events(request.params.executionId, afterSequence);
       return reply.send(events as never);
     },
   );
@@ -383,6 +533,114 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
     },
   );
 
+  app.get(
+    '/api/v2/activity-room/history/:executionId/inspector',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Read the moderate Execution Inspector v2 view for an execution',
+        params: Type.Object({ executionId: Type.String() }),
+        response: {
+          200: InspectorViewSchema,
+          404: Type.Object({ error: Type.String() }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const source = readInspectorSource(history, request.params.executionId);
+      if (!source) {
+        return reply.code(404).send({ error: 'execution not found in activity history' } as never);
+      }
+      return reply.send(buildInspectorView(source) as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/:executionId/inspector/evidence',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Resolve the immutable CP5 evidence detail for an execution (lazy)',
+        params: Type.Object({ executionId: Type.String() }),
+        response: {
+          200: InspectorEvidenceDetailSchema,
+          404: Type.Object({ error: Type.String() }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const source = readInspectorSource(history, request.params.executionId);
+      if (!source) {
+        return reply.code(404).send({ error: 'execution not found in activity history' } as never);
+      }
+      const hash = source.fact.evidenceHash;
+      if (hash === undefined) {
+        return reply.code(404).send({ error: 'no evidence recorded for this execution' } as never);
+      }
+      const detail = await resolveEvidenceDetail(evidence, hash);
+      if (!detail) {
+        return reply.code(404).send({ error: 'evidence detail not resolvable' } as never);
+      }
+      return reply.send(detail as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/:executionId/inspector/verification',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Resolve the verification report by fingerprint (lazy)',
+        params: Type.Object({ executionId: Type.String() }),
+        response: {
+          200: InspectorVerificationDetailSchema,
+          404: Type.Object({ error: Type.String() }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const source = readInspectorSource(history, request.params.executionId);
+      if (!source) {
+        return reply.code(404).send({ error: 'execution not found in activity history' } as never);
+      }
+      const fingerprint = source.fact.verificationFingerprint;
+      if (fingerprint === undefined) {
+        return reply.code(404).send({ error: 'no verification fingerprint for this execution' } as never);
+      }
+      const detail = resolveVerificationDetail(fingerprint);
+      if (!detail) {
+        return reply.code(404).send({ error: 'verification report not resolvable' } as never);
+      }
+      return reply.send(detail as never);
+    },
+  );
+
+  app.get(
+    '/api/v2/activity-room/history/:executionId/inspector/files/:path/diff',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Resolve a file-level diff for a changed file (lazy)',
+        params: Type.Object({ executionId: Type.String(), path: Type.String() }),
+        response: {
+          200: InspectorFileDiffSchema,
+          404: Type.Object({ error: Type.String() }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const source = readInspectorSource(history, request.params.executionId);
+      if (!source) {
+        return reply.code(404).send({ error: 'execution not found in activity history' } as never);
+      }
+      const diff = resolveFileDiff(source, request.params.path);
+      if (!diff) {
+        return reply.code(404).send({ error: 'file is not part of this execution change set' } as never);
+      }
+      return reply.send(diff as never);
+    },
+  );
+
   app.post(
     '/api/v2/activity-room/preview',
     {
@@ -410,6 +668,26 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
     },
   );
 
+  app.post(
+    '/api/v2/activity-room/runs',
+    {
+      schema: {
+        tags: ['activity-room'],
+        summary: 'Start a governed Activity Room execution (complexity-routed through DEX/CAR)',
+        body: ExecutionPreviewBodySchema,
+        response: { 201: GovernedActivityRunResultSchema },
+      },
+    },
+    async (request, reply) => {
+      const runner = app.application.container.resolve<import('../activity-room/runtime/governed-runner.js').GovernedActivityRunner>('activity.runner');
+      const result = await runner.start({
+        goal: request.body.goal,
+        ...(request.body.principalId !== undefined ? { principalId: request.body.principalId } : {}),
+      });
+      return reply.code(201).send(result as never);
+    },
+  );
+
   app.get(
     '/api/v2/activity-room/snapshot',
     {
@@ -427,7 +705,20 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
       const executionDrafts = execution.list('activity-room');
       const workflowDefinitions = workflow.list();
       const workflowRuns = workflow.listRuns();
-      const verification = readLatestVerificationReport();
+
+      // Execution-scoped verification: resolve the report by the latest
+      // Activity execution's fingerprint instead of the global /verification/latest
+      // (diagnostics-only). The authoritative association lives on the fact.
+      const executionFacts = history.listExecutions('activity-room');
+      const latestVerifiedFact = [...executionFacts]
+        .sort((left, right) =>
+          (right.updatedAt ?? right.createdAt ?? '').localeCompare(left.updatedAt ?? left.createdAt ?? ''),
+        )
+        .find((fact) => fact.verificationFingerprint !== undefined);
+      const verification =
+        latestVerifiedFact?.verificationFingerprint !== undefined
+          ? resolveVerificationDetail(latestVerifiedFact.verificationFingerprint)
+          : null;
 
       const latestRunByAgent = new Map<string, (typeof agentRuns)[number]>();
       for (const run of [...agentRuns].sort((left, right) => {
@@ -596,6 +887,26 @@ export const activityRoomRoutes: FastifyPluginAsyncTypebox = async (app) => {
 
 function toArray(value: string | string[]): string[] {
   return Array.isArray(value) ? [...value] : [value];
+}
+
+/**
+ * ARX-STAB-002 — Normalize the `afterSequence` event cursor at the HTTP
+ * boundary. Query parameters arrive as strings; the history/store contract
+ * stays numeric. The Fastify schema already constrains the wire form to a
+ * `\d+` pattern, so this parse is the final safety net before the domain.
+ */
+function parseAfterSequence(value: string | undefined): number {
+  if (value === undefined || value === '') {
+    return 0;
+  }
+
+  const parsed = Number(value);
+
+  if (!Number.isSafeInteger(parsed) || parsed < 0) {
+    throw new Error('afterSequence must be a non-negative integer');
+  }
+
+  return parsed;
 }
 
 function toExecutionView(execution: {

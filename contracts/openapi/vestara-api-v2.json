@@ -42945,6 +42945,1129 @@
         }
       }
     },
+    "/api/v2/themes/generate": {
+      "post": {
+        "summary": "Generate theme proposals from a natural language prompt",
+        "tags": [
+          "themes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "prompt"
+                ],
+                "properties": {
+                  "prompt": {
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "profile": {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "light"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "dark"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "adaptive"
+                            ]
+                          }
+                        ]
+                      },
+                      "brandColors": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "mood": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "professional"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "playful"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "minimal"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "bold"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "warm"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "cool"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "dark"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "light"
+                            ]
+                          }
+                        ]
+                      },
+                      "density": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "compact"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "comfortable"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "spacious"
+                            ]
+                          }
+                        ]
+                      },
+                      "radiusStyle": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "sharp"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "rounded"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "pill"
+                            ]
+                          }
+                        ]
+                      },
+                      "elevationStyle": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "flat"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "layered"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "dramatic"
+                            ]
+                          }
+                        ]
+                      },
+                      "motionStyle": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "subtle"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "standard"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "expressive"
+                            ]
+                          }
+                        ]
+                      },
+                      "typographyPersonality": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "geometric"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "humanist"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "monospace"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "editorial"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "system"
+                            ]
+                          }
+                        ]
+                      },
+                      "accessibilityLevel": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "AA"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "AAA"
+                            ]
+                          }
+                        ]
+                      },
+                      "targetSurface": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "web"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "mobile"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "desktop"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "os"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "all"
+                            ]
+                          }
+                        ]
+                      },
+                      "constraints": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      }
+                    }
+                  },
+                  "baseThemeId": {
+                    "type": "string"
+                  },
+                  "model": {
+                    "type": "object",
+                    "properties": {
+                      "provider": {
+                        "type": "string"
+                      },
+                      "model": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "temperature": {
+                    "minimum": 0,
+                    "maximum": 2,
+                    "type": "number"
+                  },
+                  "maxTokens": {
+                    "minimum": 1,
+                    "maximum": 8192,
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "proposals",
+                    "patches"
+                  ],
+                  "properties": {
+                    "proposals": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "name",
+                          "version",
+                          "mode",
+                          "draft",
+                          "rationale",
+                          "confidence",
+                          "warnings"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          },
+                          "mode": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "light"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "dark"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "adaptive"
+                                ]
+                              }
+                            ]
+                          },
+                          "draft": {
+                            "type": "object",
+                            "properties": {
+                              "colors": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "string"
+                                }
+                              },
+                              "typography": {
+                                "type": "object",
+                                "properties": {
+                                  "fontFamily": {
+                                    "type": "string"
+                                  },
+                                  "fontSizeScale": {
+                                    "type": "number"
+                                  },
+                                  "baseSizePx": {
+                                    "type": "number"
+                                  },
+                                  "headingWeight": {
+                                    "type": "integer"
+                                  },
+                                  "bodyWeight": {
+                                    "type": "integer"
+                                  },
+                                  "lineHeight": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "spacing": {
+                                "type": "object",
+                                "properties": {
+                                  "scale": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "basePx": {
+                                    "type": "number"
+                                  }
+                                }
+                              },
+                              "radius": {
+                                "type": "object",
+                                "properties": {
+                                  "small": {
+                                    "type": "integer"
+                                  },
+                                  "medium": {
+                                    "type": "integer"
+                                  },
+                                  "large": {
+                                    "type": "integer"
+                                  },
+                                  "full": {
+                                    "type": "integer"
+                                  }
+                                }
+                              },
+                              "elevation": {
+                                "type": "object",
+                                "properties": {
+                                  "levels": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "motion": {
+                                "type": "object",
+                                "properties": {
+                                  "durationFastMs": {
+                                    "type": "integer"
+                                  },
+                                  "durationMediumMs": {
+                                    "type": "integer"
+                                  },
+                                  "durationSlowMs": {
+                                    "type": "integer"
+                                  },
+                                  "easing": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "components": {
+                                "type": "object",
+                                "additionalProperties": {}
+                              },
+                              "assets": {
+                                "type": "object",
+                                "properties": {
+                                  "logo": {
+                                    "type": "string"
+                                  },
+                                  "icon": {
+                                    "type": "string"
+                                  },
+                                  "wallpaper": {
+                                    "type": "string"
+                                  },
+                                  "splash": {
+                                    "type": "string"
+                                  },
+                                  "fontFiles": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "metadata": {
+                                "type": "object",
+                                "properties": {
+                                  "author": {
+                                    "type": "string"
+                                  },
+                                  "description": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "mode": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "enum": [
+                                          "light"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string",
+                                        "enum": [
+                                          "dark"
+                                        ]
+                                      },
+                                      {
+                                        "type": "string",
+                                        "enum": [
+                                          "adaptive"
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "rationale": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "minimum": 0,
+                            "maximum": 1,
+                            "type": "number"
+                          },
+                          "warnings": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "patches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "targetThemeId",
+                          "operations",
+                          "rationale",
+                          "confidence"
+                        ],
+                        "properties": {
+                          "targetThemeId": {
+                            "type": "string"
+                          },
+                          "operations": {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "op",
+                                    "path",
+                                    "value"
+                                  ],
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "set"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "value": {}
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "op",
+                                    "path",
+                                    "value"
+                                  ],
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "add"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "value": {}
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "op",
+                                    "path"
+                                  ],
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "remove"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "required": [
+                                    "op",
+                                    "path",
+                                    "value"
+                                  ],
+                                  "properties": {
+                                    "op": {
+                                      "type": "string",
+                                      "enum": [
+                                        "replace"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "value": {}
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "rationale": {
+                            "type": "string"
+                          },
+                          "confidence": {
+                            "minimum": 0,
+                            "maximum": 1,
+                            "type": "number"
+                          }
+                        }
+                      }
+                    },
+                    "rawResponse": {
+                      "type": "string"
+                    },
+                    "usage": {
+                      "type": "object",
+                      "required": [
+                        "inputTokens",
+                        "outputTokens",
+                        "latencyMs"
+                      ],
+                      "properties": {
+                        "inputTokens": {
+                          "type": "integer"
+                        },
+                        "outputTokens": {
+                          "type": "integer"
+                        },
+                        "latencyMs": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/themes/validate-draft": {
+      "post": {
+        "summary": "Validate a semantic token draft",
+        "tags": [
+          "themes"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "draft"
+                ],
+                "properties": {
+                  "draft": {
+                    "type": "object",
+                    "properties": {
+                      "colors": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      },
+                      "typography": {
+                        "type": "object",
+                        "properties": {
+                          "fontFamily": {
+                            "type": "string"
+                          },
+                          "fontSizeScale": {
+                            "type": "number"
+                          },
+                          "baseSizePx": {
+                            "type": "number"
+                          },
+                          "headingWeight": {
+                            "type": "integer"
+                          },
+                          "bodyWeight": {
+                            "type": "integer"
+                          },
+                          "lineHeight": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "spacing": {
+                        "type": "object",
+                        "properties": {
+                          "scale": {
+                            "type": "array",
+                            "items": {
+                              "type": "number"
+                            }
+                          },
+                          "basePx": {
+                            "type": "number"
+                          }
+                        }
+                      },
+                      "radius": {
+                        "type": "object",
+                        "properties": {
+                          "small": {
+                            "type": "integer"
+                          },
+                          "medium": {
+                            "type": "integer"
+                          },
+                          "large": {
+                            "type": "integer"
+                          },
+                          "full": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "elevation": {
+                        "type": "object",
+                        "properties": {
+                          "levels": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "motion": {
+                        "type": "object",
+                        "properties": {
+                          "durationFastMs": {
+                            "type": "integer"
+                          },
+                          "durationMediumMs": {
+                            "type": "integer"
+                          },
+                          "durationSlowMs": {
+                            "type": "integer"
+                          },
+                          "easing": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "components": {
+                        "type": "object",
+                        "additionalProperties": {}
+                      },
+                      "assets": {
+                        "type": "object",
+                        "properties": {
+                          "logo": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "wallpaper": {
+                            "type": "string"
+                          },
+                          "splash": {
+                            "type": "string"
+                          },
+                          "fontFiles": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "author": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "mode": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "light"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "dark"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "adaptive"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "accessibilityLevel": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "AA"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "AAA"
+                        ]
+                      }
+                    ]
+                  },
+                  "mode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "light"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "dark"
+                        ]
+                      },
+                      {
+                        "type": "string",
+                        "enum": [
+                          "adaptive"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "issues"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    },
+                    "issues": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "path",
+                          "message",
+                          "severity",
+                          "code"
+                        ],
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "type": "string"
+                          },
+                          "severity": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "error"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "warning"
+                                ]
+                              }
+                            ]
+                          },
+                          "code": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "correctedDraft": {
+                      "type": "object",
+                      "properties": {
+                        "colors": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        },
+                        "typography": {
+                          "type": "object",
+                          "properties": {
+                            "fontFamily": {
+                              "type": "string"
+                            },
+                            "fontSizeScale": {
+                              "type": "number"
+                            },
+                            "baseSizePx": {
+                              "type": "number"
+                            },
+                            "headingWeight": {
+                              "type": "integer"
+                            },
+                            "bodyWeight": {
+                              "type": "integer"
+                            },
+                            "lineHeight": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "spacing": {
+                          "type": "object",
+                          "properties": {
+                            "scale": {
+                              "type": "array",
+                              "items": {
+                                "type": "number"
+                              }
+                            },
+                            "basePx": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "radius": {
+                          "type": "object",
+                          "properties": {
+                            "small": {
+                              "type": "integer"
+                            },
+                            "medium": {
+                              "type": "integer"
+                            },
+                            "large": {
+                              "type": "integer"
+                            },
+                            "full": {
+                              "type": "integer"
+                            }
+                          }
+                        },
+                        "elevation": {
+                          "type": "object",
+                          "properties": {
+                            "levels": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "motion": {
+                          "type": "object",
+                          "properties": {
+                            "durationFastMs": {
+                              "type": "integer"
+                            },
+                            "durationMediumMs": {
+                              "type": "integer"
+                            },
+                            "durationSlowMs": {
+                              "type": "integer"
+                            },
+                            "easing": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "components": {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        "assets": {
+                          "type": "object",
+                          "properties": {
+                            "logo": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            },
+                            "wallpaper": {
+                              "type": "string"
+                            },
+                            "splash": {
+                              "type": "string"
+                            },
+                            "fontFiles": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "author": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "tags": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "mode": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "light"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "dark"
+                                  ]
+                                },
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "adaptive"
+                                  ]
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/templates": {
       "get": {
         "summary": "List templates",
@@ -48722,6 +49845,1406 @@
         }
       }
     },
+    "/api/v2/activity-room/history": {
+      "get": {
+        "summary": "List durable Activity history facts",
+        "tags": [
+          "activity-room"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "executionId",
+                      "roomId",
+                      "goal",
+                      "agentId",
+                      "complexity",
+                      "status",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "properties": {
+                      "executionId": {
+                        "type": "string"
+                      },
+                      "roomId": {
+                        "type": "string"
+                      },
+                      "goal": {
+                        "type": "string"
+                      },
+                      "agentId": {
+                        "type": "string"
+                      },
+                      "complexity": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "simple"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "standard"
+                            ]
+                          },
+                          {
+                            "type": "string",
+                            "enum": [
+                              "complex"
+                            ]
+                          }
+                        ]
+                      },
+                      "status": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string"
+                      },
+                      "startedAt": {
+                        "type": "string"
+                      },
+                      "completedAt": {
+                        "type": "string"
+                      },
+                      "updatedAt": {
+                        "type": "string"
+                      },
+                      "workflowId": {
+                        "type": "string"
+                      },
+                      "workflowRunId": {
+                        "type": "string"
+                      },
+                      "runtimeSessionId": {
+                        "type": "string"
+                      },
+                      "verificationFingerprint": {
+                        "type": "string"
+                      },
+                      "evidenceHash": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}": {
+      "get": {
+        "summary": "Recover an execution projection from durable Activity history",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "executionId",
+                    "goal",
+                    "status",
+                    "phase",
+                    "complexity",
+                    "updatedAt"
+                  ],
+                  "properties": {
+                    "executionId": {
+                      "type": "string"
+                    },
+                    "goal": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "phase": {
+                      "type": "string"
+                    },
+                    "complexity": {
+                      "type": "string"
+                    },
+                    "workflowId": {
+                      "type": "string"
+                    },
+                    "workflowRunId": {
+                      "type": "string"
+                    },
+                    "updatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}/events": {
+      "get": {
+        "summary": "Read monotonic Activity events, optionally after a cursor",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "pattern": "^\\d+$",
+              "type": "string"
+            },
+            "in": "query",
+            "name": "afterSequence",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "executionId",
+                      "sequence",
+                      "occurredAt",
+                      "type",
+                      "payload"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "executionId": {
+                        "type": "string"
+                      },
+                      "sequence": {
+                        "type": "integer"
+                      },
+                      "occurredAt": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "payload": {}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/browse": {
+      "get": {
+        "summary": "Browse durable Activity history as bounded, cursor-paginated summaries",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "goal",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "in": "query",
+            "name": "status",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "in": "query",
+            "name": "complexity",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "agentId",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "workflowId",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "in": "query",
+            "name": "verification",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "from",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "to",
+            "required": false
+          },
+          {
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "newest"
+                  ]
+                },
+                {
+                  "type": "string",
+                  "enum": [
+                    "oldest"
+                  ]
+                }
+              ]
+            },
+            "in": "query",
+            "name": "sort",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "items",
+                    "hasMore"
+                  ],
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "executionId",
+                          "goal",
+                          "complexity",
+                          "status",
+                          "participants",
+                          "verification",
+                          "changedFileCount",
+                          "startedAt",
+                          "updatedAt"
+                        ],
+                        "properties": {
+                          "executionId": {
+                            "type": "string"
+                          },
+                          "goal": {
+                            "type": "string"
+                          },
+                          "complexity": {
+                            "anyOf": [
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "simple"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "standard"
+                                ]
+                              },
+                              {
+                                "type": "string",
+                                "enum": [
+                                  "complex"
+                                ]
+                              }
+                            ]
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "participants": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "verification": {
+                            "type": "object",
+                            "required": [
+                              "conclusion",
+                              "handoffEligible"
+                            ],
+                            "properties": {
+                              "conclusion": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "pass"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "fail"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "indeterminate"
+                                    ]
+                                  },
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "pending"
+                                    ]
+                                  }
+                                ]
+                              },
+                              "handoffEligible": {
+                                "type": "boolean"
+                              }
+                            }
+                          },
+                          "changedFileCount": {
+                            "type": "integer"
+                          },
+                          "startedAt": {
+                            "type": "string"
+                          },
+                          "updatedAt": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "nextCursor": {
+                      "type": "string"
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}/inspector": {
+      "get": {
+        "summary": "Read the moderate Execution Inspector v2 view for an execution",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "executionId",
+                    "goal",
+                    "overview",
+                    "runtime",
+                    "context",
+                    "changes",
+                    "verification",
+                    "evidence",
+                    "timeline"
+                  ],
+                  "properties": {
+                    "executionId": {
+                      "type": "string"
+                    },
+                    "goal": {
+                      "type": "string"
+                    },
+                    "overview": {
+                      "type": "object",
+                      "required": [
+                        "executionId",
+                        "goal",
+                        "status",
+                        "phase",
+                        "complexity",
+                        "participants",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "executionId": {
+                          "type": "string"
+                        },
+                        "goal": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "phase": {
+                          "type": "string"
+                        },
+                        "complexity": {
+                          "type": "string"
+                        },
+                        "participants": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "role",
+                              "agentId",
+                              "status"
+                            ],
+                            "properties": {
+                              "role": {
+                                "type": "string"
+                              },
+                              "agentId": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "workflowId": {
+                          "type": "string"
+                        },
+                        "workflowRunId": {
+                          "type": "string"
+                        },
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "updatedAt": {
+                          "type": "string"
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "required": [
+                        "health"
+                      ],
+                      "properties": {
+                        "runtimeId": {
+                          "type": "string"
+                        },
+                        "provider": {
+                          "type": "string"
+                        },
+                        "model": {
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        },
+                        "health": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "connected"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "unknown"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "unavailable"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    },
+                    "context": {
+                      "type": "object",
+                      "required": [
+                        "categories",
+                        "skills",
+                        "resourceCount",
+                        "provenance"
+                      ],
+                      "properties": {
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "skills": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "id"
+                            ],
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "version": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "resourceCount": {
+                          "type": "integer"
+                        },
+                        "provenance": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "budget": {
+                          "type": "object",
+                          "required": [
+                            "used"
+                          ],
+                          "properties": {
+                            "used": {
+                              "type": "number"
+                            },
+                            "limit": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "changes": {
+                      "type": "object",
+                      "required": [
+                        "fileCount",
+                        "files"
+                      ],
+                      "properties": {
+                        "fileCount": {
+                          "type": "integer"
+                        },
+                        "files": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "path",
+                              "status"
+                            ],
+                            "properties": {
+                              "path": {
+                                "type": "string"
+                              },
+                              "status": {
+                                "type": "string"
+                              },
+                              "additions": {
+                                "type": "number"
+                              },
+                              "deletions": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "verification": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "selectedTests",
+                        "executedTests",
+                        "cached",
+                        "reasons",
+                        "handoffEligible"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "conclusion": {
+                          "type": "string"
+                        },
+                        "freshness": {
+                          "type": "string"
+                        },
+                        "level": {
+                          "type": "string"
+                        },
+                        "selectedTests": {
+                          "type": "integer"
+                        },
+                        "executedTests": {
+                          "type": "integer"
+                        },
+                        "cached": {
+                          "type": "integer"
+                        },
+                        "fingerprint": {
+                          "type": "string"
+                        },
+                        "reasons": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "handoffEligible": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "evidence": {
+                      "type": "object",
+                      "required": [
+                        "status"
+                      ],
+                      "properties": {
+                        "status": {
+                          "type": "string"
+                        },
+                        "hash": {
+                          "type": "string"
+                        },
+                        "outcome": {
+                          "type": "string"
+                        },
+                        "recordedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timeline": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "sequence",
+                          "type",
+                          "title",
+                          "at"
+                        ],
+                        "properties": {
+                          "sequence": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "detail": {
+                            "type": "string"
+                          },
+                          "at": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}/inspector/evidence": {
+      "get": {
+        "summary": "Resolve the immutable CP5 evidence detail for an execution (lazy)",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "schemaVersion",
+                    "outcome",
+                    "execution",
+                    "agent",
+                    "runtime",
+                    "repository",
+                    "skills",
+                    "tools",
+                    "verification",
+                    "timing",
+                    "evidenceHash"
+                  ],
+                  "properties": {
+                    "schemaVersion": {
+                      "type": "number",
+                      "enum": [
+                        1
+                      ]
+                    },
+                    "outcome": {
+                      "type": "string"
+                    },
+                    "execution": {
+                      "type": "object",
+                      "required": [
+                        "executionId",
+                        "agentRunId"
+                      ],
+                      "properties": {
+                        "executionId": {
+                          "type": "string"
+                        },
+                        "agentRunId": {
+                          "type": "string"
+                        },
+                        "objective": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "agent": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "role"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "role": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "runtime": {
+                      "type": "object",
+                      "required": [
+                        "id"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        },
+                        "sessionId": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "model": {
+                      "type": "object",
+                      "properties": {
+                        "providerId": {
+                          "type": "string"
+                        },
+                        "modelId": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "repository": {
+                      "type": "object",
+                      "properties": {
+                        "baselineSha": {
+                          "type": "string"
+                        },
+                        "headSha": {
+                          "type": "string"
+                        },
+                        "changedFiles": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "skills": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "tools": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "granted",
+                          "used"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "granted": {
+                            "type": "boolean"
+                          },
+                          "used": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "verification": {
+                      "type": "object",
+                      "required": [
+                        "purpose",
+                        "conclusion",
+                        "freshness"
+                      ],
+                      "properties": {
+                        "purpose": {
+                          "type": "string"
+                        },
+                        "conclusion": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "pass"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "fail"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "indeterminate"
+                              ]
+                            }
+                          ]
+                        },
+                        "freshness": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "enum": [
+                                "current"
+                              ]
+                            },
+                            {
+                              "type": "string",
+                              "enum": [
+                                "stale"
+                              ]
+                            }
+                          ]
+                        },
+                        "fingerprint": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "timing": {
+                      "type": "object",
+                      "required": [
+                        "startedAt",
+                        "completedAt"
+                      ],
+                      "properties": {
+                        "startedAt": {
+                          "type": "string"
+                        },
+                        "completedAt": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "evidenceHash": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}/inspector/verification": {
+      "get": {
+        "summary": "Resolve the verification report by fingerprint (lazy)",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "fingerprint",
+                    "level",
+                    "scope",
+                    "result",
+                    "selectedTests",
+                    "executedTests",
+                    "cached",
+                    "failed",
+                    "durationMs",
+                    "graphValid",
+                    "evidence"
+                  ],
+                  "properties": {
+                    "fingerprint": {
+                      "type": "string"
+                    },
+                    "level": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "pass"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "fail"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "indeterminate"
+                          ]
+                        }
+                      ]
+                    },
+                    "selectedTests": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "executedTests": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "cached": {
+                      "type": "integer"
+                    },
+                    "failed": {
+                      "type": "integer"
+                    },
+                    "durationMs": {
+                      "type": "number"
+                    },
+                    "graphValid": {
+                      "type": "boolean"
+                    },
+                    "evidence": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/history/{executionId}/inspector/files/{path}/diff": {
+      "get": {
+        "summary": "Resolve a file-level diff for a changed file (lazy)",
+        "tags": [
+          "activity-room"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "executionId",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "path",
+                    "status",
+                    "additions",
+                    "deletions",
+                    "hunks"
+                  ],
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "additions": {
+                      "type": "integer"
+                    },
+                    "deletions": {
+                      "type": "integer"
+                    },
+                    "hunks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "header",
+                          "lines"
+                        ],
+                        "properties": {
+                          "header": {
+                            "type": "string"
+                          },
+                          "lines": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": [
+                                "type",
+                                "text"
+                              ],
+                              "properties": {
+                                "type": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "add"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "delete"
+                                      ]
+                                    },
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "context"
+                                      ]
+                                    }
+                                  ]
+                                },
+                                "text": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/activity-room/preview": {
       "post": {
         "summary": "Preview a governed Activity Room execution plan",
@@ -49071,6 +51594,108 @@
                       "type": "string"
                     },
                     "generatedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/activity-room/runs": {
+      "post": {
+        "summary": "Start a governed Activity Room execution (complexity-routed through DEX/CAR)",
+        "tags": [
+          "activity-room"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "goal"
+                ],
+                "properties": {
+                  "goal": {
+                    "type": "string"
+                  },
+                  "agentId": {
+                    "type": "string"
+                  },
+                  "principalId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "executionId",
+                    "complexity",
+                    "route",
+                    "status"
+                  ],
+                  "properties": {
+                    "executionId": {
+                      "type": "string"
+                    },
+                    "complexity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "simple"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "standard"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "complex"
+                          ]
+                        }
+                      ]
+                    },
+                    "route": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "developer"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "enum": [
+                            "workflow"
+                          ]
+                        }
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "workflowId": {
+                      "type": "string"
+                    },
+                    "workflowRunId": {
                       "type": "string"
                     }
                   }

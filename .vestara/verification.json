@@ -55,7 +55,9 @@
         "tests/integration/ai-execute-api.test.ts",
         "tests/integration/ai-v2-api.test.ts",
         "tests/integration/ai-v2-evaluation-api.test.ts",
-        "tests/integration/ai-v2-runtime-api.test.ts"
+        "tests/integration/ai-v2-runtime-api.test.ts",
+        "tests/unit/arx-stabilization-model-selection.test.ts",
+        "tests/integration/arx-stabilization-agent-run-model.test.ts"
       ]
     },
     "auth": {
@@ -113,7 +115,8 @@
         "tests/unit/dex-cp0-config.test.ts",
         "tests/unit/dex-cp3-developer-runtime.test.ts",
         "tests/unit/dex-cp5-evidence.test.ts",
-        "tests/unit/dex-cp6-coordinator.test.ts"
+        "tests/unit/dex-cp6-coordinator.test.ts",
+        "tests/unit/arx-stabilization-session-lifecycle.test.ts"
       ]
     },
     "component": {
@@ -420,7 +423,8 @@
       ],
       "tests": [
         "tests/unit/workflow-runtime.test.ts",
-        "tests/integration/workflow-api.test.ts"
+        "tests/integration/workflow-api.test.ts",
+        "tests/unit/arx-014-agent-step-executor.test.ts"
       ]
     },
     "routes": {
@@ -628,7 +632,11 @@
         "tests/unit/arx-cp1-projection.test.ts",
         "tests/unit/arx-cp2-011-history.test.ts",
         "tests/unit/arx-cp2-012-browse.test.ts",
-        "tests/integration/activity-room-api.test.ts"
+        "tests/integration/activity-room-api.test.ts",
+        "tests/unit/arx-stabilization-governed-runner.test.ts",
+        "tests/unit/arx-stabilization-governed-workflow.test.ts",
+        "tests/integration/arx-stabilization-activity-room-run.test.ts",
+        "tests/integration/arx-stabilization-event-cursor.test.ts"
       ],
       "dependsOn": [
         "car",

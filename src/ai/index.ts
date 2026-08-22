@@ -28,6 +28,7 @@ export { AI_CAPABILITIES } from './domain/contracts.js';
 export type { NormalizedAiRequest, AiProviderResult, AiProviderStreamEvent, AiExecutionContext, AiProviderAdapter, AiProviderAdapterRegistration } from './providers/provider-adapter.js';
 export { AiProviderRegistry } from './providers/provider-registry.js';
 export { OpenAiCompatibleAdapter } from './providers/openai-compatible.js';
+export { OpenCodeAiProviderAdapter } from './providers/opencode-ai-provider.js';
 export type { AiModelCatalogOptions } from './catalog/model-catalog.js';
 export { AiModelCatalog, catalogKey } from './catalog/model-catalog.js';
 export type {
@@ -39,7 +40,7 @@ export type {
 export { ModelsDevCatalogAdapter, toProviderType, inferProviderType } from './catalog/models-dev-adapter.js';
 export type { CatalogSnapshot } from './catalog/catalog-cache.js';
 export { CatalogCache, buildSnapshot, checksum } from './catalog/catalog-cache.js';
-export type { RoutingConfig } from './runtime/model-router.js';
+export type { RoutingConfig, ModelSelectionDiagnostic, ModelCandidateDiagnostic } from './runtime/model-router.js';
 export { ModelRouter } from './runtime/model-router.js';
 export type { AiRuntimeOptions } from './runtime/ai-runtime.js';
 export { AiService, type AiService as AiServiceInterface } from './runtime/ai-runtime.js';

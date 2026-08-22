@@ -140,7 +140,7 @@ describe('ARX-011 durable history', () => {
     });
     expect(fact.status).toBe('completed');
     expect(fact.evidenceHash).toBe('sha256:def456');
-    expect(first.events('exec_restart')).toHaveLength(7);
+    expect(first.events('exec_restart')).toHaveLength(9);
 
     // Simulate process restart — new store instance over the same file.
     const second = new FileActivityHistoryStore(filePath);
@@ -264,13 +264,86 @@ describe('ARX-011 recorder', () => {
     const types = store.events(executionId).map((e) => e.type);
     expect(types).toEqual([
       'execution-requested',
+      'runtime-connected',
       'file-changed',
       'file-changed',
+      'runtime-completed',
       'verification-started',
       'verification-completed',
       'evidence-recorded',
       'execution-completed',
     ]);
+  });
+
+  it('records an INDETERMINATE verdict as runtime-completed → blocked, not completed', () => {
+    const store = new InMemoryActivityHistoryStore();
+    const recorder = new ActivityHistoryRecorderImpl(store);
+    const executionId = 'exec_indeterminate';
+
+    const fact = recorder.recordCoordinatorResult({
+      execution: buildExecution(executionId),
+      result: {
+        ...buildCoordinatorResult(executionId),
+        handoffEligible: false,
+        verification: {
+          conclusion: 'indeterminate',
+          freshness: 'current',
+          level: 'V1',
+          affectedModules: ['cli'],
+          fingerprint: 'sha256:abc123',
+          reasons: [{ kind: 'insufficient-evidence', message: 'Verification report is missing.' }],
+        },
+      },
+    });
+
+    // Authoritative state stays failed; the narrative says "blocked".
+    expect(fact.status).toBe('failed');
+
+    const events = store.events(executionId);
+    expect(events.some((e) => e.type === 'runtime-completed')).toBe(true);
+    expect(events.some((e) => e.type === 'execution-completed')).toBe(false);
+    const blocked = events.find((e) => e.type === 'execution-blocked');
+    expect(blocked?.type === 'execution-blocked' ? blocked.payload : null).toMatchObject({
+      reason: 'Verification report is missing.',
+      changedFiles: ['src/cli.ts', 'tests/cli.test.ts'],
+    });
+    const verification = events.find((e) => e.type === 'verification-completed');
+    expect(verification?.type === 'verification-completed' ? verification.payload : null).toMatchObject({
+      conclusion: 'indeterminate',
+      reasons: [{ kind: 'insufficient-evidence', message: 'Verification report is missing.' }],
+    });
+  });
+
+  it('records a FAIL verdict as runtime-completed → failed', () => {
+    const store = new InMemoryActivityHistoryStore();
+    const recorder = new ActivityHistoryRecorderImpl(store);
+    const executionId = 'exec_fail_verdict';
+
+    const fact = recorder.recordCoordinatorResult({
+      execution: buildExecution(executionId),
+      result: {
+        ...buildCoordinatorResult(executionId),
+        handoffEligible: false,
+        verification: {
+          conclusion: 'fail',
+          freshness: 'current',
+          level: 'V1',
+          affectedModules: ['cli'],
+          fingerprint: 'sha256:abc123',
+          reasons: [{ kind: 'change-failure', message: 'Verification failed due to changes in this execution' }],
+        },
+      },
+    });
+
+    expect(fact.status).toBe('failed');
+    const events = store.events(executionId);
+    expect(events.some((e) => e.type === 'runtime-completed')).toBe(true);
+    expect(events.some((e) => e.type === 'execution-completed')).toBe(false);
+    expect(events.some((e) => e.type === 'execution-blocked')).toBe(false);
+    const failed = events.find((e) => e.type === 'execution-failed');
+    expect(failed?.type === 'execution-failed' ? failed.payload : null).toMatchObject({
+      error: 'Verification failed due to changes in this execution',
+    });
   });
 
   it('is idempotent — recording the same result twice does not duplicate', () => {
@@ -285,7 +358,7 @@ describe('ARX-011 recorder', () => {
     recorder.recordCoordinatorResult(input);
     recorder.recordCoordinatorResult(input);
 
-    expect(store.events(executionId)).toHaveLength(7);
+    expect(store.events(executionId)).toHaveLength(9);
   });
 
   it('lists executions newest-first within a room', () => {

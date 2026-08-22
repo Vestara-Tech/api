@@ -27,6 +27,12 @@ export { WorkflowGraph, stepStatusOf } from './domain/graph.js';
 export type { WorkflowRevision } from './registry/workflow-registry.js';
 export { WorkflowRegistry } from './registry/workflow-registry.js';
 export type { WorkflowRuntimeOptions, WorkflowRunEvent } from './runtime/workflow-runtime.js';
-export { WorkflowRuntime, evaluateExpression } from './runtime/workflow-runtime.js';
-export type { WorkflowServiceOptions } from './service/workflow-service.js';
+export { WorkflowRuntime, evaluateExpression, interpolateTemplate } from './runtime/workflow-runtime.js';
+export type { WorkflowServiceOptions, GovernedWorkflowStartInput } from './service/workflow-service.js';
 export { WorkflowService, type WorkflowService as WorkflowServiceContract } from './service/workflow-service.js';
+export {
+  buildGovernedWorkflow,
+  governedWorkflowId,
+  GOVERNED_WORKFLOW_IDS,
+} from './governed/governed-workflows.js';
+export type { GovernedWorkflowComplexity } from './governed/governed-workflows.js';

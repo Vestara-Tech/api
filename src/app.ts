@@ -47,6 +47,7 @@ import { applicationBuilderRoutes } from './routes/application-builder.js';
 import { userRoutes } from './routes/user.js';
 import { dashboardRoutes } from './routes/dashboard.js';
 import { themeRoutes } from './routes/theme.js';
+import { themeDraftRoutes } from './routes/theme-drafts.js';
 import { templateRoutes } from './routes/template.js';
 import { aiPlatformV2Routes } from './routes/ai-v2.js';
 import { marketplaceV2Routes } from './routes/marketplace-v2.js';
@@ -136,6 +137,7 @@ export async function buildApp(options: BuildAppOptions) {
   await app.register(userRoutes);
   await app.register(dashboardRoutes);
   await app.register(themeRoutes);
+  await app.register(themeDraftRoutes);
   await app.register(templateRoutes);
   await app.register(aiPlatformV2Routes);
   await app.register(marketplaceV2Routes);

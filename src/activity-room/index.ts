@@ -31,7 +31,14 @@ export type {
 } from './history/contracts.js';
 export { InMemoryActivityHistoryStore, FileActivityHistoryStore } from './history/store.js';
 export { ActivityHistoryRecorderImpl } from './history/recorder.js';
-export type { RecordExecutionInput, RecordCoordinatorInput, ActivityHistoryRecorder } from './history/recorder.js';
+export type {
+  RecordExecutionInput,
+  RecordCoordinatorInput,
+  RecordWorkflowStartInput,
+  RecordWorkflowProgressInput,
+  RecordWorkflowFailureInput,
+  ActivityHistoryRecorder,
+} from './history/recorder.js';
 export { recoverExecution, recoverEvents } from './history/recovery.js';
 export type { RecoveredExecution } from './history/recovery.js';
 
@@ -58,3 +65,35 @@ export type { ConversationMessageKind, ConversationMessage } from './projection/
 
 export { buildProjection } from './projection/execution-projection.js';
 export type { ExecutionRecord, CoordinatorResult } from './projection/execution-projection.js';
+
+// ARX-CP2 ARX-013 — Execution Inspector v2.
+export type {
+  ActivityInspectorOverview,
+  ActivityInspectorRuntime,
+  ActivityInspectorContext,
+  ActivityInspectorFileEntry,
+  ActivityInspectorChanges,
+  ActivityInspectorVerification,
+  ActivityInspectorEvidence,
+  ActivityInspectorTimelineEntry,
+  ActivityInspectorView,
+  ActivityInspectorEvidenceDetail,
+  ActivityInspectorVerificationDetail,
+  ActivityInspectorFileDiff,
+} from './inspector/contracts.js';
+export type { ActivityInspectorSource } from './inspector/inspector.js';
+export { readInspectorSource, buildInspectorView } from './inspector/inspector.js';
+export {
+  resolveEvidenceDetail,
+  resolveVerificationDetail,
+  resolveFileDiff,
+} from './inspector/detail.js';
+
+// ARX-CP2 ARX-014 — Governed Activity Room runner.
+export { GovernedActivityRunner } from './runtime/governed-runner.js';
+export type {
+  GovernedActivityRoute,
+  GovernedActivityStartInput,
+  GovernedActivityStartResult,
+  GovernedActivityRunnerDeps,
+} from './runtime/governed-runner.js';

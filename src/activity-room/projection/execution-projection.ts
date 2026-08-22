@@ -57,6 +57,7 @@ export interface CoordinatorResult {
   readonly outcome: string;
   readonly runtimeId: string;
   readonly sessionId?: string;
+  readonly runtimeModel?: string;
   readonly changedFiles: readonly string[];
   readonly verification: {
     readonly conclusion: string;
@@ -64,6 +65,7 @@ export interface CoordinatorResult {
     readonly level?: string;
     readonly affectedModules?: readonly string[];
     readonly fingerprint?: string;
+    readonly reasons?: readonly { kind: string; message: string }[];
   };
   readonly handoffEligible: boolean;
   readonly evidence?: {
@@ -79,6 +81,9 @@ export interface CoordinatorResult {
     readonly text?: string;
     readonly path?: string;
     readonly detail?: string;
+    readonly sessionId?: string;
+    readonly runtime?: string;
+    readonly model?: string;
   }[];
   readonly context?: {
     readonly identity?: { readonly agentId?: string };
@@ -293,6 +298,9 @@ function buildVerification(result?: CoordinatorResult): ActivityVerificationProj
     ...(result.verification.level ? { level: result.verification.level } : {}),
     ...(result.verification.affectedModules ? { modules: result.verification.affectedModules } : {}),
     ...(result.verification.fingerprint ? { fingerprint: result.verification.fingerprint } : {}),
+    ...(result.verification.reasons !== undefined && result.verification.reasons.length > 0
+      ? { reasons: result.verification.reasons }
+      : {}),
   };
 }
 

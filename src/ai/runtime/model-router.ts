@@ -14,6 +14,20 @@ export interface RoutingConfig {
   readonly enabledProviders: readonly string[];
 }
 
+/** Per-candidate rejection detail for a failed requirement-based selection. */
+export interface ModelCandidateDiagnostic {
+  readonly modelId: string;
+  readonly providerId: string;
+  readonly enabled: boolean;
+  readonly reasons: readonly string[];
+}
+
+/** Structured diagnostics for a requirement-based model selection failure. */
+export interface ModelSelectionDiagnostic {
+  readonly requested: readonly string[];
+  readonly candidates: readonly ModelCandidateDiagnostic[];
+}
+
 /**
  * AI-012/013/014 — Model router. Resolves a selector (explicit provider/model
  * or capability requirements) to a concrete model, honoring provider
@@ -56,10 +70,23 @@ export class ModelRouter {
       .filter((m) => this.config.enabledProviders.length === 0 || this.config.enabledProviders.includes(m.providerId));
 
     if (candidates.length === 0) {
-      throw notFound('No enabled model satisfies the requested capabilities');
+      throw notFound(modelSelectionMessage(requirements, this.describeCandidates(requirements)), {
+        requested: describeRequirements(requirements),
+        candidates: this.describeCandidates(requirements),
+      });
     }
 
     return toResolved(rank(candidates, profile));
+  }
+
+  /** Per-candidate rejection reasons — the diagnostics the selector should expose. */
+  private describeCandidates(requirements: AiModelRequirements): readonly ModelCandidateDiagnostic[] {
+    return this.catalog.list().map((model) => ({
+      modelId: model.id,
+      providerId: model.providerId,
+      enabled: this.providers.adapterFor(model.providerId) !== undefined,
+      reasons: rejectionReasons(model, requirements, this.providers.adapterFor(model.providerId) !== undefined, this.config.enabledProviders),
+    }));
   }
 
   async resolveAsync(selector: AiModelSelector): Promise<ResolvedAiModel> {
@@ -133,4 +160,61 @@ function toResolved(model: AiModel): ResolvedAiModel {
     capabilities: model.capabilities,
     contextWindow: model.contextWindow,
   };
+}
+
+// ── Selection diagnostics ──────────────────────────────────────────
+
+function describeRequirements(requirements: AiModelRequirements): readonly string[] {
+  const lines: string[] = [];
+  for (const key of ['reasoning', 'tools', 'structuredOutput', 'functionCalling', 'vision', 'embeddings'] as const) {
+    const value = requirements[key];
+    if (value !== undefined) lines.push(`${key}: ${value ? 'required' : 'forbidden'}`);
+  }
+  if (requirements.input !== undefined && requirements.input.length > 0) {
+    lines.push(`input: ${requirements.input.join(',')}`);
+  }
+  if (requirements.minContext !== undefined) {
+    lines.push(`minContext: ${requirements.minContext}`);
+  }
+  return lines;
+}
+
+function rejectionReasons(
+  model: AiModel,
+  requirements: AiModelRequirements,
+  providerEnabled: boolean,
+  enabledProviders: readonly string[],
+): readonly string[] {
+  const reasons: string[] = [];
+  if (!providerEnabled) reasons.push('provider not enabled');
+  if (enabledProviders.length > 0 && !enabledProviders.includes(model.providerId)) reasons.push('provider filtered by enabledProviders');
+  if (requirements.reasoning !== undefined && model.capabilities.reasoning !== requirements.reasoning) reasons.push('reasoning mismatch');
+  if (requirements.tools !== undefined && model.capabilities.tools !== requirements.tools) reasons.push('tools mismatch');
+  if (requirements.structuredOutput !== undefined && model.capabilities.structuredOutput !== requirements.structuredOutput) reasons.push('structuredOutput mismatch');
+  if (requirements.functionCalling !== undefined && model.capabilities.functionCalling !== requirements.functionCalling) reasons.push('functionCalling mismatch');
+  if (requirements.vision !== undefined && model.capabilities.vision !== requirements.vision) reasons.push('vision mismatch');
+  if (requirements.embeddings !== undefined && model.capabilities.embeddings !== requirements.embeddings) reasons.push('embeddings mismatch');
+  if (requirements.minContext !== undefined && model.contextWindow < requirements.minContext) reasons.push('context window below minimum');
+  if (requirements.input !== undefined && requirements.input.length > 0) {
+    for (const modality of requirements.input) {
+      if (!model.modalities.includes(modality)) reasons.push(`input modality "${modality}" unsupported`);
+    }
+  }
+  return reasons;
+}
+
+function modelSelectionMessage(requirements: AiModelRequirements, candidates: readonly ModelCandidateDiagnostic[]): string {
+  const lines: string[] = ['No enabled model satisfies the requested capabilities.'];
+  const requested = describeRequirements(requirements);
+  if (requested.length > 0) {
+    lines.push('', 'Requested:');
+    for (const line of requested) lines.push(`  ${line}`);
+  }
+  lines.push('', `Candidates (${candidates.length}):`);
+  for (const candidate of candidates) {
+    const state = candidate.enabled ? 'enabled' : 'disabled';
+    const reason = candidate.reasons.length > 0 ? ` — ${candidate.reasons.join(', ')}` : '';
+    lines.push(`  ${candidate.providerId}/${candidate.modelId} [${state}]${reason}`);
+  }
+  return lines.join('\n');
 }

@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { Link as RouterLink, useSearchParams } from 'react-router';
 import { AgentPresence, MessageView, type VestaraMessage, type VestaraMessagePart } from '@vestara/ai-ui';
-import { agentEventToParts } from '@vestara/ai-ui';
-import { aiApi, type ActivityRoomExecutionPlanShape, type ActivityRoomExecutionRecordShape, type ActivityRoomSnapshotShape, type VerificationReportShape } from '../api/aiApi';
+import { aiApi, type ActivityRoomExecutionPlanShape, type ActivityRoomExecutionRecordShape, type ActivityHistoryEventShape, type ActivityRoomSnapshotShape } from '../api/aiApi';
 import {
   ExecutionApprovalCard,
   ExecutionBrowser,
@@ -34,11 +33,66 @@ const QUICK_ACTIONS = [
   },
 ] as const;
 
-function verificationTone(report: VerificationReportShape | ActivityRoomSnapshotShape['verification'] | null): 'neutral' | 'info' | 'success' | 'warning' | 'error' {
+function verificationTone(report: ActivityRoomSnapshotShape['verification'] | null): 'neutral' | 'info' | 'success' | 'warning' | 'error' {
   if (!report) return 'neutral';
   if (report.result === 'pass') return 'success';
   if (report.result === 'fail') return 'error';
   return 'warning';
+}
+
+function describeActivityEvent(event: ActivityHistoryEventShape): string {
+  const payload = event.payload as Record<string, unknown> | undefined;
+  const detail = typeof payload?.path === 'string' ? ` (${payload.path})` : '';
+  const reason =
+    typeof payload?.reason === 'string'
+      ? payload.reason
+      : Array.isArray(payload?.reasons) && payload.reasons.length > 0
+        ? String((payload.reasons[0] as Record<string, unknown>)?.message ?? '')
+        : undefined;
+  switch (event.type) {
+    case 'execution-requested':
+      return `Execution requested: ${typeof payload?.goal === 'string' ? payload.goal : ''}`;
+    case 'execution-started':
+      return 'Execution started on the governed runtime.';
+    case 'file-changed':
+      return `File changed${detail}`;
+    case 'tool-requested':
+      return `Tool requested: ${typeof payload?.name === 'string' ? payload.name : ''}.`;
+    case 'tool-completed':
+      return `Tool completed: ${typeof payload?.name === 'string' ? payload.name : ''} · ${payload?.ok === false ? 'failed' : 'ok'}.`;
+    case 'context-assembled':
+      return 'Developer started implementation.';
+    case 'runtime-connected':
+      return `Developer connected${typeof payload?.model === 'string' ? ` · ${payload.model}` : typeof payload?.runtimeId === 'string' ? ` · ${payload.runtimeId}` : ''}.`;
+    case 'session-created':
+      return `Developer session created${typeof payload?.sessionId === 'string' ? ` · ${payload.sessionId}` : ''}${typeof payload?.model === 'string' ? ` · ${payload.model}` : ''}.`;
+    case 'session-resumed':
+      return `Developer session resumed${typeof payload?.sessionId === 'string' ? ` · ${payload.sessionId}` : ''}.`;
+    case 'runtime-completed':
+      return `Developer runtime completed${typeof payload?.runtimeId === 'string' ? ` · ${payload.runtimeId}` : ''}.`;
+    case 'verification-started':
+      return 'Verification started via the control plane.';
+    case 'verification-completed':
+      return `Verification completed: ${String(payload?.conclusion ?? 'unknown').toUpperCase()}${reason ? ` — ${reason}` : ''}`;
+    case 'evidence-recorded':
+      return `Evidence recorded: ${String(payload?.evidenceHash ?? 'unknown').slice(0, 16)}…`;
+    case 'execution-completed':
+      return `Execution completed${typeof payload?.changedFiles === 'number' ? ` — ${payload.changedFiles} files changed` : ''}.`;
+    case 'execution-blocked':
+      return `Handoff blocked${reason ? `: ${reason}` : ' pending verification'}.`;
+    case 'execution-failed':
+      return `Execution failed${reason ? `: ${reason}` : typeof payload?.error === 'string' ? `: ${payload.error}` : ''}.`;
+    case 'execution-cancelled':
+      return 'Execution cancelled.';
+    case 'workflow-started':
+      return `Governed workflow started: ${String(payload?.workflowId ?? 'unknown')} (run ${String(payload?.workflowRunId ?? '')})`;
+    case 'workflow-progressed':
+      return `Workflow progressed: ${String(payload?.role ?? '')} · ${String(payload?.stepId ?? '')}`;
+    case 'workflow-failed':
+      return `Workflow failed${typeof payload?.error === 'string' ? `: ${payload.error}` : ''}.`;
+    default:
+      return `${event.type}${detail}`;
+  }
 }
 
 export function ActivityRoomPage() {
@@ -51,23 +105,22 @@ export function ActivityRoomPage() {
   const [snapshot, setSnapshot] = useState<ActivityRoomSnapshotShape | null>(null);
   const [preview, setPreview] = useState<ActivityRoomExecutionPlanShape | null>(null);
   const [drafts, setDrafts] = useState<readonly ActivityRoomExecutionRecordShape[]>([]);
-  const [verificationReport, setVerificationReport] = useState<VerificationReportShape | null>(null);
   const [snapshotLoading, setSnapshotLoading] = useState(false);
   const [approvalBusyId, setApprovalBusyId] = useState<string | null>(null);
   const [approvalError, setApprovalError] = useState<string | null>(null);
+  const [selectedExecutionId, setSelectedExecutionId] = useState<string | null>(null);
+  const [inspectorRefreshTrigger, setInspectorRefreshTrigger] = useState(0);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const previewRequestRef = useRef(0);
 
   const loadSnapshot = useCallback(async () => {
     setSnapshotLoading(true);
     try {
-      const [snapshotResult, verificationResult, executionResult] = await Promise.allSettled([
+      const [snapshotResult, executionResult] = await Promise.allSettled([
         aiApi.activityRoomSnapshot(),
-        aiApi.verificationLatest(),
         aiApi.activityRoomExecutions(),
       ]);
       setSnapshot(snapshotResult.status === 'fulfilled' ? snapshotResult.value : null);
-      setVerificationReport(verificationResult.status === 'fulfilled' ? verificationResult.value : null);
       setDrafts(executionResult.status === 'fulfilled' ? executionResult.value : []);
     } finally {
       setSnapshotLoading(false);
@@ -115,37 +168,27 @@ export function ActivityRoomPage() {
     setRunId(null);
     append('user', [{ kind: 'text', text: goal }]);
     try {
-      const run = await aiApi.startAgentRun(agentId, goal.trim());
-      setRunId(run.id);
-      const agentName = AGENTS.find((a) => a.id === agentId)?.name ?? agentId;
-      append('agent', [{ kind: 'agent-activity', agentId, agentName, activity: 'started' }], agentName);
+      const run = await aiApi.activityRoomRun({ goal: goal.trim(), principalId: 'console-user' });
+      setRunId(run.executionId);
+      const routeLabel = run.route === 'workflow' ? 'planning/workflow' : 'developer runtime';
+      append('agent', [{ kind: 'text', text: `Vestara routed this goal to the ${routeLabel} orchestration path.` }], 'Activity Orchestrator');
       if (pollRef.current) clearInterval(pollRef.current);
+      let lastSequence = 0;
       pollRef.current = setInterval(async () => {
         try {
-          const events = await aiApi.agentRunEvents(run.id);
-          const parts = events.flatMap((event) => agentEventToParts(event as never, agentName));
-          if (parts.length > 0) {
-            setMessages((prev) => {
-              const prior = prev.filter((message) => message.authorName !== agentName || message.role !== 'agent');
-              return [
-                ...prior,
-                {
-                  id: `agent_${run.id}_${events.length}`,
-                  role: 'agent',
-                  authorName: agentName,
-                  parts,
-                  createdAt: new Date().toISOString(),
-                },
-              ];
-            });
+          const events = await aiApi.activityHistoryEvents(run.executionId, lastSequence);
+          for (const event of events) {
+            lastSequence = Math.max(lastSequence, event.sequence);
+            append('agent', [{ kind: 'text', text: describeActivityEvent(event) }], 'Activity Orchestrator');
           }
-          if (events.some((event) => event.type === 'completed' || event.type === 'failed')) {
+          if (events.length > 0) setInspectorRefreshTrigger((n) => n + 1);
+          if (events.some((event) => event.type === 'execution-completed' || event.type === 'execution-failed' || event.type === 'execution-blocked' || event.type === 'execution-cancelled')) {
             if (pollRef.current) clearInterval(pollRef.current);
             setRunning(false);
             void loadSnapshot();
           }
         } catch {
-          // Keep polling until the run resolves or the room is refreshed.
+          // Keep polling until the execution resolves or the room is refreshed.
         }
       }, 500);
       void loadSnapshot();
@@ -180,7 +223,6 @@ export function ActivityRoomPage() {
         try {
           const result = await aiApi.activityRoomPreview({
             goal: trimmedGoal,
-            agentId,
             principalId: 'console-user',
           });
           if (previewRequestRef.current === requestId) setPreview(result);
@@ -193,16 +235,13 @@ export function ActivityRoomPage() {
     return () => {
       clearTimeout(timeout);
     };
-  }, [agentId, goal]);
+  }, [goal]);
 
-  const verification = verificationReport ?? snapshot?.verification ?? null;
+  const verification = snapshot?.verification ?? null;
   const verificationLabel = verification ? verification.result.toUpperCase() : 'UNKNOWN';
   const verificationDetail = verification
-    ? verificationReport
-      ? `${verificationReport.level} · ${verificationReport.selectedTests.length}/${verificationReport.executedTests.length} tests · ${verificationReport.graphIssues.length} graph issues`
-      : `Scope ${verification.scope}`
+    ? `Scope ${verification.scope} · ${verification.selectedTests}/${verification.executedTests} tests`
     : 'No verification report is available yet.';
-  const verificationSnapshot = snapshot?.verification ?? null;
   const recentItems = snapshot?.timeline ?? [];
   const recentApprovals = snapshot?.approvals ?? [];
   const chatHref = goal.trim() ? `/ai/chat?goal=${encodeURIComponent(goal.trim())}` : '/ai/chat';
@@ -232,11 +271,8 @@ export function ActivityRoomPage() {
       </Stack>
 
       <ExecutionPromptBar
-        agentId={agentId}
         goal={goal}
         running={running}
-        agents={AGENTS}
-        onAgentChange={setAgentId}
         onGoalChange={setGoal}
         onRun={() => void handleRun()}
       />
@@ -276,17 +312,12 @@ export function ActivityRoomPage() {
       </Stack>
 
       <Stack direction={{ xs: 'column', lg: 'row' }} spacing={2} sx={{ mb: 2, alignItems: 'flex-start' }}>
-        <ExecutionBrowser />
+        <ExecutionBrowser onSelect={setSelectedExecutionId} />
         <Stack spacing={2} sx={{ flex: 1, minWidth: 0 }}>
           <ExecutionInspector
-            snapshot={snapshot}
-            currentAgentId={agentId}
-            currentAgentName={AGENTS.find((a) => a.id === agentId)?.name ?? agentId}
-            running={running}
-            runId={runId}
-            loading={snapshotLoading}
+            executionId={selectedExecutionId}
+            refreshTrigger={inspectorRefreshTrigger}
             onRefresh={() => void loadSnapshot()}
-            drafts={drafts}
           />
           <ExecutionTimeline items={recentItems} />
         </Stack>
@@ -298,7 +329,7 @@ export function ActivityRoomPage() {
             busyApprovalId={approvalBusyId}
             error={approvalError}
           />
-          <ExecutionEvidencePanel verification={verificationReport} snapshotVerification={verificationSnapshot} />
+          <ExecutionEvidencePanel verification={snapshot?.verification ?? null} />
         </Stack>
       </Stack>
 

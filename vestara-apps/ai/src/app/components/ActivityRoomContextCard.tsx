@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Box, Button, Chip, Divider, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
-import { aiApi, type ActivityRoomExecutionRecordShape, type ActivityRoomSnapshotShape, type VerificationReportShape } from '../../api/aiApi';
+import { aiApi, type ActivityRoomExecutionRecordShape, type ActivityRoomSnapshotShape } from '../../api/aiApi';
 
 interface ActivityRoomContextCardProps {
   readonly goal?: string;
 }
 
-function verificationTone(report: VerificationReportShape | ActivityRoomSnapshotShape['verification'] | null): 'default' | 'info' | 'success' | 'warning' | 'error' {
+function verificationTone(report: ActivityRoomSnapshotShape['verification'] | null): 'default' | 'info' | 'success' | 'warning' | 'error' {
   if (!report) return 'default';
   if (report.result === 'pass') return 'success';
   if (report.result === 'fail') return 'error';
@@ -16,20 +16,17 @@ function verificationTone(report: VerificationReportShape | ActivityRoomSnapshot
 
 export function ActivityRoomContextCard({ goal }: ActivityRoomContextCardProps) {
   const [snapshot, setSnapshot] = useState<ActivityRoomSnapshotShape | null>(null);
-  const [verificationReport, setVerificationReport] = useState<VerificationReportShape | null>(null);
   const [drafts, setDrafts] = useState<readonly ActivityRoomExecutionRecordShape[]>([]);
   const [loading, setLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [snapshotResult, verificationResult, executionResult] = await Promise.allSettled([
+      const [snapshotResult, executionResult] = await Promise.allSettled([
         aiApi.activityRoomSnapshot(),
-        aiApi.verificationLatest(),
         aiApi.activityRoomExecutions(),
       ]);
       setSnapshot(snapshotResult.status === 'fulfilled' ? snapshotResult.value : null);
-      setVerificationReport(verificationResult.status === 'fulfilled' ? verificationResult.value : null);
       setDrafts(executionResult.status === 'fulfilled' ? executionResult.value : []);
     } finally {
       setLoading(false);
@@ -42,7 +39,7 @@ export function ActivityRoomContextCard({ goal }: ActivityRoomContextCardProps) 
     return () => clearInterval(interval);
   }, [load]);
 
-  const verification = verificationReport ?? snapshot?.verification ?? null;
+  const verification = snapshot?.verification ?? null;
   const activityRoomHref = goal ? `/ai/activity?goal=${encodeURIComponent(goal)}` : '/ai/activity';
 
   return (

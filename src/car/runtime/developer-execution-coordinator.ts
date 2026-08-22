@@ -3,12 +3,14 @@ import type { SkillRegistry } from '../../skill/registry/skill-registry.js';
 import type { SkillResolver } from '../../skill/resolver/skill-resolver.js';
 import { ExecutionContextAssembler } from '../../agent/context/execution-context-assembler.js';
 import type { AgentExecutionContext } from '../../agent/context/execution-context.js';
-import type { CodingAgentRuntime, CodingAgentEvent } from '../domain/contracts.js';
+import type { CodingAgentRuntime, CodingAgentEvent, CodingAgentSession } from '../domain/contracts.js';
 import type {
   VerificationRequest,
   VerificationVerdict,
 } from '../../verification/domain/contracts.js';
 import type { VerificationControlPlane } from '../../verification/domain/contracts.js';
+import type { RuntimeSessionRegistry, WorkflowSessionContext } from './runtime-session-registry.js';
+import { CapacityExhaustedError } from './runtime-session-registry.js';
 import {
   buildCodingExecutionEvidence,
 } from '../evidence/builder.js';
@@ -29,6 +31,10 @@ export interface DeveloperExecutionRequest {
     readonly branch?: string;
     readonly headSha?: string;
   };
+  /** ARX-014 — Workflow context for session binding. When provided, the session
+   *  is keyed by (workflowRunId, agentAssignmentId, runtimeId) instead of
+   *  (executionId, agentRunId). */
+  readonly workflowContext?: WorkflowSessionContext;
 }
 
 /** DEX-CP6 — Output of developer execution. */
@@ -39,6 +45,7 @@ export interface DeveloperExecutionResult {
   readonly context: AgentExecutionContext;
   readonly runtimeId: string;
   readonly sessionId?: string;
+  readonly runtimeModel?: string;
   readonly changedFiles: readonly string[];
   readonly verification: VerificationVerdict;
   readonly handoffEligible: boolean;
@@ -53,6 +60,10 @@ export interface DeveloperExecutionCoordinatorDeps {
   readonly skillRegistry: SkillRegistry;
   readonly skillResolver: SkillResolver;
   readonly verification: VerificationControlPlane;
+  /** DEX-CP3.1 — Session ownership above the adapter. */
+  readonly sessions: RuntimeSessionRegistry;
+  /** Bounded verification-fix iterations that reuse the same CAR session. */
+  readonly maxFixAttempts?: number;
 }
 
 /**
@@ -83,6 +94,7 @@ export class DeveloperExecutionCoordinator {
     adapter: CodingAgentRuntime,
   ): Promise<DeveloperExecutionResult> {
     const startedAt = new Date().toISOString();
+    const agentRunId = request.executionId;
 
     try {
       // 1. Resolve agent.
@@ -110,38 +122,112 @@ export class DeveloperExecutionCoordinator {
       };
       const context = await assembler.assemble(contextInput);
 
-      // 3. Create session and execute via adapter.
-      const session = await adapter.createSession({
-        agentId: context.identity.agentId,
-        runId: context.identity.runId,
-        objective: context.objective.goal ?? '',
-        systemPrompt: context.governance.systemInstructions,
-        ...(request.repository?.root !== undefined ? { workspace: request.repository.root } : {}),
-      });
-
+      // 3. DEX-CP3.1 / ARX-014 — Session ownership above the adapter. One Developer
+      // execution/workflow-assignment owns one CAR session: the registry resumes an
+      // existing binding instead of recreating a session for every step/retry.
+      //
+      // Workflow path: keyed by (workflowRunId, agentAssignmentId, runtimeId)
+      // DEX path:      keyed by (executionId, agentRunId)
+      const wc = request.workflowContext;
       const events: CodingAgentEvent[] = [];
-      for await (const event of adapter.execute(session, { prompt: request.goal })) {
-        events.push(event);
+      if (wc !== undefined) {
+        events.push({ type: 'runtime-session-requested', workflowRunId: wc.workflowRunId, agentAssignmentId: wc.agentAssignmentId, runtimeId: wc.runtimeId });
+      }
+
+      let session: CodingAgentSession | undefined;
+      const acquired = await this.deps.sessions.getOrCreate(
+        request.executionId,
+        agentRunId,
+        {
+          runtime: adapter.id,
+          create: async () => {
+            const created = await adapter.createSession({
+              agentId: context.identity.agentId,
+              runId: context.identity.runId,
+              objective: context.objective.goal ?? '',
+              systemPrompt: context.governance.systemInstructions,
+              ...(request.repository?.root !== undefined ? { workspace: request.repository.root } : {}),
+            });
+            session = created;
+            return { sessionId: created.id, providerSessionId: created.providerSessionId };
+          },
+        },
+        (sessionId) => adapter.close(sessionId),
+        request.workflowContext,
+      );
+      if (!acquired.created) {
+        session = await adapter.resumeSession(acquired.binding.sessionId);
+        events.push({ type: 'session-resumed', sessionId: session.id });
+        if (wc !== undefined) {
+          events.push({ type: 'runtime-session-reused', sessionId: session.id, workflowRunId: wc.workflowRunId, agentAssignmentId: wc.agentAssignmentId, uses: acquired.binding.uses });
+        }
+      } else {
+        events.push({
+          type: 'session-created',
+          sessionId: session!.id,
+          runtime: adapter.id,
+          ...(session!.model !== undefined ? { model: session!.model } : {}),
+        });
+      }
+      if (session === undefined) {
+        throw new Error('Developer runtime session could not be established');
+      }
+
+      // 4. Execute → verify → (bounded fix loop reusing the SAME session).
+      const maxFixAttempts = this.deps.maxFixAttempts ?? 1;
+      let verification: VerificationVerdict | undefined;
+      let changedFiles: string[] = [];
+      let fixAttempt = 0;
+
+      for (;;) {
+        const prompt = fixAttempt === 0 ? request.goal : this.buildFixPrompt(request.goal, verification as VerificationVerdict, changedFiles);
+        for await (const event of adapter.execute(session, { prompt })) {
+          events.push(event);
+        }
+
+        changedFiles = this.extractChangedFiles(events);
+        verification = await this.deps.verification.verify({
+          purpose: 'developer-handoff',
+          executionId: request.executionId,
+          agentRunId,
+          repositoryRoot: request.repository?.root ?? process.cwd(),
+          changedFiles,
+        });
+
+        const handoffEligible = verification.conclusion === 'pass' && verification.freshness === 'current';
+        if (handoffEligible) break;
+        // Only actionable failures (repo mutated) justify a fix iteration.
+        if (verification.conclusion !== 'fail' || changedFiles.length === 0) break;
+        if (fixAttempt >= maxFixAttempts) break;
+
+        // Reuse the owned session for the fix — never create a second one.
+        const resumed = await this.deps.sessions.getOrCreate(request.executionId, agentRunId, {
+          runtime: adapter.id,
+          create: async () => {
+            throw new Error('Unreachable: an active binding must be resumed, not created');
+          },
+        }, undefined, request.workflowContext);
+        if (!resumed.created) {
+          session = await adapter.resumeSession(resumed.binding.sessionId);
+        }
+        events.push({ type: 'session-resumed', sessionId: session.id });
+        if (wc !== undefined) {
+          events.push({ type: 'runtime-session-reused', sessionId: session.id, workflowRunId: wc.workflowRunId, agentAssignmentId: wc.agentAssignmentId, uses: resumed.binding.uses });
+        }
+        fixAttempt += 1;
       }
 
       const completedAt = new Date().toISOString();
-      const changedFiles = this.extractChangedFiles(events);
-
-      // 4. Verify via VCTRL.
-      const verification = await this.deps.verification.verify({
-        purpose: 'developer-handoff',
-        executionId: request.executionId,
-        agentRunId: request.executionId,
-        repositoryRoot: request.repository?.root ?? process.cwd(),
-        changedFiles,
-      });
+      if (verification === undefined) {
+        throw new Error('Developer execution produced no verification verdict');
+      }
 
       // 5. Build evidence.
       const evidenceInput: CodingExecutionEvidenceInput = {
         outcome: 'completed',
         execution: {
           executionId: request.executionId,
-          agentRunId: request.executionId,
+          agentRunId,
           objective: request.goal,
         },
         agent: { id: agent.id, role: agent.role },
@@ -149,6 +235,14 @@ export class DeveloperExecutionCoordinator {
           id: adapter.id,
           sessionId: session.id,
         },
+        ...(session.model !== undefined
+          ? {
+              model: {
+                providerId: adapter.id,
+                modelId: session.model.split('/').pop() ?? session.model,
+              },
+            }
+          : {}),
         repository: {
           baselineSha: request.repository?.headSha,
           changedFiles,
@@ -170,6 +264,7 @@ export class DeveloperExecutionCoordinator {
       };
 
       const evidence = buildCodingExecutionEvidence(evidenceInput);
+      this.deps.sessions.complete(request.executionId, agentRunId);
 
       return {
         executionId: request.executionId,
@@ -178,6 +273,7 @@ export class DeveloperExecutionCoordinator {
         context,
         runtimeId: adapter.id,
         sessionId: session.id,
+        ...(session.model !== undefined ? { runtimeModel: session.model } : {}),
         changedFiles,
         verification,
         handoffEligible: verification.conclusion === 'pass' && verification.freshness === 'current',
@@ -185,7 +281,14 @@ export class DeveloperExecutionCoordinator {
         events,
       };
     } catch (error) {
+      // ARX-014 — Capacity exhaustion is a governed state, not a failure.
+      // Re-throw so the AgentStepExecutor can convert it to outcome: 'queued'.
+      if (error instanceof CapacityExhaustedError) {
+        throw error;
+      }
+
       const completedAt = new Date().toISOString();
+      this.deps.sessions.fail(request.executionId, agentRunId);
 
       // Build failure evidence.
       const failedEvidence = this.buildFailureEvidence(request, startedAt, completedAt, error);
@@ -215,6 +318,12 @@ export class DeveloperExecutionCoordinator {
         error: (error as Error).message,
       };
     }
+  }
+
+  private buildFixPrompt(goal: string, verification: VerificationVerdict, changedFiles: readonly string[]): string {
+    const reasons = (verification.reasons ?? []).map((r) => r.message).join('; ');
+    const files = changedFiles.length > 0 ? `\nChanged files:\n${changedFiles.map((f) => `- ${f}`).join('\n')}` : '';
+    return `Verification failed for "${goal}". Reason: ${reasons || verification.conclusion}.${files}\nPlease fix the implementation so it passes verification.`;
   }
 
   private extractChangedFiles(events: readonly CodingAgentEvent[]): string[] {

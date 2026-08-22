@@ -32,6 +32,7 @@ export interface CodingAgentSession {
   readonly providerSessionId: string;
   readonly createdAt: string;
   readonly resumed: boolean;
+  readonly model?: string;
 }
 
 export interface CodingAgentRequest {
@@ -41,6 +42,13 @@ export interface CodingAgentRequest {
 }
 
 export type CodingAgentEvent =
+  | { readonly type: 'session-created'; readonly sessionId: string; readonly runtime: string; readonly model?: string }
+  | { readonly type: 'session-resumed'; readonly sessionId: string }
+  // ARX-014 — Workflow-aware session lifecycle events.
+  | { readonly type: 'runtime-session-requested'; readonly workflowRunId: string; readonly agentAssignmentId: string; readonly runtimeId: string }
+  | { readonly type: 'runtime-session-reused'; readonly sessionId: string; readonly workflowRunId: string; readonly agentAssignmentId: string; readonly uses: number }
+  | { readonly type: 'runtime-session-released'; readonly sessionId: string; readonly workflowRunId: string; readonly agentAssignmentId: string }
+  | { readonly type: 'runtime-session-capacity-blocked'; readonly workflowRunId: string; readonly agentAssignmentId: string; readonly runtimeId: string; readonly activeCount: number; readonly maxActive: number }
   | { readonly type: 'thinking'; readonly text: string }
   | { readonly type: 'message'; readonly text: string }
   | { readonly type: 'tool-requested'; readonly name: string; readonly input: unknown }

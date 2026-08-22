@@ -2,10 +2,12 @@ import type { AiProvider } from '../domain/contracts.js';
 import { AiModelCatalog } from '../catalog/model-catalog.js';
 import { AiProviderRegistry } from '../providers/provider-registry.js';
 import { OpenAiCompatibleAdapter } from '../providers/openai-compatible.js';
+import { OpenCodeAiProviderAdapter } from '../providers/opencode-ai-provider.js';
 import { ModelRouter, type RoutingConfig } from '../runtime/model-router.js';
 import { AiService } from '../runtime/ai-runtime.js';
 import { CostEstimator } from '../policies/cost-estimator.js';
 import { BudgetPolicy } from '../policies/budget-policy.js';
+import type { OpenCodeEnvironmentConfig } from '../../car/domain/opencode-config.js';
 
 export interface AiServiceOptions {
   readonly providers?: readonly AiProvider[];
@@ -14,6 +16,12 @@ export interface AiServiceOptions {
   readonly defaultApiEndpoint?: string;
   readonly budgets?: BudgetPolicy;
   readonly costs?: CostEstimator;
+  /**
+   * ARX stabilization — seed the configured OpenCode default model as an
+   * enabled, capability-compatible AI provider candidate so the Agent run
+   * path resolves the same model DEX uses via the CAR runtime.
+   */
+  readonly openCode?: OpenCodeEnvironmentConfig;
 }
 
 /**
@@ -45,10 +53,65 @@ export function buildAiService(options: AiServiceOptions = {}): {
   }
 
   const catalog = new AiModelCatalog(options.models !== undefined ? { models: options.models } : {});
+  if (options.openCode) seedOpencodeProvider(registry, catalog, options.openCode);
   const router = new ModelRouter(catalog, registry, options.routing ?? { defaultProfile: 'auto', enabledProviders: [] });
   const costs = options.costs ?? new CostEstimator();
   const budgets = options.budgets ?? new BudgetPolicy();
   const service = new AiService({ router, catalog, providers: registry, costs, budgets });
 
   return { service, registry, catalog, router, budgets, costs };
+}
+
+/**
+ * ARX stabilization — represent the configured OpenCode default model as an
+ * enabled AI provider + catalog candidate. Provider id derives from the
+ * default model identity (`opencode/<model>`). Capabilities mirror what the
+ * OpenCode runtime adapter declares (tools, structured output, streaming);
+ * these are required by the built-in Developer/Planner agents. An empty
+ * OpenCode config (no default model) seeds nothing — capability enforcement
+ * is preserved either way.
+ */
+function seedOpencodeProvider(registry: AiProviderRegistry, catalog: AiModelCatalog, config: OpenCodeEnvironmentConfig): void {
+  const defaultModel = config.defaultModel?.trim();
+  if (!defaultModel) return;
+
+  const providerId = config.defaultProvider?.trim() || 'opencode';
+  const modelId = defaultModel.split('/').pop() ?? defaultModel;
+
+  if (registry.listProviders().some((p) => p.id === providerId)) return;
+
+  registry.register({
+    provider: {
+      id: providerId,
+      name: 'OpenCode',
+      type: 'openai-compatible',
+      enabled: true,
+      priority: 5,
+      ...(config.baseUrl !== undefined ? { apiEndpoint: config.baseUrl } : {}),
+      defaultModelId: modelId,
+    },
+    adapter: new OpenCodeAiProviderAdapter(providerId, config),
+  });
+
+  if (!catalog.has(providerId, modelId)) {
+    catalog.upsert({
+      id: modelId,
+      providerId,
+      name: defaultModel,
+      capabilities: {
+        reasoning: true,
+        tools: true,
+        structuredOutput: true,
+        functionCalling: true,
+        vision: false,
+        embeddings: false,
+        streaming: true,
+      },
+      modalities: ['text'],
+      contextWindow: 200_000,
+      maxOutputTokens: 32_768,
+      openWeight: true,
+      lifecycleStatus: 'ga',
+    });
+  }
 }

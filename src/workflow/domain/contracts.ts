@@ -39,6 +39,13 @@ export interface StepOutputBinding {
 export interface AgentStepConfig {
   readonly agentId: string;
   readonly objective: string;
+  /**
+   * ARX-014 — Stable identity for "agent assigned to this workflow role".
+   * Deterministic per governed workflow definition, NOT a UUID per step
+   * execution. Multiple Developer turns in the same workflow resolve to
+   * the same key: e.g. `wf_123:developer-primary:opencode`.
+   */
+  readonly agentAssignmentId?: string;
   readonly inputBindings?: Readonly<Record<string, string>>;
   readonly skills?: readonly string[];
 }

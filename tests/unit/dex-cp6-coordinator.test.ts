@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { DeveloperExecutionCoordinator } from '../../src/car/runtime/developer-execution-coordinator.js';
+import { InMemoryRuntimeSessionRegistry } from '../../src/car/runtime/runtime-session-registry.js';
 import { SkillRegistry } from '../../src/skill/registry/skill-registry.js';
 import { SkillResolver } from '../../src/skill/resolver/skill-resolver.js';
 import { AgentRegistry } from '../../src/agent/registry/agent-registry.js';
@@ -129,6 +130,7 @@ function makeCoordinator(verdictFn: () => VerificationVerdict): DeveloperExecuti
     skillRegistry: registry,
     skillResolver,
     verification: new StubVerification(verdictFn),
+    sessions: new InMemoryRuntimeSessionRegistry({ maxActiveSessions: 2, maxSessionsPerExecution: 1, sessionIdleTimeoutMs: 60_000, maxFixAttempts: 1 }),
   });
 }
 

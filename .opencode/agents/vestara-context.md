@@ -1,7 +1,7 @@
 ---
 description: "Discover repository state before planning begins."
 mode: primary
-model: opencode/deepseek-v4-flash-free
+model: opencode/nemotron-3-ultra-free
 permission:
   read: allow
   edit: deny

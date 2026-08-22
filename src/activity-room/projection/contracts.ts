@@ -87,6 +87,7 @@ export interface ActivityVerificationProjection {
   readonly level?: string;
   readonly modules?: readonly string[];
   readonly fingerprint?: string;
+  readonly reasons?: readonly { kind: string; message: string }[];
   readonly handoffEligible: boolean;
 }
 
@@ -146,6 +147,9 @@ export interface ActivityExecutionProjection {
   readonly complexity: ActivityExecutionComplexity;
 
   readonly participants: readonly ActivityParticipantProjection[];
+
+  readonly workflowId?: string;
+  readonly workflowRunId?: string;
 
   readonly runtime?: ActivityRuntimeProjection;
 

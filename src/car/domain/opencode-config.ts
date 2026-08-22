@@ -1,3 +1,5 @@
+import { mergeEnvironment } from '../../config/environment.js';
+
 /** DEX-CP0 — OpenCode runtime configuration. */
 
 /**
@@ -54,7 +56,9 @@ const DEFAULTS: OpenCodeEnvironmentConfig = {
  *   - model without provider is permitted (resolved via model identity)
  */
 export function loadOpenCodeConfig(options?: OpenCodeConfigLoadOptions): OpenCodeEnvironmentConfig {
-  const env = options?.env ?? (typeof process !== 'undefined' ? process.env : {});
+  const env =
+    options?.env ??
+    (typeof process !== 'undefined' ? mergeEnvironment() : { OPENCODE_MODE: 'external' });
   const raw: Record<string, string | undefined> = {
     OPENCODE_MODE: env.OPENCODE_MODE,
     OPENCODE_BASE_URL: env.OPENCODE_BASE_URL,

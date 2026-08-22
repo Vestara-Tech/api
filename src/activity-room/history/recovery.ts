@@ -37,7 +37,12 @@ export function recoverExecution(store: ActivityHistoryStore, executionId: strin
   const events = store.events(executionId);
   const executionRecord = toExecutionRecord(fact, events);
   const coordinatorResult = toCoordinatorResult(fact, events);
-  const projection = buildProjection(executionRecord, coordinatorResult);
+  const base = buildProjection(executionRecord, coordinatorResult);
+  const projection: ActivityExecutionProjection = {
+    ...base,
+    ...(fact.workflowId !== undefined ? { workflowId: fact.workflowId } : {}),
+    ...(fact.workflowRunId !== undefined ? { workflowRunId: fact.workflowRunId } : {}),
+  };
 
   return { fact, projection };
 }
@@ -118,6 +123,9 @@ function toCoordinatorResult(fact: ActivityExecutionFact, events: readonly Activ
       ...(verificationPayload?.level !== undefined ? { level: verificationPayload.level } : {}),
       ...(verificationPayload?.modules !== undefined ? { affectedModules: verificationPayload.modules } : {}),
       ...(verificationPayload?.fingerprint !== undefined ? { fingerprint: verificationPayload.fingerprint } : {}),
+      ...(verificationPayload?.reasons !== undefined && verificationPayload.reasons.length > 0
+        ? { reasons: verificationPayload.reasons }
+        : {}),
     },
     handoffEligible:
       completed?.type === 'execution-completed'

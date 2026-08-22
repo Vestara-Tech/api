@@ -22,7 +22,10 @@ export class AgentRunStateMachine {
   private readonly events = new Map<string, AgentRunEvent[]>();
 
   create(agentId: string): AgentRun {
-    const run: AgentRun = { id: `run_${agentId}_${Date.now().toString(36)}`, agentId, status: 'queued' };
+    // ARX-STAB-003 — Suffix prevents ID collisions when the same agent starts
+    // twice within one millisecond (governed workflow steps), which previously
+    // corrupted the state machine and produced invalid duplicate transitions.
+    const run: AgentRun = { id: `run_${agentId}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`, agentId, status: 'queued' };
     this.runs.set(run.id, run);
     return run;
   }

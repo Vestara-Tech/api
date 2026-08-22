@@ -45,7 +45,17 @@ export type {
 } from './evidence/contracts.js';
 export { computeEvidenceHash } from './evidence/hash.js';
 export { buildCodingExecutionEvidence } from './evidence/builder.js';
+export { FileCodingExecutionEvidenceStore } from './evidence/file-store.js';
 
 // DEX-CP6 — Execution coordinator.
 export type { DeveloperExecutionRequest, DeveloperExecutionResult, DeveloperExecutionCoordinatorDeps } from './runtime/developer-execution-coordinator.js';
 export { DeveloperExecutionCoordinator } from './runtime/developer-execution-coordinator.js';
+export type {
+  RuntimeSessionBinding,
+  RuntimeSessionStatus,
+  RuntimeSessionLimits,
+  RuntimeSessionFactory,
+  RuntimeSessionAcquired,
+  RuntimeSessionRegistry,
+} from './runtime/runtime-session-registry.js';
+export { InMemoryRuntimeSessionRegistry, loadSessionLimits } from './runtime/runtime-session-registry.js';

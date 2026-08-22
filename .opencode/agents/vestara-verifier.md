@@ -1,7 +1,7 @@
 ---
 description: "Prove correctness via evidence — never think, never review."
 mode: subagent
-model: opencode/deepseek-v4-flash-free
+model: opencode/nemotron-3-ultra-free
 permission:
   read: allow
   edit: deny

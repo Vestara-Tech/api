@@ -211,6 +211,18 @@ export interface ActivityRoomPreviewRequestShape {
   readonly principalId?: string;
 }
 
+export interface ActivityRoomRunResultShape {
+  readonly executionId: string;
+  readonly complexity: 'simple' | 'standard' | 'complex';
+  readonly route: 'developer' | 'workflow';
+  readonly status: string;
+}
+
+export interface ActivityRoomRunRequestShape {
+  readonly goal: string;
+  readonly principalId?: string;
+}
+
 export interface ActivityExecutionSummaryShape {
   readonly executionId: string;
   readonly goal: string;
@@ -244,6 +256,91 @@ export interface ActivityHistoryQueryShape {
   readonly sort?: 'newest' | 'oldest';
   readonly cursor?: string;
   readonly limit?: number;
+}
+
+export interface ActivityHistoryEventShape {
+  readonly id: string;
+  readonly executionId: string;
+  readonly sequence: number;
+  readonly occurredAt: string;
+  readonly type: string;
+  readonly payload?: unknown;
+}
+
+// ── ARX-013 Inspector v2 DTOs ────────────────────────────────────────
+
+export interface ActivityInspectorOverviewShape {
+  readonly executionId: string;
+  readonly goal: string;
+  readonly status: string;
+  readonly phase: string;
+  readonly complexity: string;
+  readonly participants: readonly { readonly role: string; readonly agentId: string; readonly status: string }[];
+  readonly workflowId?: string;
+  readonly workflowRunId?: string;
+  readonly startedAt?: string;
+  readonly updatedAt: string;
+  readonly completedAt?: string;
+}
+
+export interface ActivityInspectorRuntimeShape {
+  readonly runtimeId?: string;
+  readonly provider?: string;
+  readonly model?: string;
+  readonly sessionId?: string;
+  readonly health: 'connected' | 'unknown' | 'unavailable';
+}
+
+export interface ActivityInspectorContextShape {
+  readonly categories: readonly string[];
+  readonly skills: readonly { readonly id: string; readonly version?: string }[];
+  readonly resourceCount: number;
+  readonly provenance: readonly string[];
+}
+
+export interface ActivityInspectorChangesShape {
+  readonly fileCount: number;
+  readonly files: readonly { readonly path: string; readonly status: string; readonly additions?: number; readonly deletions?: number }[];
+}
+
+export interface ActivityInspectorVerificationShape {
+  readonly status: string;
+  readonly conclusion?: string;
+  readonly freshness?: string;
+  readonly level?: string;
+  readonly selectedTests: number;
+  readonly executedTests: number;
+  readonly cached: number;
+  readonly fingerprint?: string;
+  readonly reasons: readonly string[];
+  readonly handoffEligible: boolean;
+}
+
+export interface ActivityInspectorEvidenceShape {
+  readonly status: string;
+  readonly hash?: string;
+  readonly outcome?: string;
+  readonly recordedAt?: string;
+}
+
+export interface ActivityInspectorTimelineEntryShape {
+  readonly sequence: number;
+  readonly type: string;
+  readonly title: string;
+  readonly detail?: string;
+  readonly at: string;
+}
+
+export interface ActivityInspectorViewShape {
+  readonly executionId: string;
+  readonly goal: string;
+  readonly overview: ActivityInspectorOverviewShape;
+  readonly runtime: ActivityInspectorRuntimeShape;
+  readonly context: ActivityInspectorContextShape;
+  readonly changes: ActivityInspectorChangesShape;
+  readonly verification: ActivityInspectorVerificationShape;
+  readonly evidence: ActivityInspectorEvidenceShape;
+  readonly timeline: readonly ActivityInspectorTimelineEntryShape[];
 }
 
 async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -284,8 +381,22 @@ export const aiApi = {
       body: JSON.stringify(body),
     }),
 
+  activityRoomRun: (body: ActivityRoomRunRequestShape) =>
+    request<ActivityRoomRunResultShape>('/api/v2/activity-room/runs', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
+
   activityHistoryBrowse: (query: ActivityHistoryQueryShape) =>
     request<ActivityHistoryPageShape>(`/api/v2/activity-room/history/browse?${buildHistoryQuery(query)}`),
+
+  activityHistoryEvents: (executionId: string, afterSequence?: number) =>
+    request<readonly ActivityHistoryEventShape[]>(
+      `/api/v2/activity-room/history/${executionId}/events${afterSequence !== undefined ? `?afterSequence=${afterSequence}` : ''}`,
+    ),
+
+  activityHistoryInspector: (executionId: string) =>
+    request<ActivityInspectorViewShape>(`/api/v2/activity-room/history/${executionId}/inspector`),
 
   generate: (body: AiGenerateRequest) => request<{ content: string }>('/api/v2/ai/generate', { method: 'POST', body: JSON.stringify(body) }),
 

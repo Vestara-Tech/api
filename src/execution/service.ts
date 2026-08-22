@@ -31,6 +31,7 @@ export interface ExecutionService {
   get(executionId: string): Execution | null;
   start(executionId: string, patch?: Partial<Execution>): Execution;
   cancel(executionId: string): Execution;
+  complete(executionId: string, patch?: Partial<Pick<Execution, 'status' | 'result' | 'evidence' | 'completedAt'>>): Execution;
 }
 
 export class ExecutionServiceImpl implements ExecutionService {
@@ -108,6 +109,21 @@ export class ExecutionServiceImpl implements ExecutionService {
     const updated: Execution = {
       ...existing,
       status: 'cancelled',
+      completedAt: now,
+      updatedAt: now,
+    };
+    this.store.upsert(updated);
+    return updated;
+  }
+
+  complete(executionId: string, patch: Partial<Pick<Execution, 'status' | 'result' | 'evidence' | 'completedAt'>> = {}): Execution {
+    const existing = this.store.get(executionId);
+    if (!existing) throw new Error(`Execution "${executionId}" not found`);
+    const now = new Date().toISOString();
+    const updated: Execution = {
+      ...existing,
+      ...patch,
+      status: patch.status ?? 'completed',
       completedAt: now,
       updatedAt: now,
     };

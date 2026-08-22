@@ -2,6 +2,7 @@ import { badRequest } from '../../core/errors.js';
 import { randomId } from '../../core/identifiers.js';
 import type { AgentRuntime } from '../../agent/runtime/agent-runtime.js';
 import type { ToolRuntime } from '../../tool/runtime/tool-runtime.js';
+import type { AgentStepExecutor } from './agent-step-executor.js';
 import type {
   WorkflowDefinition,
   WorkflowRun,
@@ -16,6 +17,10 @@ export interface WorkflowRuntimeOptions {
   readonly registry: WorkflowRegistry;
   readonly agents: AgentRuntime;
   readonly tools: ToolRuntime;
+  /** ARX-014 — Lazy dispatch boundary for agent steps. Routes coding agents through CAR,
+   *  non-coding agents through AgentRuntime. Lazy because the coordinator depends on
+   *  verification which is built later in the bootstrap sequence. */
+  readonly agentStepExecutor?: { get(): AgentStepExecutor } | undefined;
 }
 
 export interface WorkflowRunEvent {
@@ -54,6 +59,7 @@ export class WorkflowRuntime {
   private readonly registry: WorkflowRegistry;
   private readonly agents: AgentRuntime;
   private readonly tools: ToolRuntime;
+  private readonly agentStepExecutorLazy?: { get(): AgentStepExecutor } | undefined;
   private readonly runs = new Map<string, WorkflowRun>();
   private readonly runEvents = new Map<string, WorkflowRunEvent[]>();
 
@@ -61,6 +67,7 @@ export class WorkflowRuntime {
     this.registry = options.registry;
     this.agents = options.agents;
     this.tools = options.tools;
+    this.agentStepExecutorLazy = options.agentStepExecutor;
   }
 
   get state() {
@@ -237,7 +244,29 @@ export class WorkflowRuntime {
     switch (step.kind) {
       case 'agent': {
         if (!step.agent) throw new Error(`agent step "${stepId}" missing config`);
-        const agentRun = this.agents.start({ agentId: step.agent.agentId, goal: step.agent.objective, principalId: `workflow:${runId}` });
+        const goal = interpolateTemplate(step.agent.objective, run.context);
+
+        // ARX-014 — Route through AgentStepExecutor dispatch boundary when available.
+        // This inspects the agent's runtimePolicy and routes coding agents through CAR
+        // (DeveloperExecutionCoordinator) and non-coding agents through AgentRuntime.
+        const executor = this.agentStepExecutorLazy?.get();
+        if (executor !== undefined) {
+          const result = await executor.execute({
+            agentId: step.agent.agentId,
+            goal,
+            principalId: `workflow:${runId}`,
+            workflowRunId: runId,
+            ...(step.agent.agentAssignmentId !== undefined ? { agentAssignmentId: step.agent.agentAssignmentId } : {}),
+            executionId: run.inputs.executionId as string,
+          });
+          if (result.outcome === 'failed') {
+            throw new Error(result.error ?? `Agent step "${stepId}" failed`);
+          }
+          return { agentRunId: result.agentRunId, status: result.outcome, sessionId: result.sessionId };
+        }
+
+        // Fallback: direct AgentRuntime invocation (pre-ARX-014 path).
+        const agentRun = this.agents.start({ agentId: step.agent.agentId, goal, principalId: `workflow:${runId}` });
         return { agentRunId: agentRun.id, status: agentRun.status };
       }
       case 'tool': {
@@ -330,6 +359,20 @@ export function evaluateExpression(expression: string, context: Readonly<Record<
   } catch {
     return false;
   }
+}
+
+/**
+ * WF-004 — Template interpolation for step inputs (e.g. agent objectives).
+ * Replaces `{{key}}` references with context values, leaving unknown
+ * references as empty strings. Used so a single governed workflow definition
+ * can serve every goal (e.g. `Plan {{goal}}`).
+ */
+export function interpolateTemplate(template: string, context: Readonly<Record<string, unknown>>): string {
+  return template.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (match, key: string) => {
+    const value = resolveRef(key.trim(), context);
+    if (value === undefined || value === null) return '';
+    return typeof value === 'object' ? JSON.stringify(value) : String(value);
+  });
 }
 
 type Token = { type: 'ref' | 'str' | 'num' | 'bool' | 'op' | 'lparen' | 'rparen' | 'eof'; value: string };

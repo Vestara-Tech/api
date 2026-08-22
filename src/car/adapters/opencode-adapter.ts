@@ -22,6 +22,15 @@ import type { OpenCodeEnvironmentConfig } from '../domain/opencode-config.js';
 
 export interface OpenCodeAdapterOptions extends Pick<ServerOptions, 'hostname' | 'port' | 'timeout' | 'config'> {
   readonly baseUrl?: string;
+  /** Default AI model used by the runtime; surfaced in session metadata. */
+  readonly defaultModel?: string;
+  /**
+   * Runtime ownership mode. In 'external' mode the adapter MUST NOT spawn or
+   * manage an OpenCode server lifecycle — it connects to a service that is
+   * owned elsewhere (e.g. systemd) and treats service availability as runtime
+   * health. In 'managed' mode the adapter may start an embedded server.
+   */
+  readonly mode?: 'managed' | 'external';
 }
 
 interface OpenCodeRuntimeHandle {
@@ -60,6 +69,8 @@ type RawSdkResult<T> = {
 export class OpenCodeAdapter implements CodingAgentRuntime {
   readonly id: CodingAgentRuntimeId = 'opencode';
   private readonly options: OpenCodeAdapterOptions;
+  private readonly model: string | undefined;
+  private readonly mode: 'managed' | 'external';
   private readonly declaredCapabilities: CodingAgentCapabilities = {
     streaming: true,
     sessions: true,
@@ -75,30 +86,38 @@ export class OpenCodeAdapter implements CodingAgentRuntime {
     nativeSkills: true,
     nativeAgents: true,
   };
-  private runtimePromise?: Promise<OpenCodeRuntimeHandle>;
+  private runtimePromise: Promise<OpenCodeRuntimeHandle> | undefined;
   private readonly sessions = new Map<string, OpenCodeSessionState>();
   private readonly activeControllers = new Map<string, AbortController>();
 
   constructor(options: string | OpenCodeAdapterOptions | OpenCodeEnvironmentConfig = {}) {
     if (typeof options === 'string') {
       this.options = { baseUrl: options };
-    } else if ('mode' in options) {
+      this.model = undefined;
+      this.mode = 'external';
+    } else if ('startupTimeoutMs' in options) {
       // DEX-CP0 — Map OpenCodeEnvironmentConfig to adapter options.
       const config = options;
+      this.model = config.defaultModel;
+      this.mode = config.mode ?? 'external';
       if (config.mode === 'external') {
         this.options = {
           ...(config.baseUrl !== undefined ? { baseUrl: config.baseUrl } : {}),
+          mode: 'external',
           timeout: config.startupTimeoutMs,
         };
       } else {
         this.options = {
           ...(config.hostname !== undefined ? { hostname: config.hostname } : {}),
           ...(config.port !== undefined ? { port: config.port } : {}),
+          mode: 'managed',
           timeout: config.startupTimeoutMs,
         };
       }
     } else {
       this.options = options;
+      this.model = options.defaultModel;
+      this.mode = options.mode ?? 'managed';
     }
   }
 
@@ -125,6 +144,7 @@ export class OpenCodeAdapter implements CodingAgentRuntime {
       providerSessionId: createdSession.id,
       createdAt: new Date(createdSession.time.created).toISOString(),
       resumed: false,
+      ...(this.model !== undefined ? { model: this.model } : {}),
     };
   }
 
@@ -149,6 +169,7 @@ export class OpenCodeAdapter implements CodingAgentRuntime {
         providerSessionId: session.id,
         createdAt: new Date(session.time.created).toISOString(),
         resumed: true,
+        ...(this.model !== undefined ? { model: this.model } : {}),
       };
     } catch {
       return {
@@ -245,13 +266,26 @@ export class OpenCodeAdapter implements CodingAgentRuntime {
 
   private async getRuntime(): Promise<OpenCodeRuntimeHandle> {
     if (!this.runtimePromise) {
-      this.runtimePromise = this.createRuntime();
+      this.runtimePromise = this.createRuntime().catch((error) => {
+        // Service availability is runtime health: never cache a failed
+        // acquisition, so a later call can reconnect to an external runtime.
+        this.runtimePromise = undefined;
+        throw error;
+      });
     }
     return this.runtimePromise;
   }
 
   private async createRuntime(): Promise<OpenCodeRuntimeHandle> {
-    if (this.options.baseUrl) {
+    if (this.mode === 'external') {
+      // External mode MUST NOT spawn or own an OpenCode server process.
+      // The runtime is owned elsewhere (e.g. systemd) — connect to it and
+      // treat service availability as runtime health.
+      if (!this.options.baseUrl) {
+        throw new Error(
+          'OpenCode external mode requires OPENCODE_BASE_URL (connecting to a managed service); refusing to start an embedded server.',
+        );
+      }
       return {
         client: createOpencodeClient({
           baseUrl: this.options.baseUrl,
@@ -259,11 +293,7 @@ export class OpenCodeAdapter implements CodingAgentRuntime {
       };
     }
 
-    // DEX-CP0 — Validate external mode requirements at connection time.
-    // If no baseUrl is set, we fall through to managed mode (start embedded server).
-    // External mode callers must provide baseUrl; this is validated here rather than
-    // at config load time so bootstrap can succeed without OpenCode configured.
-
+    // Managed mode: the adapter owns the embedded server lifecycle.
     const { client, server } = await createOpencode({
       ...(this.options.hostname !== undefined ? { hostname: this.options.hostname } : {}),
       ...(this.options.port !== undefined ? { port: this.options.port } : {}),

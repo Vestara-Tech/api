@@ -32,6 +32,7 @@ import { AgentRegistry } from '../../src/agent/registry/agent-registry.js';
 import { SkillRegistry } from '../../src/skill/registry/skill-registry.js';
 import { SkillResolver } from '../../src/skill/resolver/skill-resolver.js';
 import { DeveloperExecutionCoordinator } from '../../src/car/runtime/developer-execution-coordinator.js';
+import { InMemoryRuntimeSessionRegistry } from '../../src/car/runtime/runtime-session-registry.js';
 import { OpenCodeAdapter } from '../../src/car/adapters/opencode-adapter.js';
 import type { AgentDefinition } from '../../src/agent/domain/contracts.js';
 import type { SkillDefinition } from '../../src/skill/domain/contracts.js';
@@ -247,6 +248,7 @@ describe('DEX-E2E-001 — Live Developer Execution', () => {
       skillRegistry,
       skillResolver,
       verification: vctrl,
+      sessions: new InMemoryRuntimeSessionRegistry({ maxActiveSessions: 2, maxSessionsPerExecution: 1, sessionIdleTimeoutMs: 60_000, maxFixAttempts: 1 }),
     });
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -256,7 +258,7 @@ describe('DEX-E2E-001 — Live Developer Execution', () => {
       mode: 'external' as const,
       baseUrl: 'http://127.0.0.1:4096',
       defaultProvider: 'opencode',
-      defaultModel: 'opencode/deepseek-v4-flash-free',
+      defaultModel: 'opencode/nemotron-3-ultra-free',
     };
 
     const adapter = new OpenCodeAdapter(openCodeConfig);

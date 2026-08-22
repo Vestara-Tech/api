@@ -11,3 +11,4 @@ export type {
 } from './contracts.js';
 export { computeEvidenceHash } from './hash.js';
 export { buildCodingExecutionEvidence } from './builder.js';
+export { FileCodingExecutionEvidenceStore } from './file-store.js';

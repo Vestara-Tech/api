@@ -80,6 +80,7 @@ import { buildApplicationBuilderPlatform } from './appbuilder.js';
 import { buildUserPlatform } from './user.js';
 import { buildDashboardPlatform } from './dashboard.js';
 import { buildThemePlatform } from './theme.js';
+import { ThemeDraftService } from '../theme/service/theme-draft-service.js';
 import { buildTemplatePlatform } from './template.js';
 import { buildMilestonePlatform } from './milestone.js';
 import { ExecutionServiceImpl } from '../execution/service.js';
@@ -88,6 +89,16 @@ import { FileActivityHistoryStore, ActivityHistoryRecorderImpl } from '../activi
 import type { ActivityHistoryStore, ActivityHistoryRecorder } from '../activity-room/history/index.js';
 import { ActivityBrowserImpl } from '../activity-room/browse/browser.js';
 import type { ActivityBrowser } from '../activity-room/browse/browser.js';
+import { GovernedActivityRunner } from '../activity-room/runtime/governed-runner.js';
+import type { GovernedActivityRunner as GovernedActivityRunnerType } from '../activity-room/runtime/governed-runner.js';
+import { DeveloperExecutionCoordinator } from '../car/runtime/developer-execution-coordinator.js';
+import { InMemoryRuntimeSessionRegistry, loadSessionLimits } from '../car/runtime/runtime-session-registry.js';
+import { AgentStepExecutor } from '../workflow/runtime/agent-step-executor.js';
+import { VctrlService } from '../verification/service/vctrl-service.js';
+import { FastVerifyAdapter } from '../verification/adapters/fastverify-adapter.js';
+import type { VerificationControlPlane } from '../verification/domain/contracts.js';
+import { FileCodingExecutionEvidenceStore } from '../car/evidence/file-store.js';
+import type { CodingExecutionEvidenceStore } from '../car/evidence/contracts.js';
 import { registerSystemCapability } from './capabilities.js';
 import { buildComponentPlatform } from './component.js';
 import { registerComponentCapability } from './component-capability.js';
@@ -125,6 +136,26 @@ import { registerMilestoneCapability } from './milestone-capability.js';
 import { registerVerificationCapability } from './verification-capability.js';
 import { Container } from './container.js';
 import { ShutdownCoordinator } from './shutdown.js';
+
+/**
+ * ARX-014 — Lazy reference for deferred dependency resolution.
+ * Used when a dependency is built later in the bootstrap sequence.
+ */
+interface Lazy<T> {
+  resolve(value: T): void;
+  get(): T;
+}
+
+function lazy<T>(): Lazy<T> {
+  let resolved: T | undefined;
+  return {
+    resolve(value: T) { resolved = value; },
+    get(): T {
+      if (resolved === undefined) throw new Error('Lazy reference not resolved');
+      return resolved;
+    },
+  };
+}
 
 export interface SystemStatus {
   readonly service: string;
@@ -177,6 +208,9 @@ export interface Application {
   readonly activityHistory: ActivityHistoryStore;
   readonly activityRecorder: ActivityHistoryRecorder;
   readonly activityBrowser: ActivityBrowser;
+  readonly activityEvidence: CodingExecutionEvidenceStore;
+  readonly activityRunner: GovernedActivityRunnerType;
+  readonly verification: VerificationControlPlane;
   readonly shutdown: ShutdownCoordinator;
   systemStatus(): SystemStatus;
   close(): Promise<void>;
@@ -243,8 +277,14 @@ export function createApplication(config: AppConfig): Application {
   // ── OS Image Builder (IMG-001..026) ────────────────────────
   const { service: imageBuilder, platformV2: imagePlatformV2, execution: imageExecution } = buildImageBuilderService(events);
 
+  // ── Coding Agent Runtime (CAR-001..) ──────────────────────
+  const openCode = loadOpenCodeConfig();
+
   // ── AI Platform (AI-001..006) ─────────────────────────────
-  const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService();
+  // The configured OpenCode default model is seeded as an enabled AI
+  // provider candidate so the Agent run path and the DEX/CAR runtime share
+  // the same model-resolution configuration path.
+  const { service: ai, registry: aiProviders, catalog: aiCatalog, router: aiRouter } = buildAiService({ openCode });
   const aiV2 = buildAiPlatformV2Service(aiCatalog, aiProviders, ai);
 
   // ── File Module (FILE-001..) ──────────────────────────────
@@ -253,8 +293,18 @@ export function createApplication(config: AppConfig): Application {
   // ── Agent Platform (AGENT + TOOL + SKILL) ─────────────────
   const agents = buildAgentPlatform({ ai, builder, generatorRegistry, generation: generatorService, file: file.service });
 
+  // ── Coding Agent Runtime (CAR-001..) ──────────────────────
+  // CAR is built before Workflow so the AgentStepExecutor dispatch boundary
+  // can be wired into the workflow runtime.
+  const car = buildCarPlatform({ agents: agents.runtime, tools: agents.toolRuntime, approvals: agents.approvals, openCode });
+
   // ── Workflow Module (WF-001..015) ─────────────────────────
-  const workflow = buildWorkflowPlatform({ agents: agents.runtime, tools: agents.toolRuntime });
+  // ARX-014 — The workflow runtime receives an AgentStepExecutor that routes
+  // coding agents through CAR and non-coding agents through AgentRuntime.
+  // The executor is lazy-resolved because the DeveloperExecutionCoordinator
+  // depends on verification which is built later.
+  const agentStepExecutorLazy = lazy<AgentStepExecutor>();
+  const workflow = buildWorkflowPlatform({ agents: agents.runtime, tools: agents.toolRuntime, agentStepExecutor: agentStepExecutorLazy });
 
   // ── Context Module (CTX-001..) ────────────────────────────
   const context = buildContextPlatform({ agents: agents.agents, workflow: workflow.runtime });
@@ -267,10 +317,6 @@ export function createApplication(config: AppConfig): Application {
       { id: 'engineering.observer', name: 'Observer', permissions: ['file.read', 'workflow.read'] },
     ],
   });
-
-  // ── Coding Agent Runtime (CAR-001..) ──────────────────────
-  const openCode = loadOpenCodeConfig();
-  const car = buildCarPlatform({ agents: agents.runtime, tools: agents.toolRuntime, approvals: agents.approvals, openCode });
 
   // ── Marketplace (MKT-001..) ────────────────────────────────
   const marketplace = buildMarketplacePlatform();
@@ -322,6 +368,52 @@ export function createApplication(config: AppConfig): Application {
   );
   const activityRecorder = new ActivityHistoryRecorderImpl(activityHistory);
   const activityBrowser = new ActivityBrowserImpl(activityHistory);
+  const activityEvidence = new FileCodingExecutionEvidenceStore(
+    join(process.cwd(), '.vestara', 'cache', 'activity-room', 'evidence'),
+  );
+
+  // ── Verification Control Plane (DEX-CP4) ───────────────────
+  // VCTRL wraps FASTVERIFY as a VerificationSource. Coding executions
+  // verify through this plane — never through the legacy AI model path.
+  const verification = new VctrlService({ sources: [new FastVerifyAdapter()] });
+
+  // ── Developer Execution Coordinator (DEX-CP6) ─────────────
+  // DEX-CP3.1 — The session registry owns CAR session lifecycle above the
+  // adapter: one Developer execution ⇒ one session, with capacity guardrails.
+  const sessionLimits = loadSessionLimits();
+  const sessionRegistry = new InMemoryRuntimeSessionRegistry(sessionLimits);
+  const developerCoordinator = new DeveloperExecutionCoordinator({
+    agents: agents.agents,
+    skillRegistry: agents.skills,
+    skillResolver: agents.skillResolver,
+    verification,
+    sessions: sessionRegistry,
+    maxFixAttempts: sessionLimits.maxFixAttempts,
+  });
+
+  // ── ARX-014 — Agent Step Executor (dispatch boundary) ──────
+  // Resolves the lazy reference so the workflow runtime can route agent steps.
+  const agentStepExecutor = new AgentStepExecutor({
+    agents: agents.agents,
+    agentRuntime: agents.runtime,
+    selector: car.selector,
+    registry: car.registry,
+    coordinator: developerCoordinator,
+  });
+  agentStepExecutorLazy.resolve(agentStepExecutor);
+
+  // ── Governed Activity Room Runner (ARX-014/ARX-STAB-003) ──────
+  const activityRunner = new GovernedActivityRunner({
+    execution,
+    recorder: activityRecorder,
+    history: activityHistory,
+    workflow: workflow.service,
+    agents: agents.agents,
+    selector: car.selector,
+    registry: car.registry,
+    coordinator: developerCoordinator,
+    evidence: activityEvidence,
+  });
 
   // ── OS Module (OS-001..) ──────────────────────────────────
   const os = buildOsPlatform();
@@ -512,6 +604,10 @@ export function createApplication(config: AppConfig): Application {
   container.register('activity.history', activityHistory);
   container.register('activity.recorder', activityRecorder);
   container.register('activity.browser', activityBrowser);
+  container.register('activity.evidence', activityEvidence);
+  container.register('activity.runner', activityRunner);
+  container.register('verification.controlPlane', verification);
+  container.register('car.coordinator', developerCoordinator);
   container.register('os', os.service);
   container.register('page-builder.service', pageBuilder.service);
   container.register('application-builder.service', applicationBuilder.service);
@@ -522,6 +618,8 @@ export function createApplication(config: AppConfig): Application {
   container.register('dashboard.builder', dashboard.builder);
   container.register('dashboard.generator', dashboard.generator);
   container.register('themes', themes.service);
+  container.register('theme-generation', themes.generation);
+  container.register('theme-drafts', new ThemeDraftService({ themeService: themes.service }));
   container.register('templates', templates.service);
   container.register('milestone.service', milestone.service);
   container.register('milestone.store', milestone.store);
@@ -572,6 +670,9 @@ export function createApplication(config: AppConfig): Application {
     activityHistory,
     activityRecorder,
     activityBrowser,
+    activityEvidence,
+    activityRunner,
+    verification,
     shutdown,
     systemStatus(): SystemStatus {
       return {

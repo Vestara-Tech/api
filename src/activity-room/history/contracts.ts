@@ -26,15 +26,24 @@ export type ActivityEventType =
   | 'execution-started'
   | 'context-assembled'
   | 'runtime-connected'
+  | 'session-created'
+  | 'session-resumed'
   | 'file-changed'
+  | 'tool-requested'
+  | 'tool-completed'
+  | 'runtime-completed'
   | 'verification-started'
   | 'verification-completed'
   | 'evidence-recorded'
   | 'execution-completed'
+  | 'execution-blocked'
   | 'execution-failed'
   | 'execution-cancelled'
   | 'approval-requested'
-  | 'approval-decided';
+  | 'approval-decided'
+  | 'workflow-started'
+  | 'workflow-progressed'
+  | 'workflow-failed';
 
 // ── Event Payloads ─────────────────────────────────────────────────
 
@@ -54,9 +63,30 @@ export interface ActivityEventPayloadMap {
   'runtime-connected': {
     readonly runtimeId: string;
     readonly sessionId: string;
+    readonly model?: string | undefined;
+  };
+  'session-created': {
+    readonly sessionId: string;
+    readonly runtimeId: string;
+    readonly model?: string | undefined;
+  };
+  'session-resumed': {
+    readonly sessionId: string;
   };
   'file-changed': {
     readonly path: string;
+  };
+  'tool-requested': {
+    readonly name: string;
+  };
+  'tool-completed': {
+    readonly name: string;
+    readonly ok: boolean;
+  };
+  'runtime-completed': {
+    readonly runtimeId: string;
+    readonly sessionId?: string | undefined;
+    readonly changedFiles: readonly string[];
   };
   'verification-started': {
     readonly level?: string | undefined;
@@ -67,6 +97,7 @@ export interface ActivityEventPayloadMap {
     readonly level?: string | undefined;
     readonly modules?: readonly string[] | undefined;
     readonly fingerprint?: string | undefined;
+    readonly reasons?: readonly { kind: string; message: string }[] | undefined;
   };
   'evidence-recorded': {
     readonly evidenceHash: string;
@@ -76,6 +107,11 @@ export interface ActivityEventPayloadMap {
     readonly outcome: string;
     readonly changedFiles: readonly string[];
     readonly handoffEligible: boolean;
+  };
+  'execution-blocked': {
+    readonly reason: string;
+    readonly reasons?: readonly { kind: string; message: string }[] | undefined;
+    readonly changedFiles?: readonly string[] | undefined;
   };
   'execution-failed': {
     readonly error?: string | undefined;
@@ -92,6 +128,21 @@ export interface ActivityEventPayloadMap {
     readonly toolId: string;
     readonly decision: 'approve' | 'reject';
     readonly decidedBy?: string | undefined;
+  };
+  'workflow-started': {
+    readonly workflowId: string;
+    readonly workflowRunId: string;
+  };
+  'workflow-progressed': {
+    readonly workflowId: string;
+    readonly workflowRunId: string;
+    readonly stepId: string;
+    readonly role: string;
+  };
+  'workflow-failed': {
+    readonly workflowId: string;
+    readonly workflowRunId: string;
+    readonly error?: string | undefined;
   };
 }
 
@@ -141,6 +192,7 @@ export interface ActivityExecutionFact {
   readonly completedAt?: string | undefined;
   readonly updatedAt: string;
   readonly workflowId?: string | undefined;
+  readonly workflowRunId?: string | undefined;
   readonly runtimeSessionId?: string | undefined;
   readonly verificationFingerprint?: string | undefined;
   readonly evidenceHash?: string | undefined;

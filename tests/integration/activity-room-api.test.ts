@@ -1,3 +1,5 @@
+import { rmSync } from 'node:fs';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { buildApp } from '../../src/app.js';
 import { createApplication } from '../../src/bootstrap/application.js';
@@ -6,6 +8,12 @@ import { loadConfig } from '../../src/config/schema.js';
 let app: Awaited<ReturnType<typeof buildApp>>;
 
 beforeEach(async () => {
+  // Hermetic durable state: the file-backed activity-room stores persist
+  // across test runs, which would otherwise leak executions between runs.
+  const cacheDir = join(process.cwd(), '.vestara', 'cache', 'activity-room');
+  rmSync(join(cacheDir, 'history.json'), { force: true });
+  rmSync(join(cacheDir, 'executions.json'), { force: true });
+
   const config = loadConfig({});
   const application = createApplication(config);
   app = await buildApp({ config, application });
